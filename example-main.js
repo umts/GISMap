@@ -1,3 +1,5 @@
+var map;
+
 require([
     "esri/WebMap",
     "esri/views/MapView",
@@ -24,7 +26,7 @@ require([
     const mapID = "9330c364e64a491ba00442e050c52f4c";
 
     // set up the web map and view
-   var map = new WebMap({
+   map = new WebMap({
         portalItem: {
             id: mapID
         }
@@ -111,6 +113,7 @@ require([
         view.ui.add(basemapWidget, {position: "bottom-left"});
         view.ui.add(searchWidget, {position: "top-left", index: 0});
         view.ui.add(scaleWidget, {position: "bottom-left"})
+
 
         })
     });
