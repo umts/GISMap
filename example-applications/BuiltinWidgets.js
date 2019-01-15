@@ -23,7 +23,7 @@ require([
     Locator,
     ScaleBar
 ) {
-    const mapID = "9330c364e64a491ba00442e050c52f4c";
+    const mapID = "15298012bff94b1482cf3fee6277fad8";
 
     // set up the web map and view
    map = new WebMap({
