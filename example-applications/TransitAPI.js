@@ -86,7 +86,8 @@ require([
     var url = "https://bustracker.pvta.com/InfoPoint/rest/Stops/GetAllStops";
 
     esriConfig.request.corsEnabledServers.push(url);
-    // [esri.config] request.corsEnabledServers is not supported and will be removed in a future release. See http://esriurl.com/cors8664
+    // [esri.config] request.corsEnabledServers is not supported and will be removed
+    // in a future release. See http://esriurl.com/cors8664
 
     return esriRequest(url, {
       responseType: "json"
