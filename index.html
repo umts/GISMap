@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Example App</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+    <link rel="stylesheet" href="index.css">
+    <script>
+      // Current path minus everything after the last forward slash
+      var locationPath = location.pathname.replace(/\/[^\/]+$/, "");
+      // Dojo wants a very explicit path in order to load our JS package
+      window.dojoConfig = {
+        isDebug: true,
+        packages: [
+          {
+            name: "app",
+            location: location.protocol + "//" + location.host + locationPath + "/app"
+          }
+        ]
+      };
+    </script>
+    <script src="https://js.arcgis.com/4.10"></script>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+    <script>require(["app/main"]);</script>
+  </body>
+</html>
