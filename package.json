@@ -1,0 +1,8 @@
+{
+  "name": "GISMap",
+  "version": "1.0.0",
+  "main": "main.js",
+  "dependencies": {
+    "@types/arcgis-js-api": "^4.10.0"
+  }
+}

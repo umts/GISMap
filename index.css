@@ -1,0 +1,42 @@
+html,
+body,
+#viewDiv {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#main-navigation {
+  background-color: white;
+  border: 0.2rem solid #881c1c;
+  padding: 0.8rem;
+}
+
+#widgets-list ul {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+#widgets-list ul li.widget-list-item {
+  display: inline-block;
+  padding-right: 0.5rem;
+}
+
+.esri-widget--button {
+  background-color: #881c1c;
+  color: white;
+}
+.esri-widget--button:hover {
+  background-color: #63666a;
+  color: white;
+}
+.esri-icon,
+.esri-icon-search {
+  font-weight: bold;
+}
+.esri-search {
+  border: 1px solid #881c1c;
+  margin-bottom: 0.8rem;
+}
