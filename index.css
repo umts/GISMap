@@ -34,7 +34,9 @@ body,
   color: white;
 }
 .esri-icon,
-.esri-icon-search {
+.esri-icon-search,
+.esri-icon-close,
+.esri-icon-down-arrow {
   font-weight: bold;
 }
 .esri-search {
