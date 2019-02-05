@@ -11,35 +11,40 @@ import { CustomZoom } from "app/widgets/CustomZoom";
 
 @subclass("esri.widgets.MainNavigation")
 class MainNavigation extends declared(Widget) {
-  @property()
-  @renderable()
-  view: MapView;
-
+  // Compass widget
   @property()
   @renderable()
   compass: Compass;
 
+  // Home widget
   @property()
   @renderable()
   home: Home;
 
+  // Zoom in widget
   @property()
   @renderable()
   zoomIn: CustomZoom;
 
+  // Zoom out widget
   @property()
   @renderable()
   zoomOut: CustomZoom;
 
+  // Search widget
   @property()
   @renderable()
   search: Search;
 
-  // Allow us to pass in properties like widgets
+  /*
+    Pass in properties like widgets as `any` type which will then be cast to
+    their correct types.
+  */
   constructor(properties?: any) {
     super();
   }
 
+  // Render this widget by returning JSX which is converted to HTML
   render() {
     return (
       <div id="main-navigation">
@@ -58,4 +63,8 @@ class MainNavigation extends declared(Widget) {
   }
 }
 
+/*
+  Set the main navigation widget as the export for this file so it can be
+  imported and used in other files.
+*/
 export = MainNavigation;
