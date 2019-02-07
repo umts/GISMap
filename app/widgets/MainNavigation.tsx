@@ -4,6 +4,7 @@ import { renderable, tsx } from "esri/widgets/support/widget";
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
 import Home = require("esri/widgets/Home");
+import Locate = require("esri/widgets/Locate");
 import Search = require("esri/widgets/Search");
 import Widget = require("esri/widgets/Widget");
 
@@ -20,6 +21,11 @@ class MainNavigation extends declared(Widget) {
   @property()
   @renderable()
   home: Home;
+
+  // Locate widget
+  @property()
+  @renderable()
+  locate: Locate;
 
   // Zoom in widget
   @property()
@@ -56,6 +62,7 @@ class MainNavigation extends declared(Widget) {
             <li class="widget-list-item">{this.zoomOut.render()}</li>
             <li class="widget-list-item">{this.compass.render()}</li>
             <li class="widget-list-item">{this.home.render()}</li>
+            <li class="widget-list-item">{this.locate.render()}</li>
           </ul>
         </div>
       </div>

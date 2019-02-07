@@ -2,10 +2,12 @@ import WebMap = require("esri/WebMap");
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
 import Home = require("esri/widgets/Home");
+import Locate = require("esri/widgets/Locate");
 import Search = require("esri/widgets/Search");
 
 import MainNavigation = require("app/widgets/MainNavigation");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
+import { searchGoToOverride, searchSources } from "app/search";
 
 // Set the map to load data from our ArcGIS Online web map
 const map = new WebMap({
@@ -40,6 +42,9 @@ view.when(() => {
     home: new Home({
       view: view
     }),
+    locate: new Locate({
+      view: view
+    }),
     zoomIn: new CustomZoom({
       view: view,
       direction: ZoomDirection.In
@@ -49,10 +54,14 @@ view.when(() => {
       direction: ZoomDirection.Out
     }),
     search: new Search({
-      view: view
+      view: view,
+      includeDefaultSources: false,
+      popupEnabled: false,
+      goToOverride: searchGoToOverride,
+      sources: searchSources()
     })
   });
   // Add the main navigation widget to the map
-  view.ui.add(mainNavigation, "top-left");
+  view.ui.add(mainNavigation, "manual");
 })
 .otherwise((error) => console.warn(error));
