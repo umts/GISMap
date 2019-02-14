@@ -50,10 +50,6 @@ class MainNavigation extends declared(Widget) {
   @renderable()
   search: Search;
 
-  // Whether or not any custom windows are open
-  @property()
-  customWindowsOpen: boolean;
-
   // Custom windows that start hidden
   @property()
   @renderable()
@@ -70,6 +66,7 @@ class MainNavigation extends declared(Widget) {
   // Render this widget by returning JSX which is converted to HTML
   render() {
     let renderedWindows = [];
+    // Render each custom window into an array
     for (let i = 0; i < this.customWindows.length; i += 1) {
       renderedWindows.push(this.customWindows[i].render());
     }

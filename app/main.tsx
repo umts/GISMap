@@ -47,10 +47,6 @@ view.when(() => {
           view: view,
           container: document.createElement('div') as HTMLElement
         })
-      },
-      {
-        label: "Home",
-        widget: new Home({view: view})
       }
     ]
   });

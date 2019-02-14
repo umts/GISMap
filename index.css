@@ -29,10 +29,6 @@ body,
   font-size: 1.2rem;
 }
 
-#main-navigation {
-  height: 100%;
-}
-
 #widgets-list ul {
   padding: 0;
   margin: 0;

@@ -28,10 +28,12 @@ function getElementStyleSize(element: Element, property: string): number {
 
 @subclass("esri.widgets.CustomWindow")
 class CustomWindow extends declared(Widget) {
+  // Used for id and title, and is referenced by a window expand
   @property()
   @renderable()
   name: string;
 
+  // The widgets to render in this window
   @property()
   @renderable()
   widgets: Array<WidgetWithLabel>;
@@ -57,6 +59,18 @@ class CustomWindow extends declared(Widget) {
       renderedWidgets.push(widgetWithLabel.widget.render());
     }
 
+    // Set the height of the main navigation widget
+    if (this._element()) {
+      const mainNavigation = document.getElementById('main-navigation');
+      if (this._mainNavigationHeight() + this._element().scrollHeight > window.innerHeight) {
+        // If the window needs to scroll set the height explicitly to 100%
+        mainNavigation.style.height = '100%';
+      } else {
+        // Let it determine its own height if the window does not need to scroll
+        mainNavigation.style.height = '';
+      }
+    }
+
     return (
       <div
         id={`${this.name}-window`}
@@ -74,9 +88,14 @@ class CustomWindow extends declared(Widget) {
     );
   }
 
+  // Return this element
+  private _element() {
+    return document.getElementById(`${this.name}-window`);
+  }
+
   // Close this window
   private _close() {
-    document.getElementById(`${this.name}-window`).style.display = 'none';
+    this._element().style.display = 'none';
   }
 
   /*
@@ -85,7 +104,7 @@ class CustomWindow extends declared(Widget) {
   */
   private _mainNavigationHeight(): number {
     const mainWindow = document.getElementById("main-navigation-window");
-    const thisWindow = document.getElementById(`${this.name}-window`);
+    const thisWindow = this._element();
     const attribution = document.querySelector(".esri-attribution") as HTMLElement;
     let height = 0;
     if (mainWindow && thisWindow && attribution) {
