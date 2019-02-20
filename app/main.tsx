@@ -38,14 +38,14 @@ view.when(() => {
     return ['Lots', 'Spaces'].indexOf(layer.title) > -1;
   }).forEach((layer) => { layer.visible = false });
 
+  // Create a laywer window that will be hidden until opened by a window expand
   const layersWindow = new CustomWindow({
     name: 'layers',
     widgets: [
       {
         label: "Layers",
         widget: new LayerList({
-          view: view,
-          container: document.createElement('div') as HTMLElement
+          view: view
         })
       }
     ]

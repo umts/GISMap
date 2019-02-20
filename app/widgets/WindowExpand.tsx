@@ -5,7 +5,10 @@ import Widget = require("esri/widgets/Widget");
 
 @subclass("esri.widgets.WindowExpand")
 class WindowExpand extends declared(Widget) {
-  // The name to reference a custom window by the same name
+  /*
+    The reference name used to open the corresponding custom window by the
+    same name.
+  */
   @property()
   @renderable()
   name: string;
@@ -15,10 +18,7 @@ class WindowExpand extends declared(Widget) {
   @renderable()
   iconName: string;
 
-  /*
-    Pass in properties as `any` type which will then be cast to
-    their correct types.
-  */
+  // Pass in a name and an icon name
   constructor(properties?: { name: string, iconName: string }) {
     super();
   }
@@ -36,11 +36,14 @@ class WindowExpand extends declared(Widget) {
     );
   }
 
-  // Open or close the custom window based on our name
+  /*
+    Referencing the custom window by the same name, open the window if it
+    is closed, and close the window if it is open.
+  */
   private _expand() {
     const attachedWindow = document.getElementById(`${this.name}-window`);
     if (attachedWindow.style.display === 'none') {
-      // Close any other custom windows first
+      // Close any other custom windows before opening this one
       const customWindows = document.getElementsByClassName('custom-window');
       for (let i = 0; i < customWindows.length; i += 1) {
         (customWindows[i] as HTMLElement).style.display = 'none';

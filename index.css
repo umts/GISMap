@@ -8,15 +8,15 @@ body,
 }
 
 .navigation-window {
-  font-family: "Avenir Next W00","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
   background-color: white;
   border: 0.2rem solid #881c1c;
   padding: 0.8rem;
   margin: 1rem;
-  overflow-y: auto;
 }
 
 .custom-window {
+  overflow-y: auto;
   display: none;
 }
 
