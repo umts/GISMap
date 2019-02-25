@@ -7,11 +7,26 @@ body,
   width: 100%;
 }
 
-#main-navigation {
+.navigation-window {
+  font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
   background-color: white;
   border: 0.2rem solid #881c1c;
   padding: 0.8rem;
   margin: 1rem;
+}
+
+.custom-window {
+  overflow-y: auto;
+  display: none;
+}
+
+.custom-window-close {
+  float: right;
+}
+
+.widget-label {
+  margin: 0.5rem 0 0.8rem 0;
+  font-size: 1.2rem;
 }
 
 #widgets-list ul {
@@ -36,7 +51,8 @@ body,
 .esri-icon,
 .esri-icon-search,
 .esri-icon-close,
-.esri-icon-down-arrow {
+.esri-icon-down-arrow,
+.esri-icon-layers {
   font-weight: bold;
 }
 .esri-search {
@@ -46,6 +62,11 @@ body,
 
 @media only screen and (max-width: 480px) {
   #main-navigation {
+    margin: 0;
+    width: 100%;
+  }
+
+  #main-navigation-window {
     width: 100%;
     border-top: 0;
     border-right: 0;

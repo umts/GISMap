@@ -2,11 +2,14 @@ import WebMap = require("esri/WebMap");
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
 import Home = require("esri/widgets/Home");
+import LayerList = require("esri/widgets/LayerList");
 import Locate = require("esri/widgets/Locate");
 import Search = require("esri/widgets/Search");
 
 import MainNavigation = require("app/widgets/MainNavigation");
+import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
+import WindowExpand = require("app/widgets/WindowExpand");
 import { searchGoToOverride, searchSources } from "app/search";
 
 // Set the map to load data from our ArcGIS Online web map
@@ -30,6 +33,24 @@ const view = new MapView({
 
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
+  // Hide other layers by default
+  map.layers.filter((layer) => {
+    return ['Lots', 'Spaces'].indexOf(layer.title) > -1;
+  }).forEach((layer) => { layer.visible = false });
+
+  // Create a laywer window that will be hidden until opened by a window expand
+  const layersWindow = new CustomWindow({
+    name: 'layers',
+    widgets: [
+      {
+        label: "Layers",
+        widget: new LayerList({
+          view: view
+        })
+      }
+    ]
+  });
+
   /*
     Create the main navigation widget.
     The main navigation widget is the box that contains most of the
@@ -41,6 +62,10 @@ view.when(() => {
     }),
     home: new Home({
       view: view
+    }),
+    layersExpand: new WindowExpand({
+      name: 'layers',
+      iconName: 'layers'
     }),
     locate: new Locate({
       view: view
@@ -59,8 +84,10 @@ view.when(() => {
       popupEnabled: false,
       goToOverride: searchGoToOverride,
       sources: searchSources()
-    })
+    }),
+    customWindows: [layersWindow]
   });
+
   // Add the main navigation widget to the map
   view.ui.add(mainNavigation, "manual");
 })
