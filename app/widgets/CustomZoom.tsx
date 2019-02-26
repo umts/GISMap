@@ -53,6 +53,7 @@ class CustomZoom extends declared(Widget) {
         bind={this}
         class="esri-widget esri-widget--button"
         onclick={this._zoom}
+        tabindex='0'
         title={`Zoom ${(this.direction === ZoomDirection.In) ? "in" : "out"}`}>
         <span class={`esri-icon ${iconClass}`}></span>
       </div>

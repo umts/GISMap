@@ -7,6 +7,7 @@ import Locate = require("esri/widgets/Locate");
 import Search = require("esri/widgets/Search");
 
 import MainNavigation = require("app/widgets/MainNavigation");
+import CustomDirections = require("app/widgets/CustomDirections");
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
 import WindowExpand = require("app/widgets/WindowExpand");
@@ -43,9 +44,34 @@ view.when(() => {
     name: 'layers',
     widgets: [
       {
-        label: "Layers",
+        label: 'Layers',
         widget: new LayerList({
           view: view
+        })
+      }
+    ]
+  });
+
+  const directionsWindow = new CustomWindow({
+    name: 'directions',
+    widgets: [
+      {
+        label: 'Directions',
+        widget: new CustomDirections({
+          startSearch: new Search({
+            view: view,
+            includeDefaultSources: false,
+            popupEnabled: false,
+            goToOverride: searchGoToOverride,
+            sources: searchSources()
+          }),
+          endSearch: new Search({
+            view: view,
+            includeDefaultSources: false,
+            popupEnabled: false,
+            goToOverride: searchGoToOverride,
+            sources: searchSources()
+          })
         })
       }
     ]
@@ -59,6 +85,10 @@ view.when(() => {
   const mainNavigation = new MainNavigation({
     compass: new Compass({
       view: view
+    }),
+    directionsExpand: new WindowExpand({
+      name: 'directions',
+      iconName: 'directions'
     }),
     home: new Home({
       view: view
@@ -85,7 +115,7 @@ view.when(() => {
       goToOverride: searchGoToOverride,
       sources: searchSources()
     }),
-    customWindows: [layersWindow]
+    customWindows: [layersWindow, directionsWindow]
   });
 
   // Add the main navigation widget to the map

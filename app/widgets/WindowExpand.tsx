@@ -30,6 +30,7 @@ class WindowExpand extends declared(Widget) {
         bind={this}
         class="esri-widget esri-widget--button"
         onclick={this._expand}
+        tabindex='0'
         title={this.name.charAt(0).toUpperCase() + this.name.slice(1)}>
         <span class={`esri-icon esri-icon-${this.iconName}`}></span>
       </div>

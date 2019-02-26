@@ -69,14 +69,16 @@ class CustomWindow extends declared(Widget) {
       Set the height of the main navigation widget so that the custom window
       can scroll off the bottom of the screen properly.
     */
-    if (this._element()) {
+    if (this._isVisible()) {
       const mainNavigation = document.getElementById('main-navigation');
       if (this._mainNavigationHeight() + this._element().scrollHeight > window.innerHeight) {
         // If the window needs to scroll set the height explicitly to 100%
         mainNavigation.style.height = '100%';
+        this._element().style['overflow-y'] = 'auto';
       } else {
         // Let it determine its own height if the window does not need to scroll
         mainNavigation.style.height = '';
+        this._element().style['overflow-y'] = 'visible';
       }
     }
 
@@ -85,6 +87,7 @@ class CustomWindow extends declared(Widget) {
         bind={this}
         class="esri-widget esri-widget--button custom-window-close"
         onclick={this._close}
+        tabindex='0'
         title={`Close ${this.name}`}>
         <span class={`esri-icon esri-icon-close`}></span>
       </div>
@@ -109,6 +112,14 @@ class CustomWindow extends declared(Widget) {
   // Close this window
   private _close() {
     this._element().style.display = 'none';
+  }
+
+  // Return whether or not this window is visible
+  private _isVisible() {
+    if (this._element()) {
+      return !(this._element().style.display === 'none');
+    }
+    return false;
   }
 
   /*

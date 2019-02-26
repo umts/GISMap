@@ -20,6 +20,11 @@ class MainNavigation extends declared(Widget) {
   @renderable()
   compass: Compass;
 
+  // Directions expand widget
+  @property()
+  @renderable()
+  directionsExpand: WindowExpand;
+
   // Home widget
   @property()
   @renderable()
@@ -87,6 +92,7 @@ class MainNavigation extends declared(Widget) {
               <li class="widget-list-item">{this.home.render()}</li>
               <li class="widget-list-item">{this.locate.render()}</li>
               <li class="widget-list-item">{this.layersExpand.render()}</li>
+              <li class="widget-list-item">{this.directionsExpand.render()}</li>
             </ul>
           </div>
         </div>
