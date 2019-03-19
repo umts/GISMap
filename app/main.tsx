@@ -1,4 +1,5 @@
 import WebMap = require("esri/WebMap");
+import Point = require("esri/geometry/Point");
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
 import Home = require("esri/widgets/Home");
@@ -8,6 +9,7 @@ import Search = require("esri/widgets/Search");
 
 import MainNavigation = require("app/widgets/MainNavigation");
 import CustomDirections = require("app/widgets/CustomDirections");
+import CustomSearch = require("app/widgets/CustomSearch");
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
 import WindowExpand = require("app/widgets/WindowExpand");
@@ -34,6 +36,10 @@ const view = new MapView({
 
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
+  const point = new Point({spatialReference: {wkid: 2249}, x: 378176.4231097445, y: 2969271.7460795296});
+  console.log(point);
+  console.log(point.latitude);
+  console.log(point.longitude);
   // Hide other layers by default
   map.layers.filter((layer) => {
     return ['Lots', 'Spaces'].indexOf(layer.title) > -1;
@@ -52,27 +58,33 @@ view.when(() => {
     ]
   });
 
+  const searchProperties = {
+    view: view,
+    includeDefaultSources: false,
+    popupEnabled: false,
+    goToOverride: searchGoToOverride,
+    sources: searchSources()
+  };
+
+  const customDirections = new CustomDirections({
+    startSearch: new CustomSearch({
+      name: 'directions-origin',
+      placeholder: 'Origin',
+      search: new Search(searchProperties)
+    }),
+    endSearch: new CustomSearch({
+      name: 'directions-destination',
+      placeholder: 'Destination',
+      search: new Search(searchProperties)
+    })
+  });
+
   const directionsWindow = new CustomWindow({
     name: 'directions',
     widgets: [
       {
         label: 'Directions',
-        widget: new CustomDirections({
-          startSearch: new Search({
-            view: view,
-            includeDefaultSources: false,
-            popupEnabled: false,
-            goToOverride: searchGoToOverride,
-            sources: searchSources()
-          }),
-          endSearch: new Search({
-            view: view,
-            includeDefaultSources: false,
-            popupEnabled: false,
-            goToOverride: searchGoToOverride,
-            sources: searchSources()
-          })
-        })
+        widget: customDirections
       }
     ]
   });

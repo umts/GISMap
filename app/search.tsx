@@ -20,7 +20,7 @@ function searchSources() {
     locator: new Locator({
       url: "https://maps.umass.edu/arcgis/rest/services/Locators/CampusAddressLocatorWithSuggestions/GeocodeServer"
     }),
-    singleLineFieldName: "SingeLine",
+    singleLineFieldName: "SingleLine",
     name: "UMass Amherst Campus Geolocator Service",
     placeholder: "Find on-campus locations",
     exactMatch: false,

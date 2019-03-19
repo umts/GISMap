@@ -43,15 +43,15 @@ class WindowExpand extends declared(Widget) {
   */
   private _expand() {
     const attachedWindow = document.getElementById(`${this.name}-window`);
-    if (attachedWindow.style.display === 'none') {
+    if (attachedWindow.style.display === 'block') {
+      attachedWindow.style.display = 'none';
+    } else {
       // Close any other custom windows before opening this one
       const customWindows = document.getElementsByClassName('custom-window');
       for (let i = 0; i < customWindows.length; i += 1) {
         (customWindows[i] as HTMLElement).style.display = 'none';
       }
       attachedWindow.style.display = 'block';
-    } else {
-      attachedWindow.style.display = 'none';
     }
   }
 }

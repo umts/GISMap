@@ -28,6 +28,14 @@ body,
   font-size: 1.2rem;
 }
 
+.form-row {
+  display: block;
+  margin-bottom: 0.8rem;
+}
+.form-row > input {
+  width: 100%;
+}
+
 .submit-button {
   float: right;
 }
@@ -61,7 +69,6 @@ body,
   color: white;
 }
 
-.umass-theme-button,
 .esri-icon,
 .esri-icon-search,
 .esri-icon-close,
@@ -69,10 +76,27 @@ body,
 .esri-icon-layers {
   font-weight: bold;
 }
+.custom-search,
 .esri-search {
+  width: 100%;
   border: 1px solid #881c1c;
+}
+.esri-search {
   margin-bottom: 0.8rem;
 }
+.custom-search-container {
+  position: relative;
+}
+.custom-search-pane {
+  position: absolute;
+}
+.custom-search-suggestion {
+  background-color: white;
+  border: 1px solid #881c1c;
+  cursor: pointer;
+  padding: 0.8rem;
+}
+
 
 @media only screen and (max-width: 480px) {
   #main-navigation {
