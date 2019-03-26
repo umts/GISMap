@@ -45,7 +45,7 @@ view.when(() => {
     name: 'layers',
     widgets: [
       {
-        label: 'Layers',
+        label: "Layers",
         widget: new LayerList({
           view: view
         })
@@ -115,13 +115,7 @@ view.when(() => {
       view: view,
       direction: ZoomDirection.Out
     }),
-    search: new Search({
-      view: view,
-      includeDefaultSources: false,
-      popupEnabled: false,
-      goToOverride: searchGoToOverride,
-      sources: searchSources()
-    }),
+    search: new Search(searchProperties),
     customWindows: [layersWindow, directionsWindow]
   });
 

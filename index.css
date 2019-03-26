@@ -90,6 +90,7 @@ body,
 }
 .custom-search-pane {
   position: absolute;
+  width: 100%;
 }
 .custom-search-suggestion {
   background-color: white;

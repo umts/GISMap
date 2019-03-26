@@ -16,26 +16,32 @@ interface SearchResult {
 
 @subclass("esri.widgets.CustomSearch")
 class CustomSearch extends declared(Widget) {
+  // The search widget that this widget wraps
   @property()
   @renderable()
   search: Search;
 
+  // Name used to uniquely identify elements
   @property()
   @renderable()
   name: string;
 
+  // Placeholder text for the input
   @property()
   @renderable()
   placeholder: string;
 
+  // Array of suggesions based on text already typed in
   @property()
   @renderable()
-  suggestions: any;
+  suggestions: Array<any>;
 
+  // Whether or not to show the suggestions
   @property()
   @renderable()
   showSuggestions: boolean;
 
+  // The single search result returned from the geolocator services
   @property()
   searchResult: SearchResult;
 
@@ -70,14 +76,14 @@ class CustomSearch extends declared(Widget) {
         bind={this}
         onfocus={this._showSuggestions}
         onblur={this._hideSuggestions}
-        tabindex="0">
+        tabindex="-1">
         <input
           bind={this}
+          class='esri-input custom-search'
+          id={this.name}
           oninput={this._setSuggestions}
           onfocus={this._showSuggestions}
           onblur={this._hideSuggestions}
-          class='esri-input custom-search'
-          id={this.name}
           placeholder={this.placeholder}
           type='text'>
         </input>
@@ -90,10 +96,7 @@ class CustomSearch extends declared(Widget) {
     );
   }
 
-  searchTerm(): string {
-    return this._inputElement().value;
-  }
-
+  // Return the latitude and longitude as a comma seaparated string
   latitudeLongitude(): string {
     if (!(this.searchResult)) {
       return null;
@@ -101,9 +104,12 @@ class CustomSearch extends declared(Widget) {
     return `${this.searchResult.latitude},${this.searchResult.longitude}`;
   }
 
-  // Called when a suggestion term is clicked
+  /*
+    Called when a suggestion term is clicked.
+    It will search the geolocator services for the exact suggestion.
+  */
   private _setSearch(suggestion: any) {
-    console.log(suggestion);
+    // Determine which locator we should look in for the suggestion
     const locator = (
       this.search.sources.getItemAt(
         Number(suggestion.sourceIndex)
@@ -127,22 +133,27 @@ class CustomSearch extends declared(Widget) {
     ).then((response) => {
       if (response.data.candidates.length > 0) {
         const topResult = response.data.candidates[0];
+        // Set the internal search result
         this.searchResult = {
           latitude: topResult.location.y,
           longitude: topResult.location.x,
           name: topResult.address
         };
-        (document.getElementById(this.name) as HTMLInputElement).value = this.searchResult.name;
+        // Set the search input text to the name of the search result
+        (document.getElementById(this.name) as HTMLInputElement)
+          .value = this.searchResult.name;
       } else {
-        console.error(`Could not find search result for suggestion with magicKey ${suggestion.key}`);
+        console.error(`Could not find search result for suggestion
+          with magicKey ${suggestion.key}`);
       }
       this._hideSuggestions();
     });
   }
 
+  // Update suggestions based on the most recent input
   private _setSuggestions() {
     const inputValue = this._inputElement().value;
-    // Reset last search if we start typing something different
+    // Reset the last search result if the user is typing something different
     if (this.searchResult && inputValue !== this.searchResult.name) {
       this.searchResult = null;
     }
@@ -153,7 +164,9 @@ class CustomSearch extends declared(Widget) {
     }
     // Find new suggestions
     this.search.suggest(inputValue).then((response) => {
+      // Iterate over each source
       for (let i = 0; i < response.results.length; i += 1) {
+        // Iterate over each result from that source
         for (let j = 0; j < response.results[i].results.length; j += 1) {
           this.suggestions.push(response.results[i].results[j]);
         }

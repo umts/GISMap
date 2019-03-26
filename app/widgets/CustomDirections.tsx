@@ -5,16 +5,14 @@ import Widget = require("esri/widgets/Widget");
 
 import CustomSearch = require("app/widgets/CustomSearch");
 
-function inputValue(id: string): string {
-  return (document.getElementById(id) as HTMLInputElement).value;
-}
-
 @subclass("esri.widgets.CustomDirections")
 class CustomDirections extends declared(Widget) {
+  // Custom search widget for the starting location
   @property()
   @renderable()
   startSearch: CustomSearch;
 
+  // Custom search widget for the ending location
   @property()
   @renderable()
   endSearch: CustomSearch;
@@ -37,7 +35,7 @@ class CustomDirections extends declared(Widget) {
           </div>
           <div class='form-row'>
             <select id='directions-service' class='umass-theme-button'>
-              <option value='google'>Google Maps</option>
+              <option value='google' selected>Google Maps</option>
               <option value='osm'>OpenStreetMap</option>
             </select>
             <button
@@ -53,10 +51,14 @@ class CustomDirections extends declared(Widget) {
     );
   }
 
+  /*
+    Intercept the form submit to open a new window to the requested
+    directions and return false.
+  */
   private _submit(): boolean {
     const origin = this.startSearch.latitudeLongitude();
     const destination = this.endSearch.latitudeLongitude();
-    const service = inputValue('directions-service');
+    const service = (document.getElementById('directions-service') as HTMLInputElement).value;
     if (origin && destination && service) {
       let url;
       if (service === 'google') {
