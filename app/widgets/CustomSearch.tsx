@@ -1,19 +1,19 @@
 import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
 import { renderable, tsx } from "esri/widgets/support/widget";
 
-import Point = require("esri/geometry/Point");
-import webMercatorUtils = require("esri/geometry/support/webMercatorUtils");
 import esriRequest = require("esri/request");
 import Search = require("esri/widgets/Search");
 import LocatorSearchSource = require("esri/widgets/Search/LocatorSearchSource");
 import Widget = require("esri/widgets/Widget");
 
+// Everything needed to store what a user has searched
 interface SearchResult {
   latitude: number;
   longitude: number;
   name: string;
 }
 
+// Everything needed to store a suggestion for future search
 interface Suggestion {
   key: string;
   sourceIndex: number;
