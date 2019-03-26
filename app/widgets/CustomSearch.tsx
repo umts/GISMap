@@ -14,6 +14,12 @@ interface SearchResult {
   name: string;
 }
 
+interface Suggestion {
+  key: string;
+  sourceIndex: number;
+  text: string;
+}
+
 @subclass("esri.widgets.CustomSearch")
 class CustomSearch extends declared(Widget) {
   // The search widget that this widget wraps
@@ -34,7 +40,7 @@ class CustomSearch extends declared(Widget) {
   // Array of suggesions based on text already typed in
   @property()
   @renderable()
-  suggestions: Array<any>;
+  suggestions: Array<Suggestion>;
 
   // Whether or not to show the suggestions
   @property()
@@ -54,14 +60,30 @@ class CustomSearch extends declared(Widget) {
 
   // Render this widget by returning JSX which is converted to HTML
   render() {
-    // Render suggestions
+    /*
+      Render suggestions assuming suggestions from the same source are
+      consecutive.
+    */
     let suggestionElements = [];
+    let visitedSources = [];
     if (this.showSuggestions) {
       for (let i = 0; i < this.suggestions.length; i += 1) {
+        // Push a source header if the suggestions are from a new source
+        if (visitedSources.indexOf(this.suggestions[i].sourceIndex) === -1) {
+          visitedSources.push(this.suggestions[i].sourceIndex);
+          suggestionElements.push(
+            <div
+              class='custom-search-header suggestion-item'
+              key={`${this.suggestions[i].key}-header`}>
+              {this.search.sources.getItemAt(this.suggestions[i].sourceIndex).name}
+            </div>
+          );
+        }
+        // Push a new suggestion
         suggestionElements.push(
           <div
             bind={this}
-            class='custom-search-suggestion'
+            class='custom-search-suggestion suggestion-item'
             data-index={`${i}`}
             key={this.suggestions[i].key}
             onclick={this._suggestionClicked}>
@@ -108,13 +130,11 @@ class CustomSearch extends declared(Widget) {
     Called when a suggestion term is clicked.
     It will search the geolocator services for the exact suggestion.
   */
-  private _setSearch(suggestion: any) {
+  private _setSearch(suggestion: Suggestion) {
     // Determine which locator we should look in for the suggestion
-    const locator = (
-      this.search.sources.getItemAt(
-        Number(suggestion.sourceIndex)
-      ) as LocatorSearchSource
-    ).locator;
+    const locator = (this.search.sources.getItemAt(
+      Number(suggestion.sourceIndex)
+    ) as LocatorSearchSource).locator;
     /*
       Build our own request to the API so we can explicitly request the same
       output spatial reference to be in latitude and longitude.

@@ -91,16 +91,24 @@ body,
 .custom-search-pane {
   position: absolute;
   width: 100%;
+  overflow-y: auto;
 }
-.custom-search-suggestion {
-  background-color: white;
+.suggestion-item {
   border: 1px solid #881c1c;
   border-top: 0;
-  cursor: pointer;
+}
+.custom-search-suggestion {
   padding: 0.8rem;
+  background-color: white;
+  cursor: pointer;
 }
 .custom-search-suggestion:hover {
   background-color: #eeeeee;
+}
+.custom-search-header {
+  padding: 0.4rem 0.8rem 0.4rem 0.8rem;
+  background-color: #666666;
+  color: white;
 }
 
 

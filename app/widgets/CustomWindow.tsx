@@ -69,7 +69,7 @@ class CustomWindow extends declared(Widget) {
       Set the height of the main navigation widget so that the custom window
       can scroll off the bottom of the screen properly.
     */
-    if (this._isVisible()) {
+    if (this.isVisible()) {
       const mainNavigation = document.getElementById('main-navigation');
       if (this._mainNavigationHeight() + this._element().scrollHeight > window.innerHeight) {
         // If the window needs to scroll set the height explicitly to 100%
@@ -104,6 +104,14 @@ class CustomWindow extends declared(Widget) {
     );
   }
 
+  // Return whether or not this window is visible
+  isVisible() {
+    if (this._element()) {
+      return !(this._element().style.display === 'none');
+    }
+    return false;
+  }
+
   // Return this element
   private _element() {
     return document.getElementById(`${this.name}-window`);
@@ -112,14 +120,6 @@ class CustomWindow extends declared(Widget) {
   // Close this window
   private _close() {
     this._element().style.display = 'none';
-  }
-
-  // Return whether or not this window is visible
-  private _isVisible() {
-    if (this._element()) {
-      return !(this._element().style.display === 'none');
-    }
-    return false;
   }
 
   /*

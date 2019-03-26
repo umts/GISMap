@@ -75,8 +75,19 @@ class MainNavigation extends declared(Widget) {
       Render each custom window into an array.
       Only one window will be visible at a time.
     */
+    let noWindowsVisible = true;
     for (let i = 0; i < this.customWindows.length; i += 1) {
+      if (this.customWindows[i].isVisible()) {
+        noWindowsVisible = false;
+      }
       renderedWindows.push(this.customWindows[i].render());
+    }
+    /*
+      If no windows are visible reset the height, something that rendering
+      a window would normally do.
+    */
+    if (noWindowsVisible && this._element()) {
+      this._element().style.height = '';
     }
 
     return (
@@ -99,6 +110,10 @@ class MainNavigation extends declared(Widget) {
         {renderedWindows}
       </div>
     );
+  }
+
+  private _element(): HTMLElement {
+    return document.getElementById('main-navigation');
   }
 }
 
