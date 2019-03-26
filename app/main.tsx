@@ -1,5 +1,4 @@
 import WebMap = require("esri/WebMap");
-import Point = require("esri/geometry/Point");
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
 import Home = require("esri/widgets/Home");
@@ -36,10 +35,6 @@ const view = new MapView({
 
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
-  const point = new Point({spatialReference: {wkid: 2249}, x: 378176.4231097445, y: 2969271.7460795296});
-  console.log(point);
-  console.log(point.latitude);
-  console.log(point.longitude);
   // Hide other layers by default
   map.layers.filter((layer) => {
     return ['Lots', 'Spaces'].indexOf(layer.title) > -1;

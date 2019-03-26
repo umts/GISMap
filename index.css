@@ -80,6 +80,7 @@ body,
 .esri-search {
   width: 100%;
   border: 1px solid #881c1c;
+  border-radius: 0;
 }
 .esri-search {
   margin-bottom: 0.8rem;
@@ -93,8 +94,12 @@ body,
 .custom-search-suggestion {
   background-color: white;
   border: 1px solid #881c1c;
+  border-top: 0;
   cursor: pointer;
   padding: 0.8rem;
+}
+.custom-search-suggestion:hover {
+  background-color: #eeeeee;
 }
 
 
@@ -105,7 +110,6 @@ body,
   }
 
   #main-navigation-window {
-    width: 100%;
     border-top: 0;
     border-right: 0;
     border-left: 0;
