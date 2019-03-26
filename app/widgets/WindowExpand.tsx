@@ -30,6 +30,7 @@ class WindowExpand extends declared(Widget) {
         bind={this}
         class="esri-widget esri-widget--button"
         onclick={this._expand}
+        tabindex='0'
         title={this.name.charAt(0).toUpperCase() + this.name.slice(1)}>
         <span class={`esri-icon esri-icon-${this.iconName}`}></span>
       </div>
@@ -42,15 +43,15 @@ class WindowExpand extends declared(Widget) {
   */
   private _expand() {
     const attachedWindow = document.getElementById(`${this.name}-window`);
-    if (attachedWindow.style.display === 'none') {
+    if (attachedWindow.style.display === 'block') {
+      attachedWindow.style.display = 'none';
+    } else {
       // Close any other custom windows before opening this one
       const customWindows = document.getElementsByClassName('custom-window');
       for (let i = 0; i < customWindows.length; i += 1) {
         (customWindows[i] as HTMLElement).style.display = 'none';
       }
       attachedWindow.style.display = 'block';
-    } else {
-      attachedWindow.style.display = 'none';
     }
   }
 }

@@ -16,7 +16,6 @@ body,
 }
 
 .custom-window {
-  overflow-y: auto;
   display: none;
 }
 
@@ -27,6 +26,18 @@ body,
 .widget-label {
   margin: 0.5rem 0 0.8rem 0;
   font-size: 1.2rem;
+}
+
+.form-row {
+  display: block;
+  margin-bottom: 0.8rem;
+}
+.form-row > input {
+  width: 100%;
+}
+
+.submit-button {
+  float: right;
 }
 
 #widgets-list ul {
@@ -40,14 +51,24 @@ body,
   padding-right: 0.5rem;
 }
 
-.esri-widget--button {
+.esri-widget--button,
+.umass-theme-button {
   background-color: #881c1c;
   color: white;
 }
-.esri-widget--button:hover {
+.umass-theme-button {
+  height: 32px;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 16px;
+}
+.esri-widget--button:hover,
+.umass-theme-button:hover {
   background-color: #63666a;
   color: white;
 }
+
 .esri-icon,
 .esri-icon-search,
 .esri-icon-close,
@@ -55,10 +76,41 @@ body,
 .esri-icon-layers {
   font-weight: bold;
 }
+.custom-search,
 .esri-search {
+  width: 100%;
   border: 1px solid #881c1c;
+  border-radius: 0;
+}
+.esri-search {
   margin-bottom: 0.8rem;
 }
+.custom-search-container {
+  position: relative;
+}
+.custom-search-pane {
+  position: absolute;
+  width: 100%;
+  overflow-y: auto;
+}
+.suggestion-item {
+  border: 1px solid #881c1c;
+  border-top: 0;
+}
+.custom-search-suggestion {
+  padding: 0.8rem;
+  background-color: white;
+  cursor: pointer;
+}
+.custom-search-suggestion:hover {
+  background-color: #eeeeee;
+}
+.custom-search-header {
+  padding: 0.4rem 0.8rem 0.4rem 0.8rem;
+  background-color: #666666;
+  color: white;
+}
+
 
 @media only screen and (max-width: 480px) {
   #main-navigation {
@@ -67,7 +119,6 @@ body,
   }
 
   #main-navigation-window {
-    width: 100%;
     border-top: 0;
     border-right: 0;
     border-left: 0;

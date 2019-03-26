@@ -7,6 +7,8 @@ import Locate = require("esri/widgets/Locate");
 import Search = require("esri/widgets/Search");
 
 import MainNavigation = require("app/widgets/MainNavigation");
+import CustomDirections = require("app/widgets/CustomDirections");
+import CustomSearch = require("app/widgets/CustomSearch");
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
 import WindowExpand = require("app/widgets/WindowExpand");
@@ -51,6 +53,37 @@ view.when(() => {
     ]
   });
 
+  const searchProperties = {
+    view: view,
+    includeDefaultSources: false,
+    popupEnabled: false,
+    goToOverride: searchGoToOverride,
+    sources: searchSources()
+  };
+
+  const customDirections = new CustomDirections({
+    startSearch: new CustomSearch({
+      name: 'directions-origin',
+      placeholder: 'Origin',
+      search: new Search(searchProperties)
+    }),
+    endSearch: new CustomSearch({
+      name: 'directions-destination',
+      placeholder: 'Destination',
+      search: new Search(searchProperties)
+    })
+  });
+
+  const directionsWindow = new CustomWindow({
+    name: 'directions',
+    widgets: [
+      {
+        label: 'Directions',
+        widget: customDirections
+      }
+    ]
+  });
+
   /*
     Create the main navigation widget.
     The main navigation widget is the box that contains most of the
@@ -59,6 +92,10 @@ view.when(() => {
   const mainNavigation = new MainNavigation({
     compass: new Compass({
       view: view
+    }),
+    directionsExpand: new WindowExpand({
+      name: 'directions',
+      iconName: 'directions'
     }),
     home: new Home({
       view: view
@@ -78,14 +115,8 @@ view.when(() => {
       view: view,
       direction: ZoomDirection.Out
     }),
-    search: new Search({
-      view: view,
-      includeDefaultSources: false,
-      popupEnabled: false,
-      goToOverride: searchGoToOverride,
-      sources: searchSources()
-    }),
-    customWindows: [layersWindow]
+    search: new Search(searchProperties),
+    customWindows: [layersWindow, directionsWindow]
   });
 
   // Add the main navigation widget to the map
