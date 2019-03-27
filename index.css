@@ -7,6 +7,10 @@ body,
   width: 100%;
 }
 
+#main-navigation {
+  width: 22rem;
+}
+
 .navigation-window {
   font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
   background-color: white;
@@ -109,6 +113,16 @@ body,
   padding: 0.4rem 0.8rem 0.4rem 0.8rem;
   background-color: #666666;
   color: white;
+}
+
+.validation-warning {
+  background-color: #fc9c9c;
+  border-radius: 0 0 0.5rem 0.5rem;
+  color: black;
+  padding: 0.3rem 0.5rem 0.3rem 0.5rem;
+}
+.hide {
+  display: none;
 }
 
 
