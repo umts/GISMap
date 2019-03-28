@@ -107,7 +107,8 @@ class CustomSearch extends declared(Widget) {
           onfocus={this._showSuggestions}
           onblur={this._hideSuggestions}
           placeholder={this.placeholder}
-          type='text'>
+          type='text'
+          required>
         </input>
         <div class='custom-search-container'>
           <div class='custom-search-pane'>

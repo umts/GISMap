@@ -34,7 +34,7 @@ class CustomDirections extends declared(Widget) {
             {this.endSearch.render()}
           </div>
           <div class='form-row'>
-            <select id='directions-service' class='umass-theme-button'>
+            <select id='directions-service' class='umass-theme-button' required>
               <option value='google' selected>Google Maps</option>
               <option value='osm'>OpenStreetMap</option>
             </select>
