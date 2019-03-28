@@ -107,12 +107,15 @@ class CustomSearch extends declared(Widget) {
           onfocus={this._showSuggestions}
           onblur={this._hideSuggestions}
           placeholder={this.placeholder}
-          type='text'>
+          type='text'
+          required>
         </input>
         <div class='custom-search-container'>
           <div class='custom-search-pane'>
             {suggestionElements}
           </div>
+        </div>
+        <div id={`${this.name}-validation-warning`} class="validation-warning hide">
         </div>
       </div>
     );
@@ -124,6 +127,17 @@ class CustomSearch extends declared(Widget) {
       return null;
     }
     return `${this.searchResult.latitude},${this.searchResult.longitude}`;
+  }
+
+  // Show the validation warning with the given message
+  showWarning(message: string) {
+    this._warningElement().innerHTML = message;
+    this._warningElement().classList.remove("hide");
+  }
+
+  // Hide the validation warning
+  private _hideWarning() {
+    this._warningElement().classList.add("hide");
   }
 
   /*
@@ -167,6 +181,7 @@ class CustomSearch extends declared(Widget) {
           with magicKey ${suggestion.key}`);
       }
       this._hideSuggestions();
+      this._hideWarning();
     });
   }
 
@@ -211,6 +226,11 @@ class CustomSearch extends declared(Widget) {
   // Get this input element
   private _inputElement(): HTMLInputElement {
     return (document.getElementById(this.name) as HTMLInputElement);
+  }
+
+  // Get this warning element
+  private _warningElement(): HTMLElement {
+    return (document.getElementById(`${this.name}-validation-warning`) as HTMLElement);
   }
 }
 

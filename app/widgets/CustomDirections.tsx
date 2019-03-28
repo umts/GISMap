@@ -34,7 +34,7 @@ class CustomDirections extends declared(Widget) {
             {this.endSearch.render()}
           </div>
           <div class='form-row'>
-            <select id='directions-service' class='umass-theme-button'>
+            <select id='directions-service' class='umass-theme-button' required>
               <option value='google' selected>Google Maps</option>
               <option value='osm'>OpenStreetMap</option>
             </select>
@@ -69,6 +69,15 @@ class CustomDirections extends declared(Widget) {
         return false;
       }
       window.open(url, '_blank');
+    } else {
+      // Show warnings for blank custom searches
+      const warning = "Please enter a search term and select a suggestion.";
+      if (!origin) {
+        this.startSearch.showWarning(warning);
+      }
+      if (!destination) {
+        this.endSearch.showWarning(warning);
+      }
     }
     return false;
   }
