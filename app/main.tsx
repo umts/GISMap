@@ -1,6 +1,7 @@
 import WebMap = require("esri/WebMap");
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
+import Directions = require("esri/widgets/Directions");
 import Home = require("esri/widgets/Home");
 import LayerList = require("esri/widgets/LayerList");
 import Locate = require("esri/widgets/Locate");
@@ -74,12 +75,21 @@ view.when(() => {
     })
   });
 
+  const directions = new Directions({
+    view: view,
+    routeServiceUrl: "https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route"
+  });
+
   const directionsWindow = new CustomWindow({
     name: 'directions',
     widgets: [
       {
         label: 'Directions',
         widget: customDirections
+      },
+      {
+        label: 'Walking directions',
+        widget: directions
       }
     ]
   });
