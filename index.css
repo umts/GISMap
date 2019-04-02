@@ -72,6 +72,11 @@ body,
   background-color: #63666a;
   color: white;
 }
+.esri-widget--button:active,
+.umass-theme-button:active {
+  background-color: #333333;
+  color: white;
+}
 
 .esri-icon,
 .esri-icon-search,
