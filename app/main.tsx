@@ -11,6 +11,7 @@ import CustomDirections = require("app/widgets/CustomDirections");
 import CustomSearch = require("app/widgets/CustomSearch");
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
+import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
 import { searchGoToOverride, searchSources } from "app/search";
 import {
@@ -53,7 +54,7 @@ view.when(() => {
     return ['Lots', 'Spaces'].indexOf(layer.title) > -1;
   }).forEach((layer) => { layer.visible = false });
 
-  // Create a laywer window that will be hidden until opened by a window expand
+  // Create a layer window that will be hidden until opened by a window expand
   const layersWindow = new CustomWindow({
     name: 'layers',
     widgets: [
@@ -87,12 +88,27 @@ view.when(() => {
     })
   });
 
+  /*
+    Create a directions window that will be hidden until opened by a
+    window expand.
+  */
   const directionsWindow = new CustomWindow({
     name: 'directions',
     widgets: [
       {
         label: 'Directions',
         widget: customDirections
+      }
+    ]
+  });
+
+  // Create a share window that will be hidden until opened by a window expand
+  const shareWindow = new CustomWindow({
+    name: 'share',
+    widgets: [
+      {
+        label: "Share link",
+        widget: new ShareLink()
       }
     ]
   });
@@ -130,7 +146,11 @@ view.when(() => {
       direction: ZoomDirection.Out
     }),
     search: new Search(searchProperties),
-    customWindows: [layersWindow, directionsWindow]
+    shareExpand: new WindowExpand({
+      name: 'share',
+      iconName: 'link'
+    }),
+    customWindows: [layersWindow, directionsWindow, shareWindow]
   });
 
   // Add the main navigation widget to the map

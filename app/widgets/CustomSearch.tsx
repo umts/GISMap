@@ -101,15 +101,14 @@ class CustomSearch extends declared(Widget) {
         tabindex="-1">
         <input
           bind={this}
-          class='esri-input custom-search'
+          class='esri-input'
           id={this.name}
           oninput={this._setSuggestions}
           onfocus={this._showSuggestions}
           onblur={this._hideSuggestions}
           placeholder={this.placeholder}
           type='text'
-          required>
-        </input>
+          required />
         <div class='custom-search-container'>
           <div class='custom-search-pane'>
             {suggestionElements}

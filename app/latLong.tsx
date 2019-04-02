@@ -57,7 +57,7 @@ function updateUrlFromPosition(view: MapView) {
   history.replaceState(
     "",
     "",
-    `/#${view.center.latitude.toFixed(5)}/${view.center.longitude.toFixed(5)}/${view.zoom}`
+    `/#${view.center.latitude.toFixed(5)}/${view.center.longitude.toFixed(5)}/${view.zoom.toFixed(1)}`
   );
 }
 

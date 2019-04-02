@@ -8,7 +8,7 @@ body,
 }
 
 #main-navigation {
-  width: 22rem;
+  width: 24rem;
 }
 
 .navigation-window {
@@ -40,8 +40,13 @@ body,
   width: 100%;
 }
 
-.submit-button {
+.button-right {
   float: right;
+}
+
+.input-container-left {
+  overflow: hidden;
+  padding-right: 0.4rem;
 }
 
 #widgets-list ul {
@@ -52,7 +57,7 @@ body,
 
 #widgets-list ul li.widget-list-item {
   display: inline-block;
-  padding-right: 0.5rem;
+  padding: 0 0.4rem 0.4rem 0;
 }
 
 .esri-widget--button,
@@ -85,13 +90,13 @@ body,
 .esri-icon-layers {
   font-weight: bold;
 }
-.custom-search,
-.esri-search {
+.esri-input {
   width: 100%;
   border: 1px solid #881c1c;
   border-radius: 0;
 }
 .esri-search {
+  width: 100%;
   margin-bottom: 0.8rem;
 }
 .custom-search-container {
