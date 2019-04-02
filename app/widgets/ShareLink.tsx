@@ -17,38 +17,15 @@ class ShareLink extends declared(Widget) {
   render() {
     return (
       <div class="esri-widget">
-        <button
-          bind={this}
-          class="button-right umass-theme-button"
-          onclick={this._copy}>
-          Copy
-        </button>
-        <div class="input-container-left">
-          <input
-            bind={this}
-            class="esri-input"
-            id="share-input"
-            onclick={this._select}
-            readonly=""
-            type="text"
-            value={`${window.location.href}`} />
-        </div>
+        <input
+          class="esri-input"
+          id="share-input"
+          onclick="this.setSelectionRange(0, this.value.length)"
+          readonly=""
+          type="text"
+          value={`${window.location.href}`} />
       </div>
     );
-  }
-
-  private _select() {
-    this._inputElement()
-      .setSelectionRange(0, this._inputElement().value.length);
-  }
-
-  private _copy() {
-    this._inputElement().select();
-    document.execCommand("copy");
-  }
-
-  private _inputElement(): HTMLInputElement {
-    return (document.getElementById("share-input") as HTMLInputElement);
   }
 }
 
