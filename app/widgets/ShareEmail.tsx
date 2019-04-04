@@ -2,6 +2,7 @@ import { subclass, declared, property } from "esri/core/accessorSupport/decorato
 import { renderable, tsx } from "esri/widgets/support/widget";
 
 import Widget = require("esri/widgets/Widget");
+import { safeUrl } from "app/url";
 
 @subclass("esri.widgets.ShareEmail")
 class ShareEmail extends declared(Widget) {
@@ -41,7 +42,7 @@ class ShareEmail extends declared(Widget) {
 
   // Submit the form to email a link
   private _submit(): boolean {
-    window.location.href = `mailto:${this._inputElement().value}?subject=UMass Map&body=${window.location.href}`;
+    window.location.href = `mailto:${this._inputElement().value}?subject=UMass Map&body=%0A%0A${safeUrl()}`;
     return false;
   }
 

@@ -14,13 +14,9 @@ import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
 import ShareEmail = require("app/widgets/ShareEmail");
 import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
+import { homeGoToOverride, umassLongLat } from "app/latLong";
 import { searchGoToOverride, searchSources } from "app/search";
-import {
-  homeGoToOverride,
-  resetUrlTimer,
-  umassLongLat,
-  updatePositionFromUrl
-} from "app/latLong";
+import { resetUrlTimer, updatePositionFromUrl } from "app/url";
 
 // Set the map to load data from our ArcGIS Online web map
 const map = new WebMap({
@@ -48,8 +44,7 @@ const view = new MapView({
 updatePositionFromUrl(view);
 window.addEventListener("hashchange", () => { updatePositionFromUrl(view) });
 // Update the url hash when the position of the view changes
-view.watch("center", () => { resetUrlTimer(view) });
-view.watch("zoom", () => { resetUrlTimer(view) });
+view.watch(["center", "zoom", "rotation"], () => { resetUrlTimer(view) });
 
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
