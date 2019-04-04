@@ -30,6 +30,7 @@ body,
 .widget-label {
   margin: 0.5rem 0 0.8rem 0;
   font-size: 1.2rem;
+  font-weight: bold;
 }
 
 .form-row {
@@ -61,26 +62,31 @@ body,
 }
 
 .esri-widget--button,
+.esri-button,
 .umass-theme-button {
-  background-color: #881c1c;
-  color: white;
+  background-color: #881c1c !important;
+  border: 0;
+  color: white !important;
 }
 .umass-theme-button {
   height: 32px;
-  border: 0;
   cursor: pointer;
   font-family: inherit;
   font-size: 16px;
 }
 .esri-widget--button:hover,
+.esri-button:hover,
 .umass-theme-button:hover {
-  background-color: #63666a;
-  color: white;
+  background-color: #63666a !important;
+  border: 0;
+  color: white !important;
 }
 .esri-widget--button:active,
+.esri-button:active,
 .umass-theme-button:active {
-  background-color: #333333;
-  color: white;
+  background-color: #333333 !important;
+  border: 0;
+  color: white !important;
 }
 
 .esri-icon,

@@ -4,6 +4,7 @@ import Compass = require("esri/widgets/Compass");
 import Home = require("esri/widgets/Home");
 import LayerList = require("esri/widgets/LayerList");
 import Locate = require("esri/widgets/Locate");
+import Print = require("esri/widgets/Print");
 import Search = require("esri/widgets/Search");
 
 import MainNavigation = require("app/widgets/MainNavigation");
@@ -114,6 +115,12 @@ view.when(() => {
       }, {
         label: "Email",
         widget: new ShareEmail()
+      }, {
+        label: "Print",
+        widget: new Print({
+          view: view,
+          printServiceUrl: "https://maps.umass.edu/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+        })
       }
     ]
   });
