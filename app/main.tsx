@@ -11,6 +11,7 @@ import CustomDirections = require("app/widgets/CustomDirections");
 import CustomSearch = require("app/widgets/CustomSearch");
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
+import ShareEmail = require("app/widgets/ShareEmail");
 import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
 import { searchGoToOverride, searchSources } from "app/search";
@@ -32,6 +33,9 @@ const view = new MapView({
   container: "viewDiv",
   // Start the map centered on UMass
   center: umassLongLat,
+  constraints: {
+    maxZoom: 20
+  },
   zoom: 16,
   map: map,
   // Tell the view to only load the attribution widget by default
@@ -49,6 +53,9 @@ view.watch("zoom", () => { resetUrlTimer(view) });
 
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
+  // Set the url hash based on the initial view
+  resetUrlTimer(view);
+
   // Hide other layers by default
   map.layers.filter((layer) => {
     return ['Lots', 'Spaces'].indexOf(layer.title) > -1;
@@ -109,6 +116,9 @@ view.when(() => {
       {
         label: "Share link",
         widget: new ShareLink()
+      }, {
+        label: "Email",
+        widget: new ShareEmail()
       }
     ]
   });

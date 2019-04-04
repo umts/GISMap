@@ -17,13 +17,15 @@ class ShareLink extends declared(Widget) {
   render() {
     return (
       <div class="esri-widget">
-        <input
-          class="esri-input"
-          id="share-input"
-          onclick="this.setSelectionRange(0, this.value.length)"
-          readonly=""
-          type="text"
-          value={`${window.location.href}`} />
+        <p>Copy the link below to share this view</p>
+        <div class="form-row">
+          <input
+            class="esri-input"
+            onclick="this.setSelectionRange(0, this.value.length)"
+            readonly=""
+            type="text"
+            value={`${window.location.href}`} />
+        </div>
       </div>
     );
   }

@@ -44,6 +44,11 @@ body,
   float: right;
 }
 
+.input-container-left {
+  overflow: hidden;
+  padding-right: 0.4rem;
+}
+
 #widgets-list ul {
   padding: 0;
   margin: 0;
