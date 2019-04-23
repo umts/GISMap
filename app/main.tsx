@@ -5,6 +5,7 @@ import Directions = require("esri/widgets/Directions");
 import Home = require("esri/widgets/Home");
 import LayerList = require("esri/widgets/LayerList");
 import Locate = require("esri/widgets/Locate");
+import Print = require("esri/widgets/Print");
 import Search = require("esri/widgets/Search");
 
 import MainNavigation = require("app/widgets/MainNavigation");
@@ -12,8 +13,12 @@ import CustomDirections = require("app/widgets/CustomDirections");
 import CustomSearch = require("app/widgets/CustomSearch");
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
+import ShareEmail = require("app/widgets/ShareEmail");
+import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
+import { homeGoToOverride, umassLongLat } from "app/latLong";
 import { searchGoToOverride, searchSources } from "app/search";
+import { resetUrlTimer, updatePositionFromUrl } from "app/url";
 
 // Set the map to load data from our ArcGIS Online web map
 const map = new WebMap({
@@ -24,8 +29,11 @@ const map = new WebMap({
 
 const view = new MapView({
   container: "viewDiv",
-  // Start the map centered on UMass' latitude and longitude
-  center: [-72.5293, 42.3903],
+  // Start the map centered on UMass
+  center: umassLongLat,
+  constraints: {
+    maxZoom: 20
+  },
   zoom: 16,
   map: map,
   // Tell the view to only load the attribution widget by default
@@ -34,14 +42,23 @@ const view = new MapView({
   }
 });
 
+// Update the position of the view when the url hash changes
+updatePositionFromUrl(view);
+window.addEventListener("hashchange", () => { updatePositionFromUrl(view) });
+// Update the url hash when the position of the view changes
+view.watch(["center", "zoom", "rotation"], () => { resetUrlTimer(view) });
+
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
+  // Set the url hash based on the initial view
+  resetUrlTimer(view);
+
   // Hide other layers by default
   map.layers.filter((layer) => {
     return ['Lots', 'Spaces'].indexOf(layer.title) > -1;
   }).forEach((layer) => { layer.visible = false });
 
-  // Create a laywer window that will be hidden until opened by a window expand
+  // Create a layer window that will be hidden until opened by a window expand
   const layersWindow = new CustomWindow({
     name: 'layers',
     widgets: [
@@ -80,6 +97,10 @@ view.when(() => {
     routeServiceUrl: "https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route"
   });
 
+  /*
+    Create a directions window that will be hidden until opened by a
+    window expand.
+  */
   const directionsWindow = new CustomWindow({
     name: 'directions',
     widgets: [
@@ -90,6 +111,26 @@ view.when(() => {
       {
         label: 'Walking directions',
         widget: directions
+      }
+    ]
+  });
+
+  // Create a share window that will be hidden until opened by a window expand
+  const shareWindow = new CustomWindow({
+    name: 'share',
+    widgets: [
+      {
+        label: "Share link",
+        widget: new ShareLink()
+      }, {
+        label: "Email",
+        widget: new ShareEmail()
+      }, {
+        label: "Print",
+        widget: new Print({
+          view: view,
+          printServiceUrl: "https://maps.umass.edu/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+        })
       }
     ]
   });
@@ -108,7 +149,8 @@ view.when(() => {
       iconName: 'directions'
     }),
     home: new Home({
-      view: view
+      view: view,
+      goToOverride: homeGoToOverride
     }),
     layersExpand: new WindowExpand({
       name: 'layers',
@@ -126,7 +168,11 @@ view.when(() => {
       direction: ZoomDirection.Out
     }),
     search: new Search(searchProperties),
-    customWindows: [layersWindow, directionsWindow]
+    shareExpand: new WindowExpand({
+      name: 'share',
+      iconName: 'link'
+    }),
+    customWindows: [layersWindow, directionsWindow, shareWindow]
   });
 
   // Add the main navigation widget to the map

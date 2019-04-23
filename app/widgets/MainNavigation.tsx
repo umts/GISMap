@@ -55,6 +55,11 @@ class MainNavigation extends declared(Widget) {
   @renderable()
   search: Search;
 
+  // Share expand widget
+  @property()
+  @renderable()
+  shareExpand: WindowExpand;
+
   // Custom windows that start hidden and can be opened by window expands
   @property()
   @renderable()
@@ -104,6 +109,7 @@ class MainNavigation extends declared(Widget) {
               <li class="widget-list-item">{this.locate.render()}</li>
               <li class="widget-list-item">{this.layersExpand.render()}</li>
               <li class="widget-list-item">{this.directionsExpand.render()}</li>
+              <li class="widget-list-item">{this.shareExpand.render()}</li>
             </ul>
           </div>
         </div>
