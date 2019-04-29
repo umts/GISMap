@@ -131,6 +131,21 @@ body,
   color: white;
 }
 
+.layer-checkbox {
+  padding: 0.3rem;
+  cursor: pointer;
+}
+.layer-checkbox * {
+  cursor: pointer;
+}
+.filter-layer-checkbox {
+  margin-left: 2rem;
+}
+
+.layer-checkbox-input {
+  margin-right: 0.8rem;
+}
+
 .validation-warning {
   background-color: #fc9c9c;
   border-radius: 0 0 0.5rem 0.5rem;

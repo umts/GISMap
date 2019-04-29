@@ -1,4 +1,5 @@
 import WebMap = require("esri/WebMap");
+import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
 import Home = require("esri/widgets/Home");
@@ -9,6 +10,7 @@ import Search = require("esri/widgets/Search");
 
 import MainNavigation = require("app/widgets/MainNavigation");
 import CustomDirections = require("app/widgets/CustomDirections");
+import CustomLayerList = require("app/widgets/CustomLayerList");
 import CustomSearch = require("app/widgets/CustomSearch");
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
@@ -65,6 +67,11 @@ view.when(() => {
         label: "Layers",
         widget: new LayerList({
           view: view
+        })
+      }, {
+        label: "Filtered Layers",
+        widget: new CustomLayerList({
+          map: map
         })
       }
     ]
