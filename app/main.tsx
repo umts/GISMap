@@ -54,22 +54,17 @@ view.when(() => {
   // Set the url hash based on the initial view
   resetUrlTimer(view);
 
-  // Hide other layers by default
-  map.layers.filter((layer) => {
-    return ['Lots', 'Spaces'].indexOf(layer.title) > -1;
-  }).forEach((layer) => { layer.visible = false });
+  // Hide the lots layer
+  map.layers.find((layer) => {
+    return layer.title === 'Lots';
+  }).visible = false;
 
   // Create a layer window that will be hidden until opened by a window expand
   const layersWindow = new CustomWindow({
     name: 'layers',
     widgets: [
       {
-        label: "Layers",
-        widget: new LayerList({
-          view: view
-        })
-      }, {
-        label: "Filtered Layers",
+        label: 'Layers',
         widget: new CustomLayerList({
           map: map
         })

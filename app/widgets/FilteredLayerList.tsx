@@ -29,7 +29,12 @@ class FilteredLayerList extends declared(Widget) {
   constructor(properties?: any) {
     super();
     this.filterOptions = Object.keys(properties.filterOptionInfos);
-    properties.layer.definitionExpression = this._whereClause(properties.filterColumnName, this.filterOptions);
+    properties.layer.definitionExpression = this._whereClause(
+      properties.filterColumnName,
+      this.filterOptions.filter((option) => {
+        return properties.filterOptionInfos[option].checked === 'checked';
+      })
+    );
   }
 
   // Render this widget by returning JSX which is converted to HTML
@@ -39,7 +44,7 @@ class FilteredLayerList extends declared(Widget) {
       checkboxes.push(
         <div
           bind={this}
-          class='layer-checkbox filter-layer-checkbox'
+          class='layer-checkbox'
           onclick={this._toggleFilterCheckbox}
           data-filter-option={filterOption}>
           <label for={filterOption} data-filter-option={filterOption}>
@@ -50,7 +55,7 @@ class FilteredLayerList extends declared(Widget) {
               name={filterOption}
               oninput={this.setSelectedFilters}
               type='checkbox'
-              checked />
+              checked={this.filterOptionInfos[filterOption].checked} />
             {this.filterOptionInfos[filterOption].label}
           </label>
         </div>

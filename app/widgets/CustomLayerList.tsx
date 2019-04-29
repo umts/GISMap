@@ -12,6 +12,10 @@ class CustomLayerList extends declared(Widget) {
   @renderable()
   sectionLayers: FilteredLayerList;
 
+  @property()
+  @renderable()
+  spaceLayers: FilteredLayerList;
+
   // Pass in any properties
   constructor(properties?: { map: WebMap }) {
     super();
@@ -21,14 +25,32 @@ class CustomLayerList extends declared(Widget) {
       }),
       filterColumnName: 'SectionColor',
       filterOptionInfos: {
-        'Red': {label: 'Red Lots'},
-        'Blue': {label: 'Blue Lots'},
-        'Purple': {label: 'Purple Lots'},
-        'Yellow': {label: 'Yellow Lots'},
-        'Green': {label: 'Green Lots'},
-        'Pink': {label: 'Meter Lots'}
+        'Red': {label: 'Red Lots', checked: 'checked'},
+        'Blue': {label: 'Blue Lots', checked: 'checked'},
+        'Purple': {label: 'Purple Lots', checked: 'checked'},
+        'Yellow': {label: 'Yellow Lots', checked: 'checked'},
+        'Green': {label: 'Green Lots', checked: 'checked'},
+        'Pink': {label: 'Meter Lots', checked: 'checked'}
       }
     });
+    this.spaceLayers = new FilteredLayerList({
+      layer: properties.map.layers.find((layer: any) => {
+        return layer.title === 'Spaces';
+      }),
+      filterColumnName: 'ParkingSpaceSubCategory',
+      filterOptionInfos: {
+        'R-Client': {label: 'Reserved Spaces'},
+        'R-15Min': {label: '15 Minute Spaces'},
+        'R-Handicapped': {label: 'Handicapped Spaces', checked: 'checked'},
+        'R-Carpool': {label: 'Carpool Spaces'},
+        'R-State': {label: 'State Vehicle Spaces'},
+        'Meter-Paystation': {label: 'Paystation Spaces'},
+        'Meter-Coin': {label: 'Meter Spaces'},
+        'R-Visitor': {label: 'Visitor Spaces'},
+        'R-EV Stations': {label: 'Electric Vehicle Charging Stations'},
+        'Other': {label: 'Other Spaces'}
+      }
+    })
   }
 
   // Render this widget by returning JSX which is converted to HTML
@@ -52,7 +74,10 @@ class CustomLayerList extends declared(Widget) {
             Lots
           </label>
         </div>
-        {this.sectionLayers.render()}
+        <div class='indent-1'>
+          {this.sectionLayers.render()}
+        </div>
+        {this.spaceLayers.render()}
       </div>
     );
   }
