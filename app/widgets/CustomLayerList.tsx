@@ -68,7 +68,7 @@ class CustomLayerList extends declared(Widget) {
               class='layer-checkbox-input'
               id='lots-checkbox'
               name='lots'
-              oninput={this._setFilters}
+              onchange={this._setFilters}
               type='checkbox'
               checked />
             Lots

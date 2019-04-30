@@ -53,7 +53,7 @@ class FilteredLayerList extends declared(Widget) {
               class='layer-checkbox-input'
               id={this._checkboxId(filterOption)}
               name={filterOption}
-              oninput={this.setSelectedFilters}
+              onchange={this.setSelectedFilters}
               type='checkbox'
               checked={this.filterOptionInfos[filterOption].checked} />
             {this.filterOptionInfos[filterOption].label}
