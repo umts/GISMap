@@ -5,13 +5,16 @@ import WebMap = require("esri/WebMap");
 import Widget = require('esri/widgets/Widget');
 
 import FilteredLayerList = require('app/widgets/FilteredLayerList');
+import { spaceRendererInfo, sectionRendererInfo } from 'app/rendering';
 
 @subclass('esri.widgets.CustomLayerList')
 class CustomLayerList extends declared(Widget) {
+  // List of sections filtered by color into layers
   @property()
   @renderable()
   sectionLayers: FilteredLayerList;
 
+  // List of spaces filtered by category into layers
   @property()
   @renderable()
   spaceLayers: FilteredLayerList;
@@ -24,32 +27,14 @@ class CustomLayerList extends declared(Widget) {
         return layer.title === 'Sections';
       }),
       filterColumnName: 'SectionColor',
-      filterOptionInfos: {
-        'Red': {label: 'Red Lots', checked: 'checked'},
-        'Blue': {label: 'Blue Lots', checked: 'checked'},
-        'Purple': {label: 'Purple Lots', checked: 'checked'},
-        'Yellow': {label: 'Yellow Lots', checked: 'checked'},
-        'Green': {label: 'Green Lots', checked: 'checked'},
-        'Pink': {label: 'Meter Lots', checked: 'checked'}
-      }
+      filterOptionInfos: sectionRendererInfo()
     });
     this.spaceLayers = new FilteredLayerList({
       layer: properties.map.layers.find((layer: any) => {
         return layer.title === 'Spaces';
       }),
       filterColumnName: 'ParkingSpaceSubCategory',
-      filterOptionInfos: {
-        'R-Client': {label: 'Reserved Spaces'},
-        'R-15Min': {label: '15 Minute Spaces'},
-        'R-Handicapped': {label: 'Handicapped Spaces', checked: 'checked'},
-        'R-Carpool': {label: 'Carpool Spaces'},
-        'R-State': {label: 'State Vehicle Spaces'},
-        'Meter-Paystation': {label: 'Paystation Spaces'},
-        'Meter-Coin': {label: 'Meter Spaces'},
-        'R-Visitor': {label: 'Visitor Spaces'},
-        'R-EV Stations': {label: 'Electric Vehicle Charging Stations'},
-        'Other': {label: 'Other Spaces'}
-      }
+      filterOptionInfos: spaceRendererInfo()
     })
   }
 
@@ -68,7 +53,7 @@ class CustomLayerList extends declared(Widget) {
               class='layer-checkbox-input'
               id='lots-checkbox'
               name='lots'
-              onchange={this._setFilters}
+              onchange={this._toggleAll}
               type='checkbox'
               checked />
             Lots
@@ -82,12 +67,17 @@ class CustomLayerList extends declared(Widget) {
     );
   }
 
-  private _setFilters(event: any) {
+  // Toggle all checkboxes in a filtered layer list based
+  private _toggleAll(event: any) {
     if (event.target.id === 'lots-checkbox') {
       this.sectionLayers.toggleFilters(event.target.checked);
     }
   }
 
+  /*
+    Check or uncheck the corresponding checkbox based on the data-checkbox-id
+    attribute.
+  */
   private _toggleCheckbox(event: any) {
     const checkboxId = event.target.dataset.checkboxId;
     if (checkboxId) {
@@ -97,7 +87,7 @@ class CustomLayerList extends declared(Widget) {
       } else {
         checkbox.checked = true;
       }
-      this._setFilters({target: checkbox});
+      this._toggleAll({target: checkbox});
     }
   }
 }

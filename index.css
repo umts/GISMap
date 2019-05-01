@@ -146,6 +146,10 @@ body,
   margin-right: 0.8rem;
 }
 
+.image-right {
+  float: right;
+}
+
 .validation-warning {
   background-color: #fc9c9c;
   border-radius: 0 0 0.5rem 0.5rem;

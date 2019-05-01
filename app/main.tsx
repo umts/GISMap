@@ -18,6 +18,7 @@ import ShareEmail = require("app/widgets/ShareEmail");
 import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
 import { homeGoToOverride, umassLongLat } from "app/latLong";
+import { updateRenderers } from 'app/rendering';
 import { searchGoToOverride, searchSources } from "app/search";
 import { resetUrlTimer, updatePositionFromUrl } from "app/url";
 
@@ -58,6 +59,13 @@ view.when(() => {
   map.layers.find((layer) => {
     return layer.title === 'Lots';
   }).visible = false;
+
+  (map.layers.find((layer) => {
+    return layer.title === 'Sections';
+  }) as FeatureLayer).maxScale = 500;
+
+  // Set custom icons in the renderers
+  updateRenderers(map);
 
   // Create a layer window that will be hidden until opened by a window expand
   const layersWindow = new CustomWindow({

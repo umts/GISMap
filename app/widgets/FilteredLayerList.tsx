@@ -12,15 +12,19 @@ class FilteredLayerList extends declared(Widget) {
   @renderable()
   layer: FeatureLayer;
 
+  // The column name to filter by
   @property()
   filterColumnName: string;
 
+  // Potential column values to filter by
   @property()
   filterOptions: Array<string>;
 
+  // More detailed information about each column value
   @property()
   filterOptionInfos: any;
 
+  // Which column values have been selected to filter by
   @property()
   @renderable()
   selectedFilterOptions: Array<string>;
@@ -28,7 +32,9 @@ class FilteredLayerList extends declared(Widget) {
   // Pass in any properties
   constructor(properties?: any) {
     super();
+    // Set filter options based on the keys to the more detailed info
     this.filterOptions = Object.keys(properties.filterOptionInfos);
+    // Start out with some checkboxes checked
     properties.layer.definitionExpression = this._whereClause(
       properties.filterColumnName,
       this.filterOptions.filter((option) => {
@@ -41,6 +47,16 @@ class FilteredLayerList extends declared(Widget) {
   render() {
     let checkboxes: Array<JSX.Element> = [];
     this.filterOptions.forEach((filterOption) => {
+      let icon;
+      // If we have an image for this filter use it
+      if (this.filterOptionInfos[filterOption].iconUrl) {
+        icon = <img
+          class='image-right'
+          data-filter-option={filterOption}
+          width='24px'
+          height='24px'
+          src={this.filterOptionInfos[filterOption].iconUrl} />;
+      }
       checkboxes.push(
         <div
           bind={this}
@@ -56,6 +72,7 @@ class FilteredLayerList extends declared(Widget) {
               onchange={this.setSelectedFilters}
               type='checkbox'
               checked={this.filterOptionInfos[filterOption].checked} />
+            {icon}
             {this.filterOptionInfos[filterOption].label}
           </label>
         </div>
@@ -69,6 +86,7 @@ class FilteredLayerList extends declared(Widget) {
     );
   }
 
+  // Go through each checkbox to update what filters are selected
   setSelectedFilters() {
     this.selectedFilterOptions = [];
     this.filterOptions.forEach((filterOption) => {
@@ -80,6 +98,7 @@ class FilteredLayerList extends declared(Widget) {
     this._applyFilters();
   }
 
+  // Set all of the checkboxes to true or false
   toggleFilters(checked: boolean) {
     this.filterOptions.forEach((filterOption) => {
       this._checkbox(filterOption).checked = checked;
@@ -87,18 +106,25 @@ class FilteredLayerList extends declared(Widget) {
     this.setSelectedFilters();
   }
 
+  // Apply our filters on the layer column
   private _applyFilters() {
     this.layer.definitionExpression = this._whereClause(this.filterColumnName, this.selectedFilterOptions);
   }
 
+  // Return the checkbox for a specific filter
   private _checkbox(filterOption: string): HTMLInputElement {
     return document.getElementById(this._checkboxId(filterOption)) as HTMLInputElement;
   }
 
+  // Return the checkbox id for a specific filter
   private _checkboxId(filterOption: string): string {
     return `${this.filterColumnName}-${filterOption}-checkbox`;
   }
 
+  /*
+    Check or uncheck the corresponding checkbox based on the data-filter-option
+    attribute.
+  */
   private _toggleFilterCheckbox(event: any) {
     const filterOption = event.target.dataset.filterOption;
     if (filterOption) {
@@ -107,6 +133,7 @@ class FilteredLayerList extends declared(Widget) {
     }
   }
 
+  // Toggle a checkbox
   private _toggleCheckbox(checkbox: HTMLInputElement) {
     if (checkbox.checked) {
       checkbox.checked = false;
@@ -115,6 +142,7 @@ class FilteredLayerList extends declared(Widget) {
     }
   }
 
+  // Return the where clause used for the layer definitionExpression
   private _whereClause(columnName: string, options: Array<string>): string {
     if (options.length > 0) {
       return `${columnName} in (${options.map((option: any) => {return "'" + option + "'"} ).join()})`;
