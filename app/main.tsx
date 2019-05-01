@@ -60,11 +60,12 @@ view.when(() => {
     return layer.title === 'Lots';
   }).visible = false;
 
+  // Ensure that the section layer shows up when zoomed in to max
   (map.layers.find((layer) => {
     return layer.title === 'Sections';
   }) as FeatureLayer).maxScale = 500;
 
-  // Set custom icons in the renderers
+  // Set custom icons in the layer renderers
   updateRenderers(map);
 
   // Create a layer window that will be hidden until opened by a window expand

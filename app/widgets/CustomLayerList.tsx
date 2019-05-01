@@ -1,7 +1,7 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
-import WebMap = require("esri/WebMap");
+import WebMap = require('esri/WebMap');
 import Widget = require('esri/widgets/Widget');
 
 import FilteredLayerList = require('app/widgets/FilteredLayerList');
@@ -67,7 +67,10 @@ class CustomLayerList extends declared(Widget) {
     );
   }
 
-  // Toggle all checkboxes in a filtered layer list based
+  /*
+    Toggle all checkboxes in a filtered layer list based on which checkbox
+    the event is coming from.
+  */
   private _toggleAll(event: any) {
     if (event.target.id === 'lots-checkbox') {
       this.sectionLayers.toggleFilters(event.target.checked);
@@ -75,8 +78,8 @@ class CustomLayerList extends declared(Widget) {
   }
 
   /*
-    Check or uncheck the corresponding checkbox based on the data-checkbox-id
-    attribute.
+    Any element with the attribute data-checkbox-id that triggers this
+    function will toggle the corresponding checkbox.
   */
   private _toggleCheckbox(event: any) {
     const checkboxId = event.target.dataset.checkboxId;

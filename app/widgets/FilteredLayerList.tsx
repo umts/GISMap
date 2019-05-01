@@ -48,14 +48,15 @@ class FilteredLayerList extends declared(Widget) {
     let checkboxes: Array<JSX.Element> = [];
     this.filterOptions.forEach((filterOption) => {
       let icon;
+      const iconUrl = this.filterOptionInfos[filterOption].iconUrl;
       // If we have an image for this filter use it
-      if (this.filterOptionInfos[filterOption].iconUrl) {
+      if (iconUrl) {
         icon = <img
           class='image-right'
           data-filter-option={filterOption}
           width='24px'
           height='24px'
-          src={this.filterOptionInfos[filterOption].iconUrl} />;
+          src={iconUrl} />;
       }
       checkboxes.push(
         <div
@@ -86,7 +87,10 @@ class FilteredLayerList extends declared(Widget) {
     );
   }
 
-  // Go through each checkbox to update what filters are selected
+  /*
+    Go through each checkbox to update what filters are selected, then apply
+    those filters.
+  */
   setSelectedFilters() {
     this.selectedFilterOptions = [];
     this.filterOptions.forEach((filterOption) => {
@@ -106,7 +110,7 @@ class FilteredLayerList extends declared(Widget) {
     this.setSelectedFilters();
   }
 
-  // Apply our filters on the layer column
+  // Apply our filters on the layer column we are filtering by
   private _applyFilters() {
     this.layer.definitionExpression = this._whereClause(this.filterColumnName, this.selectedFilterOptions);
   }
