@@ -1,4 +1,5 @@
 import WebMap = require("esri/WebMap");
+import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
 import Home = require("esri/widgets/Home");
@@ -9,6 +10,7 @@ import Search = require("esri/widgets/Search");
 
 import MainNavigation = require("app/widgets/MainNavigation");
 import CustomDirections = require("app/widgets/CustomDirections");
+import CustomLayerList = require("app/widgets/CustomLayerList");
 import CustomSearch = require("app/widgets/CustomSearch");
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
@@ -16,6 +18,7 @@ import ShareEmail = require("app/widgets/ShareEmail");
 import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
 import { homeGoToOverride, umassLongLat } from "app/latLong";
+import { updateRenderers } from 'app/rendering';
 import { searchGoToOverride, searchSources } from "app/search";
 import { resetUrlTimer, updatePositionFromUrl } from "app/url";
 
@@ -52,19 +55,27 @@ view.when(() => {
   // Set the url hash based on the initial view
   resetUrlTimer(view);
 
-  // Hide other layers by default
-  map.layers.filter((layer) => {
-    return ['Lots', 'Spaces'].indexOf(layer.title) > -1;
-  }).forEach((layer) => { layer.visible = false });
+  // Hide the lots layer
+  map.layers.find((layer) => {
+    return layer.title === 'Lots';
+  }).visible = false;
+
+  // Ensure that the section layer shows up when zoomed in to max
+  (map.layers.find((layer) => {
+    return layer.title === 'Sections';
+  }) as FeatureLayer).maxScale = 500;
+
+  // Set custom icons in the layer renderers
+  updateRenderers(map);
 
   // Create a layer window that will be hidden until opened by a window expand
   const layersWindow = new CustomWindow({
     name: 'layers',
     widgets: [
       {
-        label: "Layers",
-        widget: new LayerList({
-          view: view
+        label: 'Layers',
+        widget: new CustomLayerList({
+          map: map
         })
       }
     ]
