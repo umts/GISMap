@@ -5,33 +5,35 @@ import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
 import PictureMarkerSymbol = require('esri/symbols/PictureMarkerSymbol');
 
+const iconsPath = 'assets/icons';
+
 // Return info that should be used to render different types of spaces
 function spaceRendererInfo(): any {
   return {
     'R-Handicapped': {
       label: 'Handicapped Spaces',
       checked: 'checked',
-      iconUrl: '/assets/icons/handicapped-space.png'
+      iconUrl: `${iconsPath}/handicapped-space.png`
     },
     'R-Carpool': {
       label: 'Carpool Spaces',
-      iconUrl: '/assets/icons/carpool-space.png'
+      iconUrl: `${iconsPath}/carpool-space.png`
     },
     'R-State': {
       label: 'State Vehicle Spaces',
-      iconUrl: '/assets/icons/state-space.png'
+      iconUrl: `${iconsPath}/state-space.png`
     },
     'Meter-Paystation': {
       label: 'Paystation Spaces',
-      iconUrl: '/assets/icons/paystation-space.png'
+      iconUrl: `${iconsPath}/paystation-space.png`
     },
     'Meter-Coin': {
       label: 'Meter Spaces',
-      iconUrl: '/assets/icons/meter-space.png'
+      iconUrl: `${iconsPath}/meter-space.png`
     },
     'R-EV Stations': {
       label: 'Electric Vehicle Charging Stations',
-      iconUrl: '/assets/icons/electric-space.png'
+      iconUrl: `${iconsPath}/electric-space.png`
     },
     'R-Visitor': {label: 'Visitor Spaces'},
     'R-Client': {label: 'Reserved Spaces'},
@@ -46,32 +48,32 @@ function sectionRendererInfo(): any {
     'Red': {
       label: 'Red Lots',
       checked: 'checked',
-      iconUrl: '/assets/icons/red-lot.png'
+      iconUrl: `${iconsPath}/red-lot.png`
     },
     'Blue': {
       label: 'Blue Lots',
       checked: 'checked',
-      iconUrl: '/assets/icons/blue-lot.png'
+      iconUrl: `${iconsPath}/blue-lot.png`
     },
     'Purple': {
       label: 'Purple Lots',
       checked: 'checked',
-      iconUrl: '/assets/icons/purple-lot.png'
+      iconUrl: `${iconsPath}/purple-lot.png`
     },
     'Yellow': {
       label: 'Yellow Lots',
       checked: 'checked',
-      iconUrl: '/assets/icons/yellow-lot.png'
+      iconUrl: `${iconsPath}/yellow-lot.png`
     },
     'Green': {
       label: 'Green Lots',
       checked: 'checked',
-      iconUrl: '/assets/icons/green-lot.png'
+      iconUrl: `${iconsPath}/green-lot.png`
     },
     'Pink': {
       label: 'Meter Lots',
       checked: 'checked',
-      iconUrl: '/assets/icons/meter-lot.png'
+      iconUrl: `${iconsPath}/meter-lot.png`
     }
   };
 }
