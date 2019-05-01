@@ -1,9 +1,12 @@
 import WebMap = require('esri/WebMap');
-import FeatureLayer = require('esri/layers/FeatureLayer')
+import FeatureLayer = require('esri/layers/FeatureLayer');
+import LabelClass = require('esri/layers/support/LabelClass');
 import UniqueValueRenderer = require('esri/renderers/UniqueValueRenderer');
+import PictureMarkerSymbol = require('esri/symbols/PictureMarkerSymbol');
+import Font = require('esri/symbols/Font');
 import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
-import PictureMarkerSymbol = require('esri/symbols/PictureMarkerSymbol');
+import TextSymbol = require('esri/symbols/TextSymbol');
 
 const iconsPath = 'assets/icons';
 
@@ -111,8 +114,32 @@ function updateRenderers(map: WebMap) {
   spacesLayer.renderer = spaceRenderer;
 }
 
+// Update the labeling of layers
+function updateLabeling(map: WebMap) {
+  const sectionLabel = new LabelClass({
+    labelExpressionInfo: {
+      expression: 'IIf($feature.SectionColor != "Pink", $feature.SectionName, "")'
+    },
+    labelPlacement: 'always-horizontal',
+    symbol: new TextSymbol({
+      color: 'black',
+      haloColor: 'white',
+      haloSize: '1px',
+      font: new Font({
+        size: 12,
+        family: 'sans-serif',
+        weight: 'bold'
+      })
+    })
+  });
+  const sectionsLayer = map.layers.find((layer) => {
+    return layer.title === 'Sections';
+  }) as FeatureLayer
+  sectionsLayer.labelingInfo = [sectionLabel];
+}
+
 /*
   Export helper functions related to rendering so they can be
   imported and used in other files.
 */
-export { updateRenderers, spaceRendererInfo, sectionRendererInfo };
+export { updateRenderers, updateLabeling, spaceRendererInfo, sectionRendererInfo };
