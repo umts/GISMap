@@ -93,8 +93,13 @@ view.when(() => {
   });
 
   const directions = new Directions({
-    view: view,
-    routeServiceUrl: "https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route"
+    viewModel: {
+      routeServiceUrl: "https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route",
+      routeParameters: {
+        useHierarchy: false
+      },
+      view: view
+    }
   });
 
   /*
