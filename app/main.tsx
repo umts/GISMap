@@ -18,7 +18,7 @@ import ShareEmail = require("app/widgets/ShareEmail");
 import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
 import { homeGoToOverride, umassLongLat } from "app/latLong";
-import { updateRenderers, updateLabeling } from 'app/rendering';
+import { updateRenderers, updateLabeling, updatePopups } from 'app/rendering';
 import { searchGoToOverride, searchSources } from "app/search";
 import { resetUrlTimer, updatePositionFromUrl } from "app/url";
 
@@ -69,6 +69,8 @@ view.when(() => {
   updateRenderers(map);
   // Set labels on layers
   updateLabeling(map);
+
+  updatePopups(map);
 
   // Create a layer window that will be hidden until opened by a window expand
   const layersWindow = new CustomWindow({

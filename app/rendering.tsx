@@ -1,4 +1,5 @@
 import WebMap = require('esri/WebMap');
+import PopupTemplate = require('esri/PopupTemplate');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import LabelClass = require('esri/layers/support/LabelClass');
 import UniqueValueRenderer = require('esri/renderers/UniqueValueRenderer');
@@ -110,7 +111,7 @@ function updateRenderers(map: WebMap) {
   });
   const spacesLayer = map.layers.find((layer) => {
     return layer.title === 'Spaces';
-  }) as FeatureLayer
+  }) as FeatureLayer;
   spacesLayer.renderer = spaceRenderer;
 }
 
@@ -134,12 +135,28 @@ function updateLabeling(map: WebMap) {
   });
   const sectionsLayer = map.layers.find((layer) => {
     return layer.title === 'Sections';
-  }) as FeatureLayer
+  }) as FeatureLayer;
   sectionsLayer.labelingInfo = [sectionLabel];
+}
+
+function updatePopups(map: WebMap) {
+  const sectionPopupTemplate = new PopupTemplate({
+    title: '{SectionName}'
+  });
+  const sectionsLayer = map.layers.find((layer) => {
+    return layer.title === 'Sections';
+  }) as FeatureLayer;
+  sectionsLayer.popupTemplate = sectionPopupTemplate;
 }
 
 /*
   Export helper functions related to rendering so they can be
   imported and used in other files.
 */
-export { updateRenderers, updateLabeling, spaceRendererInfo, sectionRendererInfo };
+export {
+  updateRenderers,
+  updateLabeling,
+  updatePopups,
+  spaceRendererInfo,
+  sectionRendererInfo
+};
