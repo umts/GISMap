@@ -97,6 +97,11 @@ function updateUrlFromPosition(view: MapView) {
   history.replaceState("", "", "#" + queryString);
 }
 
+// Return an IE safe root url
+function rootUrl(): string {
+  return location.protocol + '//' + location.host;
+}
+
 // Encode the query string part of the url, most importantly the ampersands
 function safeUrl(): string {
   const startUrl = window.location.href.split("?")[0] + "?";
@@ -108,4 +113,4 @@ function safeUrl(): string {
   Export helper functions related to urls so they can be
   imported and used in other files.
 */
-export { resetUrlTimer, updatePositionFromUrl, safeUrl };
+export { resetUrlTimer, updatePositionFromUrl, safeUrl, rootUrl };

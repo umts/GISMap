@@ -9,6 +9,8 @@ import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
 import TextSymbol = require('esri/symbols/TextSymbol');
 
+import { rootUrl } from 'app/url';
+
 const iconsPath = 'assets/icons';
 
 // Return info that should be used to render different types of spaces
@@ -17,27 +19,27 @@ function spaceRendererInfo(): any {
     'R-Handicapped': {
       label: 'Handicapped Spaces',
       checked: 'checked',
-      iconUrl: `${iconsPath}/handicapped-space.png`
+      iconUrl: `${rootUrl()}/${iconsPath}/handicapped-space.png`
     },
     'R-Carpool': {
       label: 'Carpool Spaces',
-      iconUrl: `${iconsPath}/carpool-space.png`
+      iconUrl: `${rootUrl()}/${iconsPath}/carpool-space.png`
     },
     'R-State': {
       label: 'State Vehicle Spaces',
-      iconUrl: `${iconsPath}/state-space.png`
+      iconUrl: `${rootUrl()}/${iconsPath}/state-space.png`
     },
     'Meter-Paystation': {
       label: 'Paystation Spaces',
-      iconUrl: `${iconsPath}/paystation-space.png`
+      iconUrl: `${rootUrl()}/${iconsPath}/paystation-space.png`
     },
     'Meter-Coin': {
       label: 'Meter Spaces',
-      iconUrl: `${iconsPath}/meter-space.png`
+      iconUrl: `${rootUrl()}/${iconsPath}/meter-space.png`
     },
     'R-EV Stations': {
       label: 'Electric Vehicle Charging Stations',
-      iconUrl: `${iconsPath}/electric-space.png`
+      iconUrl: `${rootUrl()}/${iconsPath}/electric-space.png`
     },
     'R-Visitor': {label: 'Visitor Spaces'},
     'R-Client': {label: 'Reserved Spaces'},
@@ -94,13 +96,15 @@ function updateRenderers(map: WebMap) {
         width: '1px'
       })
     }),
+    defaultLabel: 'Other Spaces',
     uniqueValueInfos: Object.keys(spaceRendererInfo()).map((spaceCategory) => {
-      const iconUrl = spaceRendererInfo()[spaceCategory].iconUrl;
-      if (iconUrl) {
+      const rendererInfo = spaceRendererInfo()[spaceCategory];
+      if (rendererInfo.iconUrl) {
         return {
           value: spaceCategory,
+          label: rendererInfo.label,
           symbol: new PictureMarkerSymbol({
-            url: iconUrl,
+            url: rendererInfo.iconUrl,
             width: '24px',
             height: '24px'
           })
