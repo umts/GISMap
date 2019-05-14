@@ -20,6 +20,9 @@ import { homeGoToOverride, umassLongLat } from "app/latLong";
 import { searchGoToOverride, searchSources } from "app/search";
 import { resetUrlTimer, updatePositionFromUrl } from "app/url";
 
+import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
+import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
+
 // Set the map to load data from our ArcGIS Online web map
 const map = new WebMap({
   portalItem: {
@@ -95,8 +98,24 @@ view.when(() => {
   const directions = new Directions({
     viewModel: {
       routeServiceUrl: "https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route",
+      routeSymbol: new SimpleLineSymbol({
+        color: 'black',
+        width: '3px'
+      }),
       routeParameters: {
-        useHierarchy: false
+        useHierarchy: false,
+        returnDirections: true,
+        returnRoutes: false
+      },
+      stopSymbols: {
+        first: new SimpleMarkerSymbol({
+          color: 'black',
+          size: '16px',
+          outline: new SimpleLineSymbol({
+            color: 'white',
+            width: '1px'
+          })
+        })
       },
       view: view
     }
