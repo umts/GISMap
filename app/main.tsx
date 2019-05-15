@@ -19,7 +19,7 @@ import ShareEmail = require("app/widgets/ShareEmail");
 import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
 import { homeGoToOverride, umassLongLat } from "app/latLong";
-import { updateRenderers, updateLabeling, updatePopups } from 'app/rendering';
+import { updateRenderers, updateLabeling } from 'app/rendering';
 import { searchGoToOverride, searchSources } from "app/search";
 import { resetUrlTimer, updatePositionFromUrl } from "app/url";
 
@@ -42,7 +42,8 @@ const view = new MapView({
   // Tell the view to only load the attribution widget by default
   ui: {
     components: ["attribution"]
-  }
+  },
+  popup: null
 });
 
 // Update the position of the view when the url hash changes
@@ -53,7 +54,9 @@ view.watch(["center", "zoom", "rotation"], () => { resetUrlTimer(view) });
 
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
-  map.basemap = Basemap.fromId('gray-vector');
+  // Set basemap
+  //map.basemap = Basemap.fromId('gray-vector');
+
   // Set the url hash based on the initial view
   resetUrlTimer(view);
 
@@ -71,8 +74,6 @@ view.when(() => {
   updateRenderers(map);
   // Set labels on layers
   updateLabeling(map);
-
-  updatePopups(map);
 
   // Create a layer window that will be hidden until opened by a window expand
   const layersWindow = new CustomWindow({
@@ -148,6 +149,7 @@ view.when(() => {
     other widgets.
   */
   const mainNavigation = new MainNavigation({
+    view: view,
     compass: new Compass({
       view: view
     }),

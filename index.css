@@ -23,6 +23,29 @@ body,
   display: none;
 }
 
+.custom-popup-container {
+  position: absolute;
+  width: 28rem;
+  height: 0;
+  z-index: 0;
+}
+
+.custom-popup {
+  position: relative;
+  left: -50%;
+}
+
+.popup-pointer {
+  background-color: #881c1c;
+  position: absolute;
+  left: calc(50% - 0.5rem);
+  top: -0.5rem;
+  width: 1rem;
+  height: 1rem;
+  transform: scale(0.75, 1.8) rotate(45deg);
+  z-index: -1;
+}
+
 .custom-window-close {
   float: right;
 }

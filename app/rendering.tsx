@@ -8,6 +8,7 @@ import Font = require('esri/symbols/Font');
 import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
 import TextSymbol = require('esri/symbols/TextSymbol');
+import MapView = require('esri/views/MapView');
 
 import { rootUrl } from 'app/url';
 
@@ -143,14 +144,19 @@ function updateLabeling(map: WebMap) {
   sectionsLayer.labelingInfo = [sectionLabel];
 }
 
-function updatePopups(map: WebMap) {
-  const sectionPopupTemplate = new PopupTemplate({
-    title: '{SectionName}'
-  });
-  const sectionsLayer = map.layers.find((layer) => {
-    return layer.title === 'Sections';
-  }) as FeatureLayer;
-  sectionsLayer.popupTemplate = sectionPopupTemplate;
+/*
+  Return the current padding or margin in pixels of an element assuming the
+  padding or margin is uniform on every side.
+*/
+function getElementStyleSize(element: Element, property: string): number {
+  if (['padding', 'margin'].indexOf(property) > -1) {
+    return Number(
+      window.getComputedStyle(element)
+        .getPropertyValue(`${property}-top`).slice(0, -2)
+      );
+  } else {
+    return 0;
+  }
 }
 
 /*
@@ -160,7 +166,7 @@ function updatePopups(map: WebMap) {
 export {
   updateRenderers,
   updateLabeling,
-  updatePopups,
   spaceRendererInfo,
-  sectionRendererInfo
+  sectionRendererInfo,
+  getElementStyleSize
 };
