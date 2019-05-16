@@ -20,6 +20,11 @@ import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom } from "app/widgets/CustomZoom";
 import WindowExpand = require("app/widgets/WindowExpand");
 
+interface ScreenPoint {
+  x: number;
+  y: number;
+}
+
 @subclass("esri.widgets.MainNavigation")
 class MainNavigation extends declared(Widget) {
   // The main map view
@@ -151,11 +156,15 @@ class MainNavigation extends declared(Widget) {
     }) as FeatureLayer;
   }
 
+  // Update the popup widget based on a mouse click event
   private _updatePopup(event: any) {
+    // Reset popup variables
     this.popup.visible = false;
     this.popup.point = event.mapPoint;
     this.popup.features = [];
     this.popup.page = 0;
+
+    const queryGeometry = this._circleAt(event.screenPoint);
 
     [
       this._getLayer('Sections'),
@@ -164,13 +173,13 @@ class MainNavigation extends declared(Widget) {
     ].forEach((layer) => {
       let query = layer.createQuery();
       // Query features that intersect the point from the click event
-      query.geometry = this._circleAt(event.mapPoint);
-      //query.geometry = new Point({latitude: event.mapPoint.latitude, longitude: event.mapPoint.longitude});
+      query.geometry = queryGeometry;
       query.spatialRelationship = 'intersects';
 
       layer.queryFeatures(query)
       .then((results) => {
         if (results.features.length > 0) {
+          // Add more features to the popup
           this.popup.features = this.popup.features.concat(results.features);
           this.popup.visible = true;
         }
@@ -180,19 +189,31 @@ class MainNavigation extends declared(Widget) {
     });
   }
 
-  private _circleAt(screenPoint: Point): Polygon {
-    const delta = [0.00003, 0.00003];
-    return new Polygon({
-      rings: [
-        [
-          [screenPoint.longitude - delta[1], screenPoint.latitude - delta[0]],
-          [screenPoint.longitude + delta[1], screenPoint.latitude - delta[0]],
-          [screenPoint.longitude + delta[1], screenPoint.latitude + delta[0]],
-          [screenPoint.longitude - delta[1], screenPoint.latitude + delta[0]],
-          [screenPoint.longitude - delta[1], screenPoint.latitude - delta[0]]
-        ]
-      ]
+  /*
+    Generate a 'circle' in latitude/longitude given a point on the screen in
+    pixels.
+  */
+  private _circleAt(screenPoint: ScreenPoint): Polygon {
+    const delta = 16;
+    const screenVertices: Array<ScreenPoint> = [
+      {x: screenPoint.x - delta, y: screenPoint.y - delta},
+      {x: screenPoint.x + delta, y: screenPoint.y - delta},
+      {x: screenPoint.x + delta, y: screenPoint.y + delta},
+      {x: screenPoint.x - delta, y: screenPoint.y + delta}
+    ]
+
+    const mapVertices = screenVertices.map((screenPoint) => {
+      const mapPoint = this.view.toMap(screenPoint);
+      /*
+        Explicitly grab lat/lon or else the polygon will try to convert back
+        to the MA spatial reference.
+      */
+      return [mapPoint.longitude, mapPoint.latitude];
     });
+    let circle = new Polygon();
+    // Polygon ring requires the final point to be the same as the first
+    circle.addRing(mapVertices.concat([mapVertices[0]]));
+    return circle;
   }
 }
 

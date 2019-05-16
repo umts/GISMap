@@ -54,9 +54,6 @@ view.watch(["center", "zoom", "rotation"], () => { resetUrlTimer(view) });
 
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
-  // Set basemap
-  //map.basemap = Basemap.fromId('gray-vector');
-
   // Set the url hash based on the initial view
   resetUrlTimer(view);
 

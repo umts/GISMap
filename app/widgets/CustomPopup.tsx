@@ -92,9 +92,11 @@ class CustomPopup extends declared(Widget) {
           left: ${screenPoint.x}px;
           top: ${screenPoint.y}px;
         `}>
+        <div class='popup-pointer-container'>
+          <div class='popup-pointer'></div>
+        </div>
         <div
           class='navigation-window custom-popup'>
-          <div class='popup-pointer'></div>
           {closeButton}
           {pageCounter}
           {content}
@@ -117,8 +119,6 @@ class CustomPopup extends declared(Widget) {
 
   private _changePage(amount: number) {
     if (this.features.length <= 0) return;
-    console.log('change page');
-    console.log(`${amount} and ${this.page}/${this.features.length}`);
     this.page += amount;
     this.page = this.page % this.features.length;
     if (this.page < 0) {
