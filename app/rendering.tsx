@@ -19,33 +19,39 @@ function spaceRendererInfo(): any {
   return {
     'R-Handicapped': {
       label: 'Handicapped Spaces',
+      description: 'Handicapped space',
       checked: 'checked',
       iconUrl: `${rootUrl()}/${iconsPath}/handicapped-space.png`
     },
     'R-Carpool': {
       label: 'Carpool Spaces',
+      description: 'Carpool space',
       iconUrl: `${rootUrl()}/${iconsPath}/carpool-space.png`
     },
     'R-State': {
       label: 'State Vehicle Spaces',
+      description: 'State vehicle space',
       iconUrl: `${rootUrl()}/${iconsPath}/state-space.png`
     },
     'Meter-Paystation': {
       label: 'Paystation Spaces',
+      description: 'Paystation space',
       iconUrl: `${rootUrl()}/${iconsPath}/paystation-space.png`
     },
     'Meter-Coin': {
       label: 'Meter Spaces',
+      description: 'Meter space',
       iconUrl: `${rootUrl()}/${iconsPath}/meter-space.png`
     },
     'R-EV Stations': {
       label: 'Electric Vehicle Charging Stations',
+      description: 'Electric vehicle charging station',
       iconUrl: `${rootUrl()}/${iconsPath}/electric-space.png`
     },
-    'R-Visitor': {label: 'Visitor Spaces'},
-    'R-Client': {label: 'Reserved Spaces'},
-    'R-15Min': {label: '15 Minute Spaces'},
-    'Other': {label: 'Other Spaces'}
+    'R-Visitor': {label: 'Visitor Spaces', description: 'Visitor space'},
+    'R-Client': {label: 'Reserved Spaces', description: 'Reserved space'},
+    'R-15Min': {label: '15 Minute Spaces', description: '15 minute space'},
+    'Other': {label: 'Other Spaces', description: 'Parking space'}
   };
 }
 

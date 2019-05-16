@@ -3,6 +3,8 @@ import { renderable, tsx } from "esri/widgets/support/widget";
 
 import WebMap = require('esri/WebMap');
 import watchUtils = require('esri/core/watchUtils');
+import Polygon = require('esri/geometry/Polygon');
+import Point = require('esri/geometry/Point');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
@@ -153,6 +155,7 @@ class MainNavigation extends declared(Widget) {
     this.popup.visible = false;
     this.popup.point = event.mapPoint;
     this.popup.features = [];
+    this.popup.page = 0;
 
     [
       this._getLayer('Sections'),
@@ -161,7 +164,8 @@ class MainNavigation extends declared(Widget) {
     ].forEach((layer) => {
       let query = layer.createQuery();
       // Query features that intersect the point from the click event
-      query.geometry = event.mapPoint;
+      query.geometry = this._circleAt(event.mapPoint);
+      //query.geometry = new Point({latitude: event.mapPoint.latitude, longitude: event.mapPoint.longitude});
       query.spatialRelationship = 'intersects';
 
       layer.queryFeatures(query)
@@ -173,6 +177,21 @@ class MainNavigation extends declared(Widget) {
       }, (error) => {
         console.error(error);
       });
+    });
+  }
+
+  private _circleAt(screenPoint: Point): Polygon {
+    const delta = [0.00003, 0.00003];
+    return new Polygon({
+      rings: [
+        [
+          [screenPoint.longitude - delta[1], screenPoint.latitude - delta[0]],
+          [screenPoint.longitude + delta[1], screenPoint.latitude - delta[0]],
+          [screenPoint.longitude + delta[1], screenPoint.latitude + delta[0]],
+          [screenPoint.longitude - delta[1], screenPoint.latitude + delta[0]],
+          [screenPoint.longitude - delta[1], screenPoint.latitude - delta[0]]
+        ]
+      ]
     });
   }
 }
