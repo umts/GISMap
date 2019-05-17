@@ -3,8 +3,11 @@ import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import Graphic = require('esri/Graphic');
 import Point = require('esri/geometry/Point');
+import GraphicsLayer = require('esri/layers/GraphicsLayer');
 import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
+import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
+import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
 import { spaceRendererInfo } from 'app/rendering';
 
@@ -54,6 +57,7 @@ class CustomPopup extends declared(Widget) {
   render() {
     let featureInfo;
     if (this.page >= 0 && this.page < this.features.length) {
+      this._updateSelectionGraphic();
       featureInfo = this._renderFeature(this.features[this.page]);
     }
 
@@ -139,6 +143,25 @@ class CustomPopup extends declared(Widget) {
     if (this.page < 0) {
       this.page += this.features.length;
     }
+  }
+
+  private _updateSelectionGraphic() {
+    const selectionLayer = this.view.map.layers.find((layer) => {
+      return layer.title === 'Selection';
+    }) as GraphicsLayer;
+    selectionLayer.removeAll();
+
+    if (!this.visible) return;
+
+    const graphic = this.features[this.page].clone();
+    graphic.symbol = new SimpleFillSymbol({
+      color: '#e6f2ff',
+      outline: new SimpleLineSymbol({
+        color: '#99ccff',
+        width: '3px'
+      })
+    });
+    selectionLayer.add(graphic);
   }
 
   /*
