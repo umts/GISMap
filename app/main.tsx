@@ -42,6 +42,7 @@ const view = new MapView({
   ui: {
     components: ["attribution"]
   },
+  // Don't use the default popups
   popup: null
 });
 

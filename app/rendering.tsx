@@ -48,8 +48,7 @@ function spaceRendererInfo(): any {
     },
     'R-Visitor': {label: 'Visitor Spaces', description: 'Visitor space'},
     'R-Client': {label: 'Reserved Spaces', description: 'Reserved space'},
-    'R-15Min': {label: '15 Minute Spaces', description: '15 minute space'},
-    'Other': {label: 'Other Spaces', description: 'Parking space'}
+    'R-15Min': {label: '15 Minute Spaces', description: '15 minute space'}
   };
 }
 
