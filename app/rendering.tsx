@@ -1,5 +1,4 @@
 import WebMap = require('esri/WebMap');
-import PopupTemplate = require('esri/PopupTemplate');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import LabelClass = require('esri/layers/support/LabelClass');
 import UniqueValueRenderer = require('esri/renderers/UniqueValueRenderer');
@@ -8,7 +7,6 @@ import Font = require('esri/symbols/Font');
 import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
 import TextSymbol = require('esri/symbols/TextSymbol');
-import MapView = require('esri/views/MapView');
 
 import { rootUrl } from 'app/url';
 

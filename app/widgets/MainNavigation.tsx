@@ -2,9 +2,7 @@ import { subclass, declared, property } from "esri/core/accessorSupport/decorato
 import { renderable, tsx } from "esri/widgets/support/widget";
 
 import WebMap = require('esri/WebMap');
-import watchUtils = require('esri/core/watchUtils');
 import Polygon = require('esri/geometry/Polygon');
-import Point = require('esri/geometry/Point');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
@@ -13,7 +11,6 @@ import LayerList = require("esri/widgets/LayerList");
 import Locate = require("esri/widgets/Locate");
 import Search = require("esri/widgets/Search");
 import Widget = require("esri/widgets/Widget");
-import Query = require('esri/tasks/support/Query');
 
 import CustomPopup = require('app/widgets/CustomPopup');
 import CustomWindow = require("app/widgets/CustomWindow");
@@ -95,7 +92,9 @@ class MainNavigation extends declared(Widget) {
     super();
   }
 
+  // Run after this widget is ready
   postInitialize() {
+    // Set up popup and popup event listener
     this.popup = new CustomPopup({view: this.view});
     this.view.on('click', (event) => { this._updatePopup(event) });
   }
@@ -150,6 +149,7 @@ class MainNavigation extends declared(Widget) {
     return document.getElementById('main-navigation');
   }
 
+  // Return a feature layer by title
   private _getLayer(name: string): FeatureLayer {
     return (this.view.map as WebMap).layers.find((layer) => {
       return layer.title === name;
@@ -172,7 +172,10 @@ class MainNavigation extends declared(Widget) {
       this._getLayer('Spaces')
     ].forEach((layer) => {
       let query = layer.createQuery();
-      // Query features that intersect the point from the click event
+      /*
+        Query features that intersect the circle around the point from
+        the click event.
+      */
       query.geometry = queryGeometry;
       query.spatialRelationship = 'intersects';
 

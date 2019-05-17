@@ -1,4 +1,3 @@
-import Basemap = require('esri/Basemap');
 import WebMap = require("esri/WebMap");
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require("esri/views/MapView");

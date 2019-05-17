@@ -192,6 +192,10 @@ body,
 .image-right {
   float: right;
 }
+.image-in-text {
+  vertical-align: middle;
+  padding: 0 0.4rem 0 0.4rem;
+}
 
 .validation-warning {
   background-color: #fc9c9c;
