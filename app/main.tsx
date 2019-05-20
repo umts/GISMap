@@ -1,5 +1,5 @@
 import WebMap = require("esri/WebMap");
-import RouteTask = require('esri/tasks/RouteTask');
+import SpatialReference = require('esri/geometry/SpatialReference');
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
 import Directions = require('esri/widgets/Directions');
@@ -9,16 +9,8 @@ import Locate = require("esri/widgets/Locate");
 import Print = require("esri/widgets/Print");
 import Search = require("esri/widgets/Search");
 
-import Graphic = require('esri/Graphic');
-import Point = require('esri/geometry/Point');
-import SpatialReference = require('esri/geometry/SpatialReference');
-import FeatureSet = require('esri/tasks/support/FeatureSet');
-import DirectionsViewModel = require('esri/widgets/Directions/DirectionsViewModel');
-import RouteParameters = require('esri/tasks/support/RouteParameters');
-
 import MainNavigation = require("app/widgets/MainNavigation");
 import CustomDirections = require("app/widgets/CustomDirections");
-import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
 import CustomSearch = require("app/widgets/CustomSearch");
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
@@ -28,9 +20,6 @@ import WindowExpand = require("app/widgets/WindowExpand");
 import { homeGoToOverride, umassLongLat } from "app/latLong";
 import { searchGoToOverride, searchSources } from "app/search";
 import { resetUrlTimer, updatePositionFromUrl } from "app/url";
-
-import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
-import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
 
 // Set the map to load data from our ArcGIS Online web map
 const map = new WebMap({
@@ -51,8 +40,7 @@ const view = new MapView({
   // Tell the view to only load the attribution widget by default
   ui: {
     components: ["attribution"]
-  },
-  popup: null
+  }
 });
 
 // Update the position of the view when the url hash changes
