@@ -1,15 +1,24 @@
 import WebMap = require("esri/WebMap");
+import RouteTask = require('esri/tasks/RouteTask');
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
-import Directions = require("esri/widgets/Directions");
+import Directions = require('esri/widgets/Directions');
 import Home = require("esri/widgets/Home");
 import LayerList = require("esri/widgets/LayerList");
 import Locate = require("esri/widgets/Locate");
 import Print = require("esri/widgets/Print");
 import Search = require("esri/widgets/Search");
 
+import Graphic = require('esri/Graphic');
+import Point = require('esri/geometry/Point');
+import SpatialReference = require('esri/geometry/SpatialReference');
+import FeatureSet = require('esri/tasks/support/FeatureSet');
+import DirectionsViewModel = require('esri/widgets/Directions/DirectionsViewModel');
+import RouteParameters = require('esri/tasks/support/RouteParameters');
+
 import MainNavigation = require("app/widgets/MainNavigation");
 import CustomDirections = require("app/widgets/CustomDirections");
+import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
 import CustomSearch = require("app/widgets/CustomSearch");
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
@@ -42,7 +51,8 @@ const view = new MapView({
   // Tell the view to only load the attribution widget by default
   ui: {
     components: ["attribution"]
-  }
+  },
+  popup: null
 });
 
 // Update the position of the view when the url hash changes
@@ -95,31 +105,18 @@ view.when(() => {
     })
   });
 
-  const directions = new Directions({
-    viewModel: {
-      routeServiceUrl: "https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route",
-      routeSymbol: new SimpleLineSymbol({
-        color: 'black',
-        width: '3px'
-      }),
-      routeParameters: {
-        useHierarchy: false,
-        returnDirections: true,
-        returnRoutes: false
-      },
-      stopSymbols: {
-        first: new SimpleMarkerSymbol({
-          color: 'black',
-          size: '16px',
-          outline: new SimpleLineSymbol({
-            color: 'white',
-            width: '1px'
-          })
-        })
-      },
-      view: view
-    }
+  const customPedestrianDirections = new Directions({
+    view: view,
+    routeServiceUrl: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route'
   });
+  /*
+    These parameters must be set outside the constructor. If we try to set
+    them on the view model within the constructor the widget will break.
+  */
+  // Pedestrian route service doesn't support hierarchy
+  customPedestrianDirections.viewModel.routeParameters.useHierarchy = false;
+  // Directions widget seems to want lat and lon
+  customPedestrianDirections.viewModel.routeParameters.outSpatialReference = new SpatialReference({wkid: 4326});
 
   /*
     Create a directions window that will be hidden until opened by a
@@ -129,12 +126,12 @@ view.when(() => {
     name: 'directions',
     widgets: [
       {
-        label: 'Directions',
+        label: 'Driving directions',
         widget: customDirections
       },
       {
         label: 'Walking directions',
-        widget: directions
+        widget: customPedestrianDirections
       }
     ]
   });
