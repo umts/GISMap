@@ -1,7 +1,8 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
-import WebMap = require('esri/WebMap');
+import FeatureLayer = require('esri/layers/FeatureLayer');
+import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
 import FilteredLayerList = require('app/widgets/FilteredLayerList');
@@ -9,6 +10,11 @@ import { spaceRendererInfo, sectionRendererInfo } from 'app/rendering';
 
 @subclass('esri.widgets.CustomLayerList')
 class CustomLayerList extends declared(Widget) {
+  // The map view
+  @property()
+  @renderable()
+  view: MapView
+
   // List of sections filtered by color into layers
   @property()
   @renderable()
@@ -20,17 +26,17 @@ class CustomLayerList extends declared(Widget) {
   spaceLayers: FilteredLayerList;
 
   // Pass in any properties
-  constructor(properties?: { map: WebMap }) {
+  constructor(properties?: { view: MapView }) {
     super();
     this.sectionLayers = new FilteredLayerList({
-      layer: properties.map.layers.find((layer: any) => {
+      layer: properties.view.map.layers.find((layer: any) => {
         return layer.title === 'Sections';
       }),
       filterColumnName: 'SectionColor',
       filterOptionInfos: sectionRendererInfo()
     });
     this.spaceLayers = new FilteredLayerList({
-      layer: properties.map.layers.find((layer: any) => {
+      layer: properties.view.map.layers.find((layer: any) => {
         return layer.title === 'Spaces';
       }),
       filterColumnName: 'ParkingSpaceSubCategory',
@@ -53,7 +59,7 @@ class CustomLayerList extends declared(Widget) {
               class='layer-checkbox-input'
               id='lots-checkbox'
               name='lots'
-              onchange={this._toggleAll}
+              onchange={this._checkboxEvent}
               type='checkbox'
               checked />
             Lots
@@ -62,18 +68,42 @@ class CustomLayerList extends declared(Widget) {
         <div class='indent-1'>
           {this.sectionLayers.render()}
         </div>
+        <div
+          bind={this}
+          class='layer-checkbox'
+          onclick={this._toggleCheckbox}
+          data-checkbox-id='lot-labels-checkbox'>
+          <label for='lot-labels' data-checkbox-id='lot-labels-checkbox'>
+            <input
+              bind={this}
+              class='layer-checkbox-input'
+              id='lot-labels-checkbox'
+              name='lot-labels'
+              onchange={this._checkboxEvent}
+              type='checkbox'
+              checked />
+            Lot Numbers
+          </label>
+        </div>
         {this.spaceLayers.render()}
       </div>
     );
   }
 
-  /*
-    Toggle all checkboxes in a filtered layer list based on which checkbox
-    the event is coming from.
-  */
-  private _toggleAll(event: any) {
+  // Given an event on a checkbox perform the corresponding event
+  private _checkboxEvent(event: any) {
     if (event.target.id === 'lots-checkbox') {
+      /*
+        Toggle all checkboxes in a filtered layer list based on which checkbox
+        the event is coming from.
+      */
       this.sectionLayers.toggleFilters(event.target.checked);
+    } else if (event.target.id === 'lot-labels-checkbox') {
+      // Toggle the visibility of the lot labels
+      const sectionsLayer = this.view.map.layers.find((layer) => {
+        return layer.title === 'Sections';
+      }) as FeatureLayer;
+      sectionsLayer.labelsVisible = event.target.checked;
     }
   }
 
@@ -90,7 +120,7 @@ class CustomLayerList extends declared(Widget) {
       } else {
         checkbox.checked = true;
       }
-      this._toggleAll({target: checkbox});
+      this._checkboxEvent({target: checkbox});
     }
   }
 }

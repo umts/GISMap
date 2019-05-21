@@ -79,7 +79,7 @@ view.when(() => {
       {
         label: 'Layers',
         widget: new CustomLayerList({
-          map: map
+          view: view
         })
       }
     ]
