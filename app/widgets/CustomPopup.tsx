@@ -167,13 +167,33 @@ class CustomPopup extends declared(Widget) {
     if (feature.attributes.ParkmobileZoneID) {
       parkmobile = <p>{parkmobileLink} Zone #: {feature.attributes.ParkmobileZoneID}</p>
     } else {
-      parkmobile = <p>No {parkmobileLink} available</p>
+      parkmobile = <p>No {parkmobileLink} available.</p>
     }
+
+    let permitInfo;
+    if (feature.attributes.SectionColor === 'Red') {
+      permitInfo = <p>Permits for this lot sold to faculty and staff only.</p>;
+    } else if (feature.attributes.SectionColor === 'Blue') {
+      permitInfo = <p>Permits for this lot sold to faculty,
+        staff and graduate students only.</p>;
+    } else if (feature.attributes.SectionColor === 'Green') {
+      permitInfo = <p>Permits for this lot sold to faculty,
+        staff, graduate students and non-residential students only.</p>;
+    } else if (feature.attributes.SectionColor === 'Yellow') {
+      permitInfo = <p>Permits for this lot sold to any
+        university community member.</p>;
+    } else if (feature.attributes.SectionColor === 'Purple') {
+      permitInfo = <p>Permits for this lot sold to residential students only.</p>;
+    } else if (feature.attributes.SectionColor === 'Pink') {
+      permitInfo = <p>Visitor and non-permit parking.</p>;
+    }
+
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
         <p class='widget-label'>
           {feature.attributes.SectionName} ({feature.attributes.SectionColor})
         </p>
+        {permitInfo}
         {parkmobile}
       </div>
     );
