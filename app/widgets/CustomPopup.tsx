@@ -153,6 +153,10 @@ class CustomPopup extends declared(Widget) {
     }
   }
 
+  /*
+    Clear the selection graphics layer then add a new graphic if an element
+    in this popup is still selected.
+  */
   private _updateSelectionGraphic() {
     const selectionLayer = this.view.map.layers.find((layer) => {
       return layer.title === 'Selection';

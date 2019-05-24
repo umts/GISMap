@@ -56,8 +56,10 @@ view.watch(["center", "zoom", "rotation"], () => { resetUrlTimer(view) });
 
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
+  // Set the default basemap
   map.basemap = Basemap.fromId('topo');
 
+  // Special layer for popup feature selection
   map.add(new GraphicsLayer({
     title: 'Selection'
   }));
