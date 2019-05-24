@@ -1,6 +1,9 @@
 import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
 import { renderable, tsx } from "esri/widgets/support/widget";
 
+import WebMap = require('esri/WebMap');
+import Polygon = require('esri/geometry/Polygon');
+import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
 import Home = require("esri/widgets/Home");
@@ -9,16 +12,32 @@ import Locate = require("esri/widgets/Locate");
 import Search = require("esri/widgets/Search");
 import Widget = require("esri/widgets/Widget");
 
+import CustomPopup = require('app/widgets/CustomPopup');
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom } from "app/widgets/CustomZoom";
 import WindowExpand = require("app/widgets/WindowExpand");
 
+interface ScreenPoint {
+  x: number;
+  y: number;
+}
+
 @subclass("esri.widgets.MainNavigation")
 class MainNavigation extends declared(Widget) {
+  // The main map view
+  @property()
+  @renderable()
+  view: MapView;
+
   // Compass widget
   @property()
   @renderable()
   compass: Compass;
+
+  // Single popup for the whole app
+  @property()
+  @renderable()
+  popup: CustomPopup;
 
   // Directions expand widget
   @property()
@@ -73,6 +92,13 @@ class MainNavigation extends declared(Widget) {
     super();
   }
 
+  // Run after this widget is ready
+  postInitialize() {
+    // Set up popup and popup event listener
+    this.popup = new CustomPopup({view: this.view});
+    this.view.on('click', (event) => { this._updatePopup(event) });
+  }
+
   // Render this widget by returning JSX which is converted to HTML
   render() {
     let renderedWindows = [];
@@ -114,12 +140,83 @@ class MainNavigation extends declared(Widget) {
           </div>
         </div>
         {renderedWindows}
+        {this.popup.render()}
       </div>
     );
   }
 
   private _element(): HTMLElement {
     return document.getElementById('main-navigation');
+  }
+
+  // Return a feature layer by title
+  private _getLayer(name: string): FeatureLayer {
+    return (this.view.map as WebMap).layers.find((layer) => {
+      return layer.title === name;
+    }) as FeatureLayer;
+  }
+
+  // Update the popup widget based on a mouse click event
+  private _updatePopup(event: any) {
+    // Reset popup variables
+    this.popup.visible = false;
+    this.popup.point = event.mapPoint;
+    this.popup.features = [];
+    this.popup.page = 0;
+
+    const queryGeometry = this._circleAt(event.screenPoint);
+
+    [
+      this._getLayer('Sections'),
+      this._getLayer('Campus Buildings'),
+      this._getLayer('Spaces')
+    ].forEach((layer) => {
+      let query = layer.createQuery();
+      /*
+        Query features that intersect the circle around the point from
+        the click event.
+      */
+      query.geometry = queryGeometry;
+      query.spatialRelationship = 'intersects';
+
+      layer.queryFeatures(query)
+      .then((results) => {
+        if (results.features.length > 0) {
+          // Add more features to the popup
+          this.popup.features = this.popup.features.concat(results.features);
+          this.popup.visible = true;
+        }
+      }, (error) => {
+        console.error(error);
+      });
+    });
+  }
+
+  /*
+    Generate a 'circle' in latitude/longitude given a point on the screen in
+    pixels.
+  */
+  private _circleAt(screenPoint: ScreenPoint): Polygon {
+    const delta = 16;
+    const screenVertices: Array<ScreenPoint> = [
+      {x: screenPoint.x - delta, y: screenPoint.y - delta},
+      {x: screenPoint.x + delta, y: screenPoint.y - delta},
+      {x: screenPoint.x + delta, y: screenPoint.y + delta},
+      {x: screenPoint.x - delta, y: screenPoint.y + delta}
+    ]
+
+    const mapVertices = screenVertices.map((screenPoint) => {
+      const mapPoint = this.view.toMap(screenPoint);
+      /*
+        Explicitly grab lat/lon or else the polygon will try to convert back
+        to the MA spatial reference.
+      */
+      return [mapPoint.longitude, mapPoint.latitude];
+    });
+    let circle = new Polygon();
+    // Polygon ring requires the final point to be the same as the first
+    circle.addRing(mapVertices.concat([mapVertices[0]]));
+    return circle;
   }
 }
 

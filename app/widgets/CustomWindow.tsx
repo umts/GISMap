@@ -2,6 +2,7 @@ import { subclass, declared, property } from "esri/core/accessorSupport/decorato
 import { renderable, tsx } from "esri/widgets/support/widget";
 
 import Widget = require("esri/widgets/Widget");
+import { getElementStyleSize } from 'app/rendering';
 
 // Interface for objects with a render method
 interface RenderableWidget {
@@ -12,21 +13,6 @@ interface RenderableWidget {
 interface WidgetWithLabel {
   label: string;
   widget: RenderableWidget;
-}
-
-/*
-  Return the current padding or margin in pixels of an element assuming the
-  padding or margin is uniform on every side.
-*/
-function getElementStyleSize(element: Element, property: string): number {
-  if (['padding', 'margin'].indexOf(property) > -1) {
-    return Number(
-      window.getComputedStyle(element)
-        .getPropertyValue(`${property}-top`).slice(0, -2)
-      );
-  } else {
-    return 0;
-  }
 }
 
 @subclass("esri.widgets.CustomWindow")

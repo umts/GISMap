@@ -1,9 +1,14 @@
 import WebMap = require('esri/WebMap');
-import FeatureLayer = require('esri/layers/FeatureLayer')
+import FeatureLayer = require('esri/layers/FeatureLayer');
+import LabelClass = require('esri/layers/support/LabelClass');
 import UniqueValueRenderer = require('esri/renderers/UniqueValueRenderer');
+import PictureMarkerSymbol = require('esri/symbols/PictureMarkerSymbol');
+import Font = require('esri/symbols/Font');
 import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
-import PictureMarkerSymbol = require('esri/symbols/PictureMarkerSymbol');
+import TextSymbol = require('esri/symbols/TextSymbol');
+
+import { rootUrl } from 'app/url';
 
 const iconsPath = 'assets/icons';
 
@@ -12,33 +17,38 @@ function spaceRendererInfo(): any {
   return {
     'R-Handicapped': {
       label: 'Handicapped Spaces',
+      description: 'Handicapped space',
       checked: 'checked',
-      iconUrl: `${iconsPath}/handicapped-space.png`
+      iconUrl: `${rootUrl()}/${iconsPath}/handicapped-space.png`
     },
     'R-Carpool': {
       label: 'Carpool Spaces',
-      iconUrl: `${iconsPath}/carpool-space.png`
+      description: 'Carpool space',
+      iconUrl: `${rootUrl()}/${iconsPath}/carpool-space.png`
     },
     'R-State': {
       label: 'State Vehicle Spaces',
-      iconUrl: `${iconsPath}/state-space.png`
+      description: 'State vehicle space',
+      iconUrl: `${rootUrl()}/${iconsPath}/state-space.png`
     },
     'Meter-Paystation': {
       label: 'Paystation Spaces',
-      iconUrl: `${iconsPath}/paystation-space.png`
+      description: 'Paystation space',
+      iconUrl: `${rootUrl()}/${iconsPath}/paystation-space.png`
     },
     'Meter-Coin': {
       label: 'Meter Spaces',
-      iconUrl: `${iconsPath}/meter-space.png`
+      description: 'Meter space',
+      iconUrl: `${rootUrl()}/${iconsPath}/meter-space.png`
     },
     'R-EV Stations': {
       label: 'Electric Vehicle Charging Stations',
-      iconUrl: `${iconsPath}/electric-space.png`
+      description: 'Electric vehicle charging station',
+      iconUrl: `${rootUrl()}/${iconsPath}/electric-space.png`
     },
-    'R-Visitor': {label: 'Visitor Spaces'},
-    'R-Client': {label: 'Reserved Spaces'},
-    'R-15Min': {label: '15 Minute Spaces'},
-    'Other': {label: 'Other Spaces'}
+    'R-Visitor': {label: 'Visitor Spaces', description: 'Visitor space'},
+    'R-Client': {label: 'Reserved Spaces', description: 'Reserved space'},
+    'R-15Min': {label: '15 Minute Spaces', description: '15 minute space'}
   };
 }
 
@@ -90,13 +100,15 @@ function updateRenderers(map: WebMap) {
         width: '1px'
       })
     }),
+    defaultLabel: 'Other Spaces',
     uniqueValueInfos: Object.keys(spaceRendererInfo()).map((spaceCategory) => {
-      const iconUrl = spaceRendererInfo()[spaceCategory].iconUrl;
-      if (iconUrl) {
+      const rendererInfo = spaceRendererInfo()[spaceCategory];
+      if (rendererInfo.iconUrl) {
         return {
           value: spaceCategory,
+          label: rendererInfo.label,
           symbol: new PictureMarkerSymbol({
-            url: iconUrl,
+            url: rendererInfo.iconUrl,
             width: '24px',
             height: '24px'
           })
@@ -107,12 +119,57 @@ function updateRenderers(map: WebMap) {
   });
   const spacesLayer = map.layers.find((layer) => {
     return layer.title === 'Spaces';
-  }) as FeatureLayer
+  }) as FeatureLayer;
   spacesLayer.renderer = spaceRenderer;
+}
+
+// Update the labeling of layers
+function updateLabeling(map: WebMap) {
+  const sectionLabel = new LabelClass({
+    labelExpressionInfo: {
+      expression: 'IIf($feature.SectionColor != "Pink", $feature.SectionName, "")'
+    },
+    labelPlacement: 'always-horizontal',
+    symbol: new TextSymbol({
+      color: 'black',
+      haloColor: 'white',
+      haloSize: '1px',
+      font: new Font({
+        size: 12,
+        family: 'sans-serif',
+        weight: 'bold'
+      })
+    })
+  });
+  const sectionsLayer = map.layers.find((layer) => {
+    return layer.title === 'Sections';
+  }) as FeatureLayer;
+  sectionsLayer.labelingInfo = [sectionLabel];
+}
+
+/*
+  Return the current padding or margin in pixels of an element assuming the
+  padding or margin is uniform on every side.
+*/
+function getElementStyleSize(element: Element, property: string): number {
+  if (['padding', 'margin'].indexOf(property) > -1) {
+    return Number(
+      window.getComputedStyle(element)
+        .getPropertyValue(`${property}-top`).slice(0, -2)
+      );
+  } else {
+    return 0;
+  }
 }
 
 /*
   Export helper functions related to rendering so they can be
   imported and used in other files.
 */
-export { updateRenderers, spaceRendererInfo, sectionRendererInfo };
+export {
+  updateRenderers,
+  updateLabeling,
+  spaceRendererInfo,
+  sectionRendererInfo,
+  getElementStyleSize
+};
