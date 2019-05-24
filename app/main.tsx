@@ -1,6 +1,7 @@
 import Basemap = require('esri/Basemap');
 import WebMap = require("esri/WebMap");
 import FeatureLayer = require('esri/layers/FeatureLayer');
+import GraphicsLayer = require('esri/layers/GraphicsLayer');
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
 import Home = require("esri/widgets/Home");
@@ -56,6 +57,10 @@ view.watch(["center", "zoom", "rotation"], () => { resetUrlTimer(view) });
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
   map.basemap = Basemap.fromId('topo');
+
+  map.add(new GraphicsLayer({
+    title: 'Selection'
+  }));
 
   // Set the url hash based on the initial view
   resetUrlTimer(view);
