@@ -117,6 +117,14 @@ class CustomPopup extends declared(Widget) {
     );
   }
 
+  // Reset variables, hide selection
+  reset() {
+    this.visible = false;
+    this.features = [];
+    this.page = 0;
+    this._updateSelectionGraphic();
+  }
+
   // Close this popup by hiding it
   private _close() {
     this.visible = false;
@@ -193,20 +201,25 @@ class CustomPopup extends declared(Widget) {
       parkmobile = <p>No {parkmobileLink} available.</p>
     }
 
+    const permitLink = (
+      <a target='_blank' href='https://umass.t2hosted.com/cmn/auth_ext.aspx'>
+        Permits
+      </a>
+    );
     let permitInfo;
     if (feature.attributes.SectionColor === 'Red') {
-      permitInfo = <p>Permits for this lot sold to faculty and staff only.</p>;
+      permitInfo = <p>{permitLink} for this lot sold to faculty and staff only.</p>;
     } else if (feature.attributes.SectionColor === 'Blue') {
-      permitInfo = <p>Permits for this lot sold to faculty,
+      permitInfo = <p>{permitLink} for this lot sold to faculty,
         staff and graduate students only.</p>;
     } else if (feature.attributes.SectionColor === 'Green') {
-      permitInfo = <p>Permits for this lot sold to faculty,
+      permitInfo = <p>{permitLink} for this lot sold to faculty,
         staff, graduate students and non-residential students only.</p>;
     } else if (feature.attributes.SectionColor === 'Yellow') {
-      permitInfo = <p>Permits for this lot sold to any
+      permitInfo = <p>{permitLink} for this lot sold to any
         university community member.</p>;
     } else if (feature.attributes.SectionColor === 'Purple') {
-      permitInfo = <p>Permits for this lot sold to residential students only.</p>;
+      permitInfo = <p>{permitLink} for this lot sold to residential students only.</p>;
     } else if (feature.attributes.SectionColor === 'Pink') {
       permitInfo = <p>Visitor and non-permit parking.</p>;
     }
