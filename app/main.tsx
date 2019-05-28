@@ -1,9 +1,11 @@
 import Basemap = require('esri/Basemap');
 import WebMap = require("esri/WebMap");
+import SpatialReference = require('esri/geometry/SpatialReference');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
+import Directions = require('esri/widgets/Directions');
 import Home = require("esri/widgets/Home");
 import LayerList = require("esri/widgets/LayerList");
 import Locate = require("esri/widgets/Locate");
@@ -116,6 +118,19 @@ view.when(() => {
     })
   });
 
+  const customPedestrianDirections = new Directions({
+    view: view,
+    routeServiceUrl: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route'
+  });
+  /*
+    These parameters must be set outside the constructor. If we try to set
+    them on the view model within the constructor the widget will break.
+  */
+  // Pedestrian route service doesn't support hierarchy
+  customPedestrianDirections.viewModel.routeParameters.useHierarchy = false;
+  // Directions widget seems to want lat and lon
+  customPedestrianDirections.viewModel.routeParameters.outSpatialReference = new SpatialReference({wkid: 4326});
+
   /*
     Create a directions window that will be hidden until opened by a
     window expand.
@@ -124,8 +139,12 @@ view.when(() => {
     name: 'directions',
     widgets: [
       {
-        label: 'Directions',
+        label: 'Driving directions',
         widget: customDirections
+      },
+      {
+        label: 'Walking directions',
+        widget: customPedestrianDirections
       }
     ]
   });
