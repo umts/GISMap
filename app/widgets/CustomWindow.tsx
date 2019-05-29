@@ -25,13 +25,22 @@ class CustomWindow extends declared(Widget) {
   @renderable()
   name: string;
 
+  // The name of the esri icon class to use
+  @property()
+  @renderable()
+  iconName: string;
+
   // The widgets to render in this window
   @property()
   @renderable()
   widgets: Array<WidgetWithLabel>;
 
   // Pass in a name and an explicit array of widgets
-  constructor(properties?: { name: string, widgets: Array<WidgetWithLabel> }) {
+  constructor(properties?: {
+    name: string,
+    iconName: string,
+    widgets: Array<WidgetWithLabel>
+  }) {
     super();
   }
 
@@ -46,7 +55,17 @@ class CustomWindow extends declared(Widget) {
       const widgetWithLabel = this.widgets[i];
       // Only render the label if it exists
       if (widgetWithLabel.label !== "") {
-        renderedElements.push(<p class="widget-label">{widgetWithLabel.label}</p>);
+        let widgetLabel = <p class="widget-label">{widgetWithLabel.label}</p>;
+        if (i === 0) {
+          widgetLabel = (
+            <p class="widget-label">
+              <span class={`widget-label-icon esri-icon esri-icon-${this.iconName}`}>
+              </span>
+              {widgetWithLabel.label}
+            </p>
+          );
+        }
+        renderedElements.push(widgetLabel);
       }
       renderedElements.push(widgetWithLabel.widget.render());
     }
