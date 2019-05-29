@@ -141,10 +141,31 @@ function updateLabeling(map: WebMap) {
       })
     })
   });
+  const buildingLabel = new LabelClass({
+    labelExpressionInfo: {
+      expression: '$feature.Building_Name'
+    },
+    labelPlacement: 'always-horizontal',
+    symbol: new TextSymbol({
+      color: 'white',
+      haloColor: 'black',
+      haloSize: '1px',
+      font: new Font({
+        size: 10,
+        family: 'sans-serif',
+        weight: 'bold'
+      })
+    })
+  });
+
   const sectionsLayer = map.layers.find((layer) => {
     return layer.title === 'Sections';
   }) as FeatureLayer;
   sectionsLayer.labelingInfo = [sectionLabel];
+  const buildingsLayer = map.layers.find((layer) => {
+    return layer.title === 'Campus Buildings';
+  }) as FeatureLayer;
+  buildingsLayer.labelingInfo = [buildingLabel];
 }
 
 /*

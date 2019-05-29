@@ -159,10 +159,8 @@ class MainNavigation extends declared(Widget) {
   // Update the popup widget based on a mouse click event
   private _updatePopup(event: any) {
     // Reset popup variables
-    this.popup.visible = false;
+    this.popup.reset();
     this.popup.point = event.mapPoint;
-    this.popup.features = [];
-    this.popup.page = 0;
 
     const queryGeometry = this._circleAt(event.screenPoint);
 

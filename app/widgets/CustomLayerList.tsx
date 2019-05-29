@@ -48,44 +48,35 @@ class CustomLayerList extends declared(Widget) {
   render() {
     return (
       <div>
-        <div
-          bind={this}
-          class='layer-checkbox'
-          onclick={this._toggleCheckbox}
-          data-checkbox-id='lots-checkbox'>
-          <label for='lots' data-checkbox-id='lots-checkbox'>
-            <input
-              bind={this}
-              class='layer-checkbox-input'
-              id='lots-checkbox'
-              name='lots'
-              onchange={this._checkboxEvent}
-              type='checkbox'
-              checked />
-            Lots
-          </label>
-        </div>
+        {this._renderCustomCheckbox('lots', 'Lots')}
         <div class='indent-1'>
           {this.sectionLayers.render()}
         </div>
-        <div
-          bind={this}
-          class='layer-checkbox'
-          onclick={this._toggleCheckbox}
-          data-checkbox-id='lot-labels-checkbox'>
-          <label for='lot-labels' data-checkbox-id='lot-labels-checkbox'>
-            <input
-              bind={this}
-              class='layer-checkbox-input'
-              id='lot-labels-checkbox'
-              name='lot-labels'
-              onchange={this._checkboxEvent}
-              type='checkbox'
-              checked />
-            Lot Numbers
-          </label>
-        </div>
+        {this._renderCustomCheckbox('lot-labels', 'Lot Numbers')}
+        {this._renderCustomCheckbox('building-labels', 'Building Names')}
         {this.spaceLayers.render()}
+      </div>
+    );
+  }
+
+  private _renderCustomCheckbox(uniqueId: string, text: string): JSX.Element {
+    return (
+      <div
+        bind={this}
+        class='layer-checkbox'
+        onclick={this._toggleCheckbox}
+        data-checkbox-id={`${uniqueId}-checkbox`}>
+        <label for={uniqueId} data-checkbox-id={`${uniqueId}-checkbox`}>
+          <input
+            bind={this}
+            class='layer-checkbox-input'
+            id={`${uniqueId}-checkbox`}
+            name={uniqueId}
+            onchange={this._checkboxEvent}
+            type='checkbox'
+            checked />
+          {text}
+        </label>
       </div>
     );
   }
@@ -104,6 +95,12 @@ class CustomLayerList extends declared(Widget) {
         return layer.title === 'Sections';
       }) as FeatureLayer;
       sectionsLayer.labelsVisible = event.target.checked;
+    } else if (event.target.id === 'building-labels-checkbox') {
+      // Toggle the visibility of the lot labels
+      const buildingsLayer = this.view.map.layers.find((layer) => {
+        return layer.title === 'Campus Buildings';
+      }) as FeatureLayer;
+      buildingsLayer.labelsVisible = event.target.checked;
     }
   }
 

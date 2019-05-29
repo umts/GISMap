@@ -3,8 +3,11 @@ import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import Graphic = require('esri/Graphic');
 import Point = require('esri/geometry/Point');
+import GraphicsLayer = require('esri/layers/GraphicsLayer');
 import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
+import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
+import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
 import { spaceRendererInfo } from 'app/rendering';
 
@@ -54,6 +57,7 @@ class CustomPopup extends declared(Widget) {
   render() {
     let featureInfo;
     if (this.page >= 0 && this.page < this.features.length) {
+      this._updateSelectionGraphic();
       featureInfo = this._renderFeature(this.features[this.page]);
     }
 
@@ -113,6 +117,14 @@ class CustomPopup extends declared(Widget) {
     );
   }
 
+  // Reset variables, hide selection
+  reset() {
+    this.visible = false;
+    this.features = [];
+    this.page = 0;
+    this._updateSelectionGraphic();
+  }
+
   // Close this popup by hiding it
   private _close() {
     this.visible = false;
@@ -142,6 +154,29 @@ class CustomPopup extends declared(Widget) {
   }
 
   /*
+    Clear the selection graphics layer then add a new graphic if an element
+    in this popup is still selected.
+  */
+  private _updateSelectionGraphic() {
+    const selectionLayer = this.view.map.layers.find((layer) => {
+      return layer.title === 'Selection';
+    }) as GraphicsLayer;
+    selectionLayer.removeAll();
+
+    if (!this.visible) return;
+
+    const graphic = this.features[this.page].clone();
+    graphic.symbol = new SimpleFillSymbol({
+      color: '#e6f2ff',
+      outline: new SimpleLineSymbol({
+        color: '#99ccff',
+        width: '3px'
+      })
+    });
+    selectionLayer.add(graphic);
+  }
+
+  /*
     Return a JSX element describing the feature. Note that each div has to
     have its own unique key attribute for rendering, otherwise it errors.
   */
@@ -167,13 +202,38 @@ class CustomPopup extends declared(Widget) {
     if (feature.attributes.ParkmobileZoneID) {
       parkmobile = <p>{parkmobileLink} Zone #: {feature.attributes.ParkmobileZoneID}</p>
     } else {
-      parkmobile = <p>No {parkmobileLink} available</p>
+      parkmobile = <p>No {parkmobileLink} available.</p>
     }
+
+    const permitLink = (
+      <a target='_blank' href='https://umass.t2hosted.com/cmn/auth_ext.aspx'>
+        Permits
+      </a>
+    );
+    let permitInfo;
+    if (feature.attributes.SectionColor === 'Red') {
+      permitInfo = <p>{permitLink} for this lot sold to faculty and staff only.</p>;
+    } else if (feature.attributes.SectionColor === 'Blue') {
+      permitInfo = <p>{permitLink} for this lot sold to faculty,
+        staff and graduate students only.</p>;
+    } else if (feature.attributes.SectionColor === 'Green') {
+      permitInfo = <p>{permitLink} for this lot sold to faculty,
+        staff, graduate students and non-residential students only.</p>;
+    } else if (feature.attributes.SectionColor === 'Yellow') {
+      permitInfo = <p>{permitLink} for this lot sold to any
+        university community member.</p>;
+    } else if (feature.attributes.SectionColor === 'Purple') {
+      permitInfo = <p>{permitLink} for this lot sold to residential students only.</p>;
+    } else if (feature.attributes.SectionColor === 'Pink') {
+      permitInfo = <p>Visitor and non-permit parking.</p>;
+    }
+
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
         <p class='widget-label'>
           {feature.attributes.SectionName} ({feature.attributes.SectionColor})
         </p>
+        {permitInfo}
         {parkmobile}
       </div>
     );
