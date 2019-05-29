@@ -193,14 +193,25 @@ class CustomPopup extends declared(Widget) {
 
   // Return a JSX element describing a section
   private _renderSection(feature: Graphic): JSX.Element {
+    let title;
+    if (feature.attributes.SectionColor) {
+      title = <p class='widget-label'>
+        {feature.attributes.SectionName} ({feature.attributes.SectionColor})
+      </p>;
+    } else {
+      title = <p class='widget-label'>
+        {feature.attributes.SectionName}
+      </p>;
+    }
+
     const parkmobileLink = (
-      <a target='_blank' href='https://parkmobile.io/'>
-        Parkmobile
+      <a target='_blank' href='https://www.umass.edu/transportation/pay-cell-parkmobile'>
+        ParkMobile
       </a>
     );
     let parkmobile;
     if (feature.attributes.ParkmobileZoneID) {
-      parkmobile = <p>{parkmobileLink} Zone #: {feature.attributes.ParkmobileZoneID}</p>
+      parkmobile = <p>{parkmobileLink} Zone {feature.attributes.ParkmobileZoneID}</p>
     } else {
       parkmobile = <p>No {parkmobileLink} available.</p>
     }
@@ -230,9 +241,7 @@ class CustomPopup extends declared(Widget) {
 
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
-        <p class='widget-label'>
-          {feature.attributes.SectionName} ({feature.attributes.SectionColor})
-        </p>
+        {title}
         {permitInfo}
         {parkmobile}
       </div>
