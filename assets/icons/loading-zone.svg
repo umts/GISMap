@@ -30,10 +30,10 @@
      id="namedview11"
      showgrid="false"
      inkscape:zoom="9.8461543"
-     inkscape:cx="-5.6716162"
-     inkscape:cy="20.675781"
-     inkscape:window-x="202"
-     inkscape:window-y="87"
+     inkscape:cx="13.219008"
+     inkscape:cy="16.613281"
+     inkscape:window-x="316"
+     inkscape:window-y="129"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <metadata
@@ -44,7 +44,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -71,5 +71,5 @@
        id="tspan4143"
        x="6.8046875"
        y="17.976562"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:17.5px;font-family:Arial;-inkscape-font-specification:Arial;fill:#ffffff;fill-opacity:1">L</tspan></text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:17.5px;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#ffffff;fill-opacity:1">L</tspan></text>
 </svg>
