@@ -9,9 +9,9 @@ import Compass = require("esri/widgets/Compass");
 import Home = require("esri/widgets/Home");
 import LayerList = require("esri/widgets/LayerList");
 import Locate = require("esri/widgets/Locate");
-import Search = require("esri/widgets/Search");
 import Widget = require("esri/widgets/Widget");
 
+import CustomSearch = require('app/widgets/CustomSearch');
 import CustomPopup = require('app/widgets/CustomPopup');
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom } from "app/widgets/CustomZoom";
@@ -72,7 +72,7 @@ class MainNavigation extends declared(Widget) {
   // Search widget
   @property()
   @renderable()
-  search: Search;
+  search: CustomSearch;
 
   // Share expand widget
   @property()
@@ -124,7 +124,9 @@ class MainNavigation extends declared(Widget) {
     return (
       <div id="main-navigation">
         <div id="main-navigation-window" class="navigation-window">
-          {this.search.render()}
+          <div class='form-row'>
+            {this.search.render()}
+          </div>
 
           <div id="widgets-list">
             <ul>

@@ -10,7 +10,6 @@ import Home = require("esri/widgets/Home");
 import LayerList = require("esri/widgets/LayerList");
 import Locate = require("esri/widgets/Locate");
 import Print = require("esri/widgets/Print");
-import Search = require("esri/widgets/Search");
 
 import MainNavigation = require("app/widgets/MainNavigation");
 import CustomDirections = require("app/widgets/CustomDirections");
@@ -23,7 +22,6 @@ import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
 import { homeGoToOverride, umassLongLat } from "app/latLong";
 import { updateRenderers, updateLabeling } from 'app/rendering';
-import { searchGoToOverride, searchSources } from "app/search";
 import { resetUrlTimer, updatePositionFromUrl } from "app/url";
 
 // Set the map to load data from our ArcGIS Online web map
@@ -97,24 +95,14 @@ view.when(() => {
     ]
   });
 
-  const searchProperties = {
-    view: view,
-    includeDefaultSources: false,
-    popupEnabled: false,
-    goToOverride: searchGoToOverride,
-    sources: searchSources()
-  };
-
   const customDirections = new CustomDirections({
     startSearch: new CustomSearch({
       name: 'directions-origin',
-      placeholder: 'Origin',
-      search: new Search(searchProperties)
+      placeholder: 'Origin'
     }),
     endSearch: new CustomSearch({
       name: 'directions-destination',
-      placeholder: 'Destination',
-      search: new Search(searchProperties)
+      placeholder: 'Destination'
     })
   });
 
@@ -202,7 +190,10 @@ view.when(() => {
       view: view,
       direction: ZoomDirection.Out
     }),
-    search: new Search(searchProperties),
+    search: new CustomSearch({
+      name: 'main',
+      placeholder: 'Search'
+    }),
     shareExpand: new WindowExpand({
       name: 'share',
       iconName: 'link'

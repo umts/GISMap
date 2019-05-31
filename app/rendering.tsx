@@ -88,6 +88,21 @@ function sectionRendererInfo(): any {
   };
 }
 
+function filterInfo(): any {
+  return {
+    'Sections': {
+      'Red lots': {
+        definitionExpression: "SectionColor = 'Red'",
+        subFilters: {
+          'Lot 41': {
+            definitionExpression: "SectionName = 'Lot 41'"
+          }
+        }
+      }
+    }
+  };
+}
+
 // Update the renderers of layers to add our own icons
 function updateRenderers(map: WebMap) {
   const spaceRenderer = new UniqueValueRenderer({

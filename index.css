@@ -88,10 +88,10 @@ body,
 
 #widgets-list ul li.widget-list-item {
   display: inline-block;
-  padding: 0 0.4rem 0.4rem 0;
+  margin: 0 0.4rem 0.4rem 0;
 }
 #widgets-list ul li.widget-list-item:last-of-type {
-  padding: 0 0 0.4rem 0;
+  margin: 0 0 0.4rem 0;
 }
 
 .horizontal-list-item {
@@ -143,6 +143,7 @@ body,
   width: 100%;
   border: 1px solid #881c1c;
   border-radius: 0;
+  box-sizing: border-box;
 }
 .esri-search {
   width: 100%;
@@ -150,6 +151,7 @@ body,
 }
 .custom-search-container {
   position: relative;
+  z-index: 1;
 }
 .custom-search-pane {
   position: absolute;
