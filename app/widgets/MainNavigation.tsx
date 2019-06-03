@@ -124,9 +124,7 @@ class MainNavigation extends declared(Widget) {
     return (
       <div id="main-navigation">
         <div id="main-navigation-window" class="navigation-window">
-          <div class='form-row'>
-            {this.search.render()}
-          </div>
+          {this.search.render()}
 
           <div id="widgets-list">
             <ul>

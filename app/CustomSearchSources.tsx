@@ -100,6 +100,7 @@ class CustomSearchSources extends declared(Accessor) {
           const topResult = response.data.candidates[0];
           searchResult = {
             name: topResult.address,
+            sourceType: SearchSourceType.Location,
             latitude: topResult.location.y,
             longitude: topResult.location.x
           };

@@ -14,6 +14,7 @@ interface Suggestion {
 // Everything needed to store what a user has searched
 interface SearchResult {
   name: string;
+  sourceType: SearchSourceType;
   latitude?: number;
   longitude?: number;
 }

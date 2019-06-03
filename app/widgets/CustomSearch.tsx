@@ -1,14 +1,20 @@
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
-import { renderable, tsx } from "esri/widgets/support/widget";
+import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { renderable, tsx } from 'esri/widgets/support/widget';
 
+import MapView = require('esri/views/MapView');
 import Search = require('esri/widgets/Search');
 import Widget = require('esri/widgets/Widget');
 
-import { SearchResult, Suggestion } from 'app/search';
+import { SearchSourceType, SearchResult, Suggestion } from 'app/search';
 import CustomSearchSources = require('app/CustomSearchSources');
 
-@subclass("esri.widgets.CustomSearch")
+@subclass('esri.widgets.CustomSearch')
 class CustomSearch extends declared(Widget) {
+  // The main map view
+  @property()
+  @renderable()
+  view: MapView;
+
   // Name used to uniquely identify elements
   @property()
   @renderable()
@@ -37,8 +43,13 @@ class CustomSearch extends declared(Widget) {
   @property()
   sources: CustomSearchSources;
 
+  // Whether or not this input should be required in a form
   @property()
   required: boolean;
+
+  // Whether or not this is the main search bar for the entire app
+  @property()
+  mainSearch: boolean;
 
   // Pass in any properties
   constructor(properties?: any) {
@@ -47,6 +58,17 @@ class CustomSearch extends declared(Widget) {
     this.suggestions = [];
     this.showSuggestions = false;
     this.required = properties.required || false;
+    this.mainSearch = properties.mainSearch || false;
+
+    window.addEventListener('keydown', (event) => {
+      // Do nothing if the event was already processed
+      if (event.defaultPrevented) {
+        return;
+      }
+      if (event.key === 'Escape') {
+        this._hideSuggestions();
+      }
+    });
   }
 
   // Render this widget by returning JSX which is converted to HTML
@@ -85,22 +107,52 @@ class CustomSearch extends declared(Widget) {
       });
     }
 
+    let clearButton;
+    if (this.mainSearch) {
+      clearButton = (
+        <div
+          bind={this}
+          class='esri-widget esri-widget--button'
+          onclick={this._hideSuggestions}
+          tabindex='0'
+          title='Clear search'>
+          <span class='esri-icon esri-icon-close'></span>
+        </div>
+      );
+    }
+
+    let mainElement;
+    const input = (
+      <input
+        bind={this}
+        class='esri-input'
+        id={this.name}
+        oninput={this._setSuggestions}
+        onfocus={this._showSuggestions}
+        onblur={this._hideSuggestions}
+        placeholder={this.placeholder}
+        type='text'
+        required={this.required} />
+    );
+    mainElement = input;
+    if (this.mainSearch) {
+      mainElement = (
+        <form bind={this} onsubmit={this._submitSearch}>
+          <div class='form-row'>
+            {input}
+            {clearButton}
+          </div>
+        </form>
+      );
+    }
+
     return (
       <div
         bind={this}
         onfocus={this._showSuggestions}
         onblur={this._hideSuggestions}
         tabindex="-1">
-        <input
-          bind={this}
-          class='esri-input'
-          id={this.name}
-          oninput={this._setSuggestions}
-          onfocus={this._showSuggestions}
-          onblur={this._hideSuggestions}
-          placeholder={this.placeholder}
-          type='text'
-          required={this.required} />
+        {mainElement}
         <div class='custom-search-container'>
           <div class='custom-search-pane'>
             {suggestionElements}
@@ -129,6 +181,26 @@ class CustomSearch extends declared(Widget) {
   // Hide the validation warning
   private _hideWarning() {
     this._warningElement().classList.add("hide");
+  }
+
+  private _submitSearch() {
+    if (this.searchResult) {
+      if (this.searchResult.sourceType === SearchSourceType.Location) {
+        this.view.goTo({
+          target: [this.searchResult.longitude, this.searchResult.latitude],
+          zoom: 18
+        });
+        this._hideSuggestions();
+      }
+    } else {
+      for (let i = 0; i < this.suggestions.length; i += 1) {
+        const suggestion = this.suggestions[i];
+        if (suggestion.sourceType === SearchSourceType.Location) {
+          this._setSearch(suggestion);
+          break;
+        }
+      }
+    }
   }
 
   // Update suggestions based on the most recent input
@@ -164,6 +236,10 @@ class CustomSearch extends declared(Widget) {
         .value = this.searchResult.name;
       this._hideSuggestions();
       this._hideWarning();
+      // When this is the main search bar submit when a suggestion is selected
+      if (this.mainSearch) {
+        this._submitSearch();
+      }
     }).catch((error) => {
       console.error(error);
     });
@@ -180,6 +256,7 @@ class CustomSearch extends declared(Widget) {
 
   private _hideSuggestions() {
     this.showSuggestions = false;
+    this._inputElement().blur();
   }
 
   // Get this input element

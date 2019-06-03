@@ -97,12 +97,16 @@ view.when(() => {
 
   const customDirections = new CustomDirections({
     startSearch: new CustomSearch({
+      view: view,
       name: 'directions-origin',
-      placeholder: 'Origin'
+      placeholder: 'Origin',
+      required: true
     }),
     endSearch: new CustomSearch({
+      view: view,
       name: 'directions-destination',
-      placeholder: 'Destination'
+      placeholder: 'Destination',
+      required: true
     })
   });
 
@@ -191,8 +195,10 @@ view.when(() => {
       direction: ZoomDirection.Out
     }),
     search: new CustomSearch({
+      view: view,
       name: 'main',
-      placeholder: 'Search'
+      placeholder: 'Search',
+      mainSearch: true
     }),
     shareExpand: new WindowExpand({
       name: 'share',
