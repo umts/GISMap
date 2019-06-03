@@ -70,9 +70,17 @@ body,
 .form-row > input {
   width: 100%;
 }
+.form-row-input {
+  display: flex;
+  justify-content: space-between;
+}
 
 .button-right {
   float: right;
+}
+
+.button-input {
+  flex-shrink: 0;
 }
 
 .input-container-left {
@@ -150,6 +158,9 @@ body,
   margin-bottom: 0.8rem;
 }
 .custom-search-container {
+  width: 100%;
+}
+.custom-search-pane-container {
   position: relative;
   z-index: 1;
 }

@@ -108,12 +108,12 @@ class CustomSearch extends declared(Widget) {
     }
 
     let clearButton;
-    if (this.mainSearch) {
+    if (this._inputElement() && this._inputElement().value) {
       clearButton = (
         <div
           bind={this}
-          class='esri-widget esri-widget--button'
-          onclick={this._hideSuggestions}
+          class='esri-widget esri-widget--button button-input'
+          onclick={this._clearSearch}
           tabindex='0'
           title='Clear search'>
           <span class='esri-icon esri-icon-close'></span>
@@ -121,44 +121,62 @@ class CustomSearch extends declared(Widget) {
       );
     }
 
+    let submitButton;
+    if (this.mainSearch) {
+      submitButton = (
+        <div
+          bind={this}
+          class='esri-widget esri-widget--button button-input'
+          onclick={this._submitSearch}
+          tabindex='0'
+          title='Search'>
+          <span class='esri-icon esri-icon-search'></span>
+        </div>
+      );
+    }
+
     let mainElement;
     const input = (
-      <input
-        bind={this}
-        class='esri-input'
-        id={this.name}
-        oninput={this._setSuggestions}
-        onfocus={this._showSuggestions}
-        onblur={this._hideSuggestions}
-        placeholder={this.placeholder}
-        type='text'
-        required={this.required} />
+      <div class='form-row-input'>
+        <input
+          bind={this}
+          class='esri-input'
+          id={this.name}
+          oninput={this._setSuggestions}
+          onfocus={this._showSuggestions}
+          onblur={this._hideSuggestions}
+          placeholder={this.placeholder}
+          type='text'
+          required={this.required} />
+        {clearButton}
+        {submitButton}
+      </div>
     );
     mainElement = input;
     if (this.mainSearch) {
       mainElement = (
         <form bind={this} onsubmit={this._submitSearch}>
-          <div class='form-row'>
-            {input}
-            {clearButton}
-          </div>
+          {input}
         </form>
       );
     }
 
     return (
-      <div
-        bind={this}
-        onfocus={this._showSuggestions}
-        onblur={this._hideSuggestions}
-        tabindex="-1">
-        {mainElement}
-        <div class='custom-search-container'>
-          <div class='custom-search-pane'>
-            {suggestionElements}
+      <div class='form-row'>
+        <div
+          bind={this}
+          class='custom-search-container'
+          onfocus={this._showSuggestions}
+          onblur={this._hideSuggestions}
+          tabindex="-1">
+          {mainElement}
+          <div class='custom-search-pane-container'>
+            <div class='custom-search-pane'>
+              {suggestionElements}
+            </div>
           </div>
-        </div>
-        <div id={`${this.name}-validation-warning`} class="validation-warning hide">
+          <div id={`${this.name}-validation-warning`} class="validation-warning hide">
+          </div>
         </div>
       </div>
     );
@@ -243,6 +261,13 @@ class CustomSearch extends declared(Widget) {
     }).catch((error) => {
       console.error(error);
     });
+  }
+
+  // Completely clear the search bar
+  private _clearSearch() {
+    this.searchResult = null;
+    this.suggestions = [];
+    this._inputElement().value = '';
   }
 
   // Called when a suggestion is clicked
