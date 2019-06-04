@@ -13,7 +13,7 @@ class CustomFilter extends declared(Widget) {
   // The map view
   @property()
   @renderable()
-  view: MapView
+  view: MapView;
 
   // Layer list to apply layer filters when this filter is closed
   @property()
@@ -23,7 +23,7 @@ class CustomFilter extends declared(Widget) {
   // Filter to search by
   @property()
   @renderable()
-  filter: SearchFilter
+  filter: SearchFilter;
 
   constructor(properties?: any) {
     super();
@@ -38,7 +38,7 @@ class CustomFilter extends declared(Widget) {
           return layer.title === clause.layerName;
         }) as FeatureLayer);
         layer.definitionExpression = clause.clause;
-        if (clause.labelsVisible !== null) {
+        if (clause.labelsVisible === true || clause.labelsVisible === false) {
           layer.labelsVisible = clause.labelsVisible;
         }
       });
@@ -56,15 +56,15 @@ class CustomFilter extends declared(Widget) {
     if (this.filter && this.filter.visible) {
       filterWindow = (
         <div id='filter-window' key='filter-window'>
+          <p class='standalone-text'>Filtering by: {this.filter.name}</p>
           <div
             bind={this}
             class='esri-widget esri-widget--button custom-filter-close'
             onclick={this.resetFilter}
             tabindex='0'
-            title='Close filter'>
+            title='Stop filtering'>
             <span class='esri-icon esri-icon-close'></span>
           </div>
-          <p class='text-center'>Filter by: {this.filter.name}</p>
         </div>
       );
     }

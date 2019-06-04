@@ -44,6 +44,7 @@ class CustomSearch extends declared(Widget) {
   @property()
   sources: CustomSearchSources;
 
+  // The main filter widget we can apply filters to
   @property()
   customFilter: CustomFilter;
 
@@ -54,6 +55,11 @@ class CustomSearch extends declared(Widget) {
   // Whether or not this is the main search bar for the entire app
   @property()
   mainSearch: boolean;
+
+  // Whether or not we are waiting for the suggestions to load
+  @property()
+  @renderable()
+  loadingSuggestions: boolean;
 
   // Pass in any properties
   constructor(properties?: any) {
@@ -114,6 +120,15 @@ class CustomSearch extends declared(Widget) {
           </div>
         );
       });
+      if (this.loadingSuggestions) {
+        suggestionElements.push(
+          <div
+            class='custom-search-header suggestion-item'
+            key='loading-header'>
+            Loading...
+          </div>
+        );
+      }
     }
 
     let clearButton;
@@ -245,12 +260,15 @@ class CustomSearch extends declared(Widget) {
     if (searchTerm === '') {
       return;
     }
+    this.loadingSuggestions = true;
     // Find new suggestions
     this.sources.suggest(searchTerm).then((suggestions) => {
       this.suggestions = suggestions;
       this._showSuggestions();
+      this.loadingSuggestions = false;
     }).catch((error) => {
       console.log(error);
+      this.loadingSuggestions = false;
     });
   }
 
@@ -280,7 +298,6 @@ class CustomSearch extends declared(Widget) {
     this.searchResult = null;
     this.suggestions = [];
     this._inputElement().value = '';
-    this.customFilter.resetFilter();
   }
 
   // Called when a suggestion is clicked

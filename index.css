@@ -28,13 +28,15 @@ body,
 }
 
 #filter-window {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: 1rem;
   margin-top: 0;
   padding: 0.5rem;
   background-color: #000000bb;
   color: white;
-  min-height: 32px;
 }
 
 .custom-popup-container {
@@ -125,10 +127,6 @@ body,
   font-size: 16px;
 }
 
-.text-center {
-  vertical-align: middle;
-}
-
 .esri-widget--button,
 .esri-button,
 .umass-theme-button {
@@ -159,7 +157,7 @@ body,
 }
 
 .custom-filter-close {
-  float: right;
+  flex-shrink: 0;
   background-color: #000000bb !important;
   color: white !important;
 }
@@ -224,6 +222,10 @@ body,
 
 .layer-checkbox-input {
   margin-right: 0.8rem;
+}
+
+.standalone-text {
+  margin: 0;
 }
 
 .image-right {
