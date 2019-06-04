@@ -1,17 +1,10 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
-import FeatureLayer = require('esri/layers/FeatureLayer');
-import Query = require('esri/tasks/support/Query');
 import Widget = require('esri/widgets/Widget');
 
 @subclass('esri.widgets.FilteredLayerList')
 class FilteredLayerList extends declared(Widget) {
-  // The layer to filter from
-  @property()
-  @renderable()
-  layer: FeatureLayer;
-
   // The column name to filter by
   @property()
   filterColumnName: string;
@@ -24,18 +17,17 @@ class FilteredLayerList extends declared(Widget) {
   @property()
   filterOptionInfos: any;
 
-  // Which column values have been selected to filter by
+  // The where clause that other widgets will look at for filtering
   @property()
-  @renderable()
-  selectedFilterOptions: Array<string>;
+  clause: string;
 
   // Pass in any properties
   constructor(properties?: any) {
     super();
     // Set filter options based on the keys to the more detailed info
     this.filterOptions = Object.keys(properties.filterOptionInfos);
-    // Start out with some checkboxes checked
-    properties.layer.definitionExpression = this._whereClause(
+    // Set the starting clause based on the checkboxes that start checked
+    this.clause = this._clause(
       properties.filterColumnName,
       this.filterOptions.filter((option) => {
         return properties.filterOptionInfos[option].checked === 'checked';
@@ -92,14 +84,14 @@ class FilteredLayerList extends declared(Widget) {
     those filters.
   */
   setSelectedFilters() {
-    this.selectedFilterOptions = [];
+    let selectedFilterOptions: Array<string> = [];
     this.filterOptions.forEach((filterOption) => {
       const checkbox = this._checkbox(filterOption);
       if (checkbox.checked) {
-        this.selectedFilterOptions.push(filterOption);
+        selectedFilterOptions.push(filterOption);
       }
     });
-    this._applyFilters();
+    this.clause = this._clause(this.filterColumnName, selectedFilterOptions);
   }
 
   // Set all of the checkboxes to true or false
@@ -108,11 +100,6 @@ class FilteredLayerList extends declared(Widget) {
       this._checkbox(filterOption).checked = checked;
     });
     this.setSelectedFilters();
-  }
-
-  // Apply our filters on the layer column we are filtering by
-  private _applyFilters() {
-    this.layer.definitionExpression = this._whereClause(this.filterColumnName, this.selectedFilterOptions);
   }
 
   // Return the checkbox for a specific filter
@@ -146,8 +133,8 @@ class FilteredLayerList extends declared(Widget) {
     }
   }
 
-  // Return the where clause used for the layer definitionExpression
-  private _whereClause(columnName: string, options: Array<string>): string {
+  // Return the where clause to filter a layer by
+  private _clause(columnName: string, options: Array<string>): string {
     if (options.length > 0) {
       return `${columnName} in (${options.map((option: any) => {return "'" + option + "'"} ).join()})`;
     } else {

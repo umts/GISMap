@@ -13,6 +13,7 @@ import Print = require("esri/widgets/Print");
 
 import MainNavigation = require("app/widgets/MainNavigation");
 import CustomDirections = require("app/widgets/CustomDirections");
+import CustomFilter = require('app/widgets/CustomFilter');
 import CustomLayerList = require("app/widgets/CustomLayerList");
 import CustomSearch = require("app/widgets/CustomSearch");
 import CustomWindow = require("app/widgets/CustomWindow");
@@ -82,15 +83,17 @@ view.when(() => {
   // Set labels on layers
   updateLabeling(map);
 
+  const layerList = new CustomLayerList({
+    view: view
+  });
+
   // Create a layer window that will be hidden until opened by a window expand
   const layersWindow = new CustomWindow({
     name: 'layers',
     widgets: [
       {
         label: 'Layers',
-        widget: new CustomLayerList({
-          view: view
-        })
+        widget: layerList,
       }
     ]
   });
@@ -161,6 +164,11 @@ view.when(() => {
     ]
   });
 
+  const customFilter = new CustomFilter({
+    view: view,
+    layerList: layerList
+  });
+
   /*
     Create the main navigation widget.
     The main navigation widget is the box that contains most of the
@@ -198,8 +206,10 @@ view.when(() => {
       view: view,
       name: 'main',
       placeholder: 'Search',
+      customFilter: customFilter,
       mainSearch: true
     }),
+    customFilter: customFilter,
     shareExpand: new WindowExpand({
       name: 'share',
       iconName: 'link'

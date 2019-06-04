@@ -3,7 +3,8 @@ import { subclass, declared, property } from 'esri/core/accessorSupport/decorato
 import esriRequest = require('esri/request');
 import Accessor = require('esri/core/Accessor');
 
-import { SearchSourceType, SearchResult, Suggestion } from 'app/search';
+import { filterInfo } from 'app/rendering';
+import { SearchSourceType, SearchFilter, SearchResult, Suggestion } from 'app/search';
 
 interface LocationSearchSourceProperties {
   url: string;
@@ -16,6 +17,10 @@ class CustomSearchSources extends declared(Accessor) {
   @property()
   locationSearchSourceProperties: Array<LocationSearchSourceProperties>;
 
+  // Only use location sources
+  @property()
+  locationsOnly: boolean;
+
   // Pass in any properties
   constructor(properties?: any) {
     super();
@@ -27,17 +32,88 @@ class CustomSearchSources extends declared(Accessor) {
         title: 'Off-campus locations'
       }
     ];
+    this.locationsOnly = properties.locationsOnly || false;
   }
 
   suggestionHeader(suggestion: Suggestion): string {
     if (suggestion.sourceType === SearchSourceType.Location) {
       return this.locationSearchSourceProperties[suggestion.locationSourceIndex].title;
+    } else if (suggestion.sourceType === SearchSourceType.Filter) {
+      return 'Filters';
     } else {
       return '';
     }
   }
 
   suggest(searchTerm: string): Promise<Array<Suggestion>> {
+    return new Promise((resolve, reject) => {
+      let suggestPromises;
+      if (this.locationsOnly) {
+        suggestPromises = [this._suggestLocations(searchTerm)];
+      } else {
+        suggestPromises = [
+          this._suggestFilters(searchTerm),
+          this._suggestLocations(searchTerm)
+        ];
+      }
+      Promise.all(suggestPromises).then((allSuggestions) => {
+        let finalSuggestions: Array<Suggestion> = [];
+        allSuggestions.forEach((suggestions) => {
+          finalSuggestions = finalSuggestions.concat(suggestions);
+        });
+        resolve(finalSuggestions);
+      })
+    });
+  }
+
+  search(suggestion: Suggestion): Promise<SearchResult> {
+    return new Promise((resolve, reject) => {
+      let searchResult: SearchResult;
+      if (suggestion.sourceType === SearchSourceType.Location) {
+        /*
+          Build our own request to the API so we can explicitly request the same
+          output spatial reference to be in latitude and longitude.
+          Otherwise different locators return coordinates in different spatial
+          references depending on the location.
+        */
+        esriRequest(
+          this.locationSearchSourceProperties[suggestion.locationSourceIndex].url + '/findAddressCandidates',
+          {
+            query: {
+              magicKey: suggestion.key,
+              f: 'json',
+              maxLocations: 1,
+              outSR: '{"wkid":4326}'
+            }
+          }
+        ).then((response) => {
+          if (response.data.candidates.length > 0) {
+            const topResult = response.data.candidates[0];
+            searchResult = {
+              name: topResult.address,
+              sourceType: SearchSourceType.Location,
+              latitude: topResult.location.y,
+              longitude: topResult.location.x
+            };
+            resolve(searchResult);
+          } else {
+            reject(`Could not find search result for suggestion with magicKey ${suggestion.key}`);
+          }
+        });
+      } else if (suggestion.sourceType === SearchSourceType.Filter) {
+        searchResult = {
+          name: suggestion.text,
+          sourceType: suggestion.sourceType,
+          filter: suggestion.filter
+        }
+        resolve(searchResult);
+      } else {
+        reject(`Cannot search for suggestion from source type ${suggestion.sourceType}`);
+      }
+    });
+  }
+
+  private _suggestLocations(searchTerm: string): Promise<Array<Suggestion>> {
     return new Promise((resolve, reject) => {
       let suggestPromises = [];
       // Create a promise for every locator service
@@ -76,39 +152,18 @@ class CustomSearchSources extends declared(Accessor) {
     });
   }
 
-  search(suggestion: Suggestion): Promise<SearchResult> {
+  private _suggestFilters(searchTerm: string): Promise<Array<Suggestion>> {
     return new Promise((resolve, reject) => {
-      let searchResult: SearchResult;
-      /*
-        Build our own request to the API so we can explicitly request the same
-        output spatial reference to be in latitude and longitude.
-        Otherwise different locators return coordinates in different spatial
-        references depending on the location.
-      */
-      esriRequest(
-        this.locationSearchSourceProperties[suggestion.locationSourceIndex].url + '/findAddressCandidates',
-        {
-          query: {
-            magicKey: suggestion.key,
-            f: 'json',
-            maxLocations: 1,
-            outSR: '{"wkid":4326}'
-          }
-        }
-      ).then((response) => {
-        if (response.data.candidates.length > 0) {
-          const topResult = response.data.candidates[0];
-          searchResult = {
-            name: topResult.address,
-            sourceType: SearchSourceType.Location,
-            latitude: topResult.location.y,
-            longitude: topResult.location.x
-          };
-          resolve(searchResult);
-        } else {
-          reject(`Could not find search result for suggestion with magicKey ${suggestion.key}`);
-        }
+      let suggestions: Array<Suggestion> = [];
+      filterInfo().forEach((filter: SearchFilter) => {
+        suggestions.push({
+          text: filter.name,
+          key: `filter-${filter.name}`,
+          sourceType: SearchSourceType.Filter,
+          filter: filter
+        });
       });
+      resolve(suggestions);
     });
   }
 }

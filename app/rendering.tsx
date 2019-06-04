@@ -9,6 +9,7 @@ import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
 import TextSymbol = require('esri/symbols/TextSymbol');
 
 import { rootUrl } from 'app/url';
+import { SearchFilter } from 'app/search';
 
 const iconsPath = 'assets/icons';
 
@@ -88,19 +89,21 @@ function sectionRendererInfo(): any {
   };
 }
 
-function filterInfo(): any {
-  return {
-    'Sections': {
-      'Red lots': {
-        definitionExpression: "SectionColor = 'Red'",
-        subFilters: {
-          'Lot 41': {
-            definitionExpression: "SectionName = 'Lot 41'"
-          }
+function filterInfo(): Array<SearchFilter> {
+  return [
+    {
+      name: 'Red lots',
+      visible: true,
+      clauses: [{layerName: 'Sections', clause: "SectionColor = 'Red'"}],
+      subFilters: [
+        {
+          name: 'Lot 41',
+          visible: true,
+          clauses: [{layerName: 'Sections', clause: "Sectionname = 'Lot 41'"}]
         }
-      }
+      ]
     }
-  };
+  ];
 }
 
 // Update the renderers of layers to add our own icons
@@ -207,5 +210,6 @@ export {
   updateLabeling,
   spaceRendererInfo,
   sectionRendererInfo,
+  filterInfo,
   getElementStyleSize
 };

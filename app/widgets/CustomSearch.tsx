@@ -7,6 +7,7 @@ import Widget = require('esri/widgets/Widget');
 
 import { SearchSourceType, SearchResult, Suggestion } from 'app/search';
 import CustomSearchSources = require('app/CustomSearchSources');
+import CustomFilter = require('app/widgets/CustomFilter');
 
 @subclass('esri.widgets.CustomSearch')
 class CustomSearch extends declared(Widget) {
@@ -43,6 +44,9 @@ class CustomSearch extends declared(Widget) {
   @property()
   sources: CustomSearchSources;
 
+  @property()
+  customFilter: CustomFilter;
+
   // Whether or not this input should be required in a form
   @property()
   required: boolean;
@@ -54,11 +58,16 @@ class CustomSearch extends declared(Widget) {
   // Pass in any properties
   constructor(properties?: any) {
     super();
-    this.sources = new CustomSearchSources();
     this.suggestions = [];
     this.showSuggestions = false;
     this.required = properties.required || false;
     this.mainSearch = properties.mainSearch || false;
+
+    if (properties.mainSearch) {
+      this.sources = new CustomSearchSources({locationsOnly: false});
+    } else {
+      this.sources = new CustomSearchSources({locationsOnly: true});
+    }
 
     window.addEventListener('keydown', (event) => {
       // Do nothing if the event was already processed
@@ -209,7 +218,10 @@ class CustomSearch extends declared(Widget) {
           zoom: 18
         });
         this._hideSuggestions();
+      } else if (this.searchResult.sourceType === SearchSourceType.Filter) {
+        this.customFilter.filter = this.searchResult.filter;
       }
+    // No search result, so use the first suggestion
     } else {
       for (let i = 0; i < this.suggestions.length; i += 1) {
         const suggestion = this.suggestions[i];
@@ -268,6 +280,7 @@ class CustomSearch extends declared(Widget) {
     this.searchResult = null;
     this.suggestions = [];
     this._inputElement().value = '';
+    this.customFilter.resetFilter();
   }
 
   // Called when a suggestion is clicked

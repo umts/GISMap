@@ -11,6 +11,7 @@ import LayerList = require("esri/widgets/LayerList");
 import Locate = require("esri/widgets/Locate");
 import Widget = require("esri/widgets/Widget");
 
+import CustomFilter = require('app/widgets/CustomFilter');
 import CustomSearch = require('app/widgets/CustomSearch');
 import CustomPopup = require('app/widgets/CustomPopup');
 import CustomWindow = require("app/widgets/CustomWindow");
@@ -73,6 +74,11 @@ class MainNavigation extends declared(Widget) {
   @property()
   @renderable()
   search: CustomSearch;
+
+  // Filter widget
+  @property()
+  @renderable()
+  customFilter: CustomFilter;
 
   // Share expand widget
   @property()
@@ -139,6 +145,7 @@ class MainNavigation extends declared(Widget) {
             </ul>
           </div>
         </div>
+        {this.customFilter.render()}
         {renderedWindows}
         {this.popup.render()}
       </div>

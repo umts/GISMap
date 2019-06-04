@@ -114,6 +114,7 @@ class CustomWindow extends declared(Widget) {
   */
   private _mainNavigationHeight(): number {
     const mainWindow = document.getElementById("main-navigation-window");
+    const filterWindow = document.getElementById('filter-window');
     const thisWindow = this._element();
     const attribution = document.querySelector(".esri-attribution") as HTMLElement;
     let height = 0;
@@ -122,6 +123,9 @@ class CustomWindow extends declared(Widget) {
         getElementStyleSize(thisWindow, 'margin') * 2 +
         getElementStyleSize(thisWindow, 'padding') * 2;
       height = mainWindow.offsetHeight + extraHeight + attribution.offsetHeight;
+      if (filterWindow) {
+        height += filterWindow.offsetHeight;
+      }
     }
     return height;
   }
