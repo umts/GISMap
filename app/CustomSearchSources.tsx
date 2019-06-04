@@ -4,7 +4,13 @@ import esriRequest = require('esri/request');
 import Accessor = require('esri/core/Accessor');
 
 import { filterInfo } from 'app/rendering';
-import { SearchSourceType, SearchFilter, SearchResult, Suggestion } from 'app/search';
+import {
+  SearchSourceType,
+  SearchFilter,
+  SearchResult,
+  Suggestion,
+  searchTermMatchesTags
+} from 'app/search';
 
 interface LocationSearchSourceProperties {
   url: string;
@@ -154,14 +160,31 @@ class CustomSearchSources extends declared(Accessor) {
 
   private _suggestFilters(searchTerm: string): Promise<Array<Suggestion>> {
     return new Promise((resolve, reject) => {
+      const maxResults = 5;
       let suggestions: Array<Suggestion> = [];
-      filterInfo().forEach((filter: SearchFilter) => {
-        suggestions.push({
-          text: filter.name,
-          key: `filter-${filter.name}`,
-          sourceType: SearchSourceType.Filter,
-          filter: filter
-        });
+      filterInfo.forEach((filter: SearchFilter) => {
+        if (suggestions.length >= maxResults) {
+          return;
+        }
+        // Use tags from the filter or convert the filter name to tags
+        let tags;
+        if (filter.tags) {
+          tags = filter.tags;
+        } else {
+          tags = filter.name.split(' ');
+        }
+        /*
+          Only include the filter as a suggestion if the search term matches
+          the filter's tags.
+        */
+        if (searchTermMatchesTags(searchTerm, tags)) {
+          suggestions.push({
+            text: filter.name,
+            key: `filter-${filter.name}`,
+            sourceType: SearchSourceType.Filter,
+            filter: filter
+          });
+        }
       });
       resolve(suggestions);
     });

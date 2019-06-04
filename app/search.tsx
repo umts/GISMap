@@ -17,6 +17,8 @@ interface SearchFilter {
   visible: boolean;
   // The name of the filter to be displayed in the filter window
   name?: string;
+  // Strings to identify this filter in a search
+  tags?: Array<string>;
   subFilters?: Array<SearchFilter>;
 }
 
@@ -38,6 +40,19 @@ interface SearchResult {
   filter?: SearchFilter;
 }
 
+// Return true if the search term matches one of the tags
+function searchTermMatchesTags(searchTerm: string, tags: Array<string>): boolean {
+  let searchWords = searchTerm.split(' ');
+  return searchWords.some((word) => {
+    return tags.some((tag) => {
+      if (tag.toUpperCase().includes(word.toUpperCase())) {
+        return true;
+      }
+      return false;
+    });
+  })
+}
+
 /*
   Export helper types related to search so they can be
   imported and used in other files.
@@ -47,5 +62,6 @@ export {
   SearchFilter,
   SearchFilterClause,
   Suggestion,
-  SearchResult
+  SearchResult,
+  searchTermMatchesTags
 };

@@ -36,11 +36,11 @@ class CustomLayerList extends declared(Widget) {
     super();
     this.sectionLayers = new FilteredLayerList({
       filterColumnName: 'SectionColor',
-      filterOptionInfos: sectionRendererInfo()
+      filterOptionInfos: sectionRendererInfo
     });
     this.spaceLayers = new FilteredLayerList({
       filterColumnName: 'ParkingSpaceSubCategory',
-      filterOptionInfos: spaceRendererInfo()
+      filterOptionInfos: spaceRendererInfo
     })
   }
 

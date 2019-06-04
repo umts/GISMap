@@ -30,6 +30,7 @@ class CustomFilter extends declared(Widget) {
   }
 
   postInitialize() {
+    // Watch our own filter property so we can update the view with the filter
     this.watch('filter', (newFilter: SearchFilter) => {
       console.log('NEW FILTER');
       console.log(newFilter);
@@ -43,11 +44,14 @@ class CustomFilter extends declared(Widget) {
         }
       });
     });
-
+    /*
+      Watch the layer list filter, which will override any other filter if
+      updated.
+    */
     this.layerList.watch('filter', (newFilter) => {
       this.filter = newFilter;
     });
-
+    // Set our initial filter based on the layer list filter
     this.resetFilter();
   }
 
