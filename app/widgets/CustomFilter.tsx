@@ -31,11 +31,16 @@ class CustomFilter extends declared(Widget) {
 
   postInitialize() {
     this.watch('filter', (newFilter: SearchFilter) => {
+      console.log('NEW FILTER');
+      console.log(newFilter);
       newFilter.clauses.forEach((clause) => {
         const layer = (this.view.map.layers.find((layer) => {
           return layer.title === clause.layerName;
         }) as FeatureLayer);
         layer.definitionExpression = clause.clause;
+        if (clause.labelsVisible !== null) {
+          layer.labelsVisible = clause.labelsVisible;
+        }
       });
     });
 

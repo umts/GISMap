@@ -7,7 +7,7 @@ import Widget = require('esri/widgets/Widget');
 
 import FilteredLayerList = require('app/widgets/FilteredLayerList');
 import { spaceRendererInfo, sectionRendererInfo } from 'app/rendering';
-import { SearchFilter } from 'app/search';
+import { SearchFilter, SearchFilterClause } from 'app/search';
 
 @subclass('esri.widgets.CustomLayerList')
 class CustomLayerList extends declared(Widget) {
@@ -96,6 +96,10 @@ class CustomLayerList extends declared(Widget) {
     );
   }
 
+  private _checkbox(id: string): HTMLInputElement {
+    return document.getElementById(id) as HTMLInputElement;
+  }
+
   // Given an event on a checkbox perform the corresponding event
   private _checkboxEvent(event: any) {
     if (event.target.id === 'lots-checkbox') {
@@ -104,18 +108,6 @@ class CustomLayerList extends declared(Widget) {
         the event is coming from.
       */
       this.sectionLayers.toggleFilters(event.target.checked);
-    } else if (event.target.id === 'lot-labels-checkbox') {
-      // Toggle the visibility of the lot labels
-      const sectionsLayer = this.view.map.layers.find((layer) => {
-        return layer.title === 'Sections';
-      }) as FeatureLayer;
-      sectionsLayer.labelsVisible = event.target.checked;
-    } else if (event.target.id === 'building-labels-checkbox') {
-      // Toggle the visibility of the building labels
-      const buildingsLayer = this.view.map.layers.find((layer) => {
-        return layer.title === 'Campus Buildings';
-      }) as FeatureLayer;
-      buildingsLayer.labelsVisible = event.target.checked;
     }
     this._updateFilter();
   }
@@ -127,7 +119,7 @@ class CustomLayerList extends declared(Widget) {
   private _toggleCheckbox(event: any) {
     const checkboxId = event.target.dataset.checkboxId;
     if (checkboxId) {
-      const checkbox = document.getElementById(checkboxId) as HTMLInputElement;
+      const checkbox = this._checkbox(checkboxId);
       if (checkbox.checked) {
         checkbox.checked = false;
       } else {
@@ -138,11 +130,31 @@ class CustomLayerList extends declared(Widget) {
   }
 
   private _updateFilter() {
+    let lotLabelsVisible = true;
+    let buildingLabelsVisible = true;
+
+    const lotLabelsCheckbox = this._checkbox('lot-labels-checkbox');
+    if (lotLabelsCheckbox) {
+      lotLabelsVisible = lotLabelsCheckbox.checked;
+    }
+    const buildingLabelsCheckbox = this._checkbox('building-labels-checkbox');
+    if (buildingLabelsCheckbox) {
+      buildingLabelsVisible = buildingLabelsCheckbox.checked;
+    }
     this.filter = {
       visible: false,
       clauses: [
-        {layerName: 'Sections', clause: this.sectionLayers.clause},
-        {layerName: 'Spaces', clause: this.spaceLayers.clause}
+        {
+          layerName: 'Sections',
+          clause: this.sectionLayers.clause,
+          labelsVisible: lotLabelsVisible
+        }, {
+          layerName: 'Spaces',
+          clause: this.spaceLayers.clause
+        }, {
+          layerName: 'Campus Buildings',
+          labelsVisible: buildingLabelsVisible
+        }
       ]
     }
   }

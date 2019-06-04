@@ -6,12 +6,16 @@ enum SearchSourceType {
 
 interface SearchFilterClause {
   layerName: string;
-  clause: string;
+  clause?: string;
+  labelsVisible?: boolean,
 }
 
 interface SearchFilter {
+  // The clauses to filter by. There should only be one per layer.
   clauses: Array<SearchFilterClause>;
+  // Whether or not the filter should be visible in its own window
   visible: boolean;
+  // The name of the filter to be displayed in the filter window
   name?: string;
   subFilters?: Array<SearchFilter>;
 }
