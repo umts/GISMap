@@ -83,6 +83,10 @@ view.when(() => {
   // Set labels on layers
   updateLabeling(map);
 
+  /*
+    We will give this to both the layer window and the custom filter, that
+    way the custom filter can filter based on this widget.
+  */
   const layerList = new CustomLayerList({
     view: view
   });
@@ -169,6 +173,10 @@ view.when(() => {
     layerList: layerList
   });
 
+  /*
+    Every window needs to know about the other windows, that way a single
+    window can close the other windows when it needs to open.
+  */
   const customWindows = [layersWindow, directionsWindow, shareWindow];
 
   /*

@@ -31,6 +31,7 @@ class CustomWindow extends declared(Widget) {
   @renderable()
   widgets: Array<WidgetWithLabel>;
 
+  // Whether or not this window is visible
   @property()
   @renderable()
   visible: boolean;

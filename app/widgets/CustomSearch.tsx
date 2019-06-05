@@ -221,15 +221,18 @@ class CustomSearch extends declared(Widget) {
     this._warningElement().classList.add("hide");
   }
 
+  // Called when the main search is submitted
   private _submitSearch() {
     if (this.searchResult) {
       if (this.searchResult.sourceType === SearchSourceType.Location) {
+        // Go to a location result
         this.view.goTo({
           target: [this.searchResult.longitude, this.searchResult.latitude],
           zoom: 18
         });
         this._hideSuggestions();
       } else if (this.searchResult.sourceType === SearchSourceType.Filter) {
+        // Filter by a filter result
         this.customFilter.filter = this.searchResult.filter;
       }
     // No search result, so use the first suggestion

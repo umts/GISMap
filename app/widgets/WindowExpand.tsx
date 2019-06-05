@@ -7,10 +7,7 @@ import CustomWindow = require('app/widgets/CustomWindow');
 
 @subclass("esri.widgets.WindowExpand")
 class WindowExpand extends declared(Widget) {
-  /*
-    The reference name used to open the corresponding custom window by the
-    same name.
-  */
+  // A descriptive name for the window this expand will open
   @property()
   @renderable()
   name: string;
@@ -20,9 +17,11 @@ class WindowExpand extends declared(Widget) {
   @renderable()
   iconName: string;
 
+  // The window that this expand will actually open
   @property()
   window: CustomWindow;
 
+  // Any other windows that need to be closed before this window can be opened
   @property()
   windows: Array<CustomWindow>;
 

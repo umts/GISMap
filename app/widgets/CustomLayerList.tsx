@@ -26,7 +26,10 @@ class CustomLayerList extends declared(Widget) {
   @renderable()
   spaceLayers: FilteredLayerList;
 
-  // The filter representing how the map layers should be filtered
+  /*
+    The filter representing how the map layers should be filtered by the
+    custom filter widget.
+  */
   @property()
   @renderable()
   filter: SearchFilter
@@ -44,13 +47,19 @@ class CustomLayerList extends declared(Widget) {
     })
   }
 
+  // Run after this widget is ready 
   postInitialize() {
+    /*
+      Check the filtered layer lists for clause changes, and update our filter
+      when that happens.
+    */
     this.sectionLayers.watch('clause', (_clause) => {
       this._updateFilter();
     });
     this.spaceLayers.watch('clause', (_clause) => {
       this._updateFilter();
     });
+    // Set our initial filter
     this._updateFilter();
   }
 
@@ -69,11 +78,10 @@ class CustomLayerList extends declared(Widget) {
     );
   }
 
-  setSelectedFilters() {
-    this.sectionLayers.setSelectedFilters();
-    this.spaceLayers.setSelectedFilters();
-  }
-
+  /*
+    Render a generic checkbox that will trigger generic checkbox events in
+    this widget.
+  */
   private _renderCustomCheckbox(uniqueId: string, text: string): JSX.Element {
     return (
       <div
@@ -96,6 +104,7 @@ class CustomLayerList extends declared(Widget) {
     );
   }
 
+  // Return a checkbox by id
   private _checkbox(id: string): HTMLInputElement {
     return document.getElementById(id) as HTMLInputElement;
   }
@@ -129,6 +138,10 @@ class CustomLayerList extends declared(Widget) {
     }
   }
 
+  /*
+    Update our filter based on the state of our own checkboxes and the
+    filtered layer list checkboxes.
+  */
   private _updateFilter() {
     let lotLabelsVisible = true;
     let buildingLabelsVisible = true;

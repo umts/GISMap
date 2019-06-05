@@ -42,6 +42,7 @@ class CustomSearchSources extends declared(Accessor) {
     this.locationsOnly = properties.locationsOnly || false;
   }
 
+  // Return header text to describe a list of suggestions of the same type
   suggestionHeader(suggestion: Suggestion): string {
     if (suggestion.sourceType === SearchSourceType.Location) {
       return this.locationSearchSourceProperties[suggestion.locationSourceIndex].title;
@@ -52,9 +53,11 @@ class CustomSearchSources extends declared(Accessor) {
     }
   }
 
+  // Return a promise with search suggestions based on the search term
   suggest(searchTerm: string): Promise<Array<Suggestion>> {
     return new Promise((resolve, reject) => {
       let suggestPromises;
+      // Prepare suggestion promises from multiple sources
       if (this.locationsOnly) {
         suggestPromises = [this._suggestLocations(searchTerm)];
       } else {
@@ -63,6 +66,7 @@ class CustomSearchSources extends declared(Accessor) {
           this._suggestLocations(searchTerm)
         ];
       }
+      // Evaluate after all promises have completed
       Promise.all(suggestPromises).then((allSuggestions) => {
         let finalSuggestions: Array<Suggestion> = [];
         allSuggestions.forEach((suggestions) => {
@@ -73,6 +77,12 @@ class CustomSearchSources extends declared(Accessor) {
     });
   }
 
+  /*
+    Return a promise to a search result based on the suggestion passed in.
+    This is neccesary for location searches because the suggestions don't
+    contain the full information about the location, so there has to be a
+    call to the API to ask for the full info.
+  */
   search(suggestion: Suggestion): Promise<SearchResult> {
     return new Promise((resolve, reject) => {
       let searchResult: SearchResult;
@@ -120,6 +130,7 @@ class CustomSearchSources extends declared(Accessor) {
     });
   }
 
+  // Return a promise for location suggestions
   private _suggestLocations(searchTerm: string): Promise<Array<Suggestion>> {
     return new Promise((resolve, reject) => {
       let suggestPromises = [];
@@ -156,11 +167,12 @@ class CustomSearchSources extends declared(Accessor) {
         });
         resolve(suggestions);
       }).catch((error) => {
-        console.error(error);
+        reject(error);
       });
     });
   }
 
+  // Return a promise for filter suggestions
   private _suggestFilters(searchTerm: string): Promise<Array<Suggestion>> {
     return new Promise((resolve, reject) => {
       const maxResults = 5;

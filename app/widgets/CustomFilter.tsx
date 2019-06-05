@@ -25,10 +25,12 @@ class CustomFilter extends declared(Widget) {
   @renderable()
   filter: SearchFilter;
 
+  // Pass in any properties
   constructor(properties?: any) {
     super();
   }
 
+  // Run after this widget is ready
   postInitialize() {
     // Watch our own filter property so we can update the view with the filter
     this.watch('filter', (newFilter: SearchFilter) => {
@@ -55,6 +57,7 @@ class CustomFilter extends declared(Widget) {
     this.resetFilter();
   }
 
+  // Render this widget by returning JSX which is converted to HTML
   render() {
     let filterWindow;
     if (this.filter && this.filter.visible) {
