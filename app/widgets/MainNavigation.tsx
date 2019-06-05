@@ -107,25 +107,14 @@ class MainNavigation extends declared(Widget) {
 
   // Render this widget by returning JSX which is converted to HTML
   render() {
-    let renderedWindows = [];
+    let renderedWindows: Array<JSX.Element> = [];
     /*
       Render each custom window into an array.
       Only one window will be visible at a time.
     */
-    let noWindowsVisible = true;
-    for (let i = 0; i < this.customWindows.length; i += 1) {
-      if (this.customWindows[i].isVisible()) {
-        noWindowsVisible = false;
-      }
-      renderedWindows.push(this.customWindows[i].render());
-    }
-    /*
-      If no windows are visible reset the height, something that rendering
-      a window would normally do.
-    */
-    if (noWindowsVisible && this._element()) {
-      this._element().style.height = '';
-    }
+    this.customWindows.forEach((window) => {
+      renderedWindows.push(window.render());
+    });
 
     return (
       <div id="main-navigation">

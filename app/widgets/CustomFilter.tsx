@@ -32,20 +32,20 @@ class CustomFilter extends declared(Widget) {
   postInitialize() {
     // Watch our own filter property so we can update the view with the filter
     this.watch('filter', (newFilter: SearchFilter) => {
-      console.log('NEW FILTER');
-      console.log(newFilter);
       newFilter.clauses.forEach((clause) => {
+        // Set layer filters
         const layer = (this.view.map.layers.find((layer) => {
           return layer.title === clause.layerName;
         }) as FeatureLayer);
         layer.definitionExpression = clause.clause;
+        // Set layer visibility
         if (clause.labelsVisible === true || clause.labelsVisible === false) {
           layer.labelsVisible = clause.labelsVisible;
         }
       });
     });
     /*
-      Watch the layer list filter, which will override any other filter if
+      Watch the layer list filter, which should override any other filter if
       updated.
     */
     this.layerList.watch('filter', (newFilter) => {
@@ -76,6 +76,7 @@ class CustomFilter extends declared(Widget) {
     return filterWindow;
   }
 
+  // Manually set this filter to the layer list filter
   resetFilter() {
     this.filter = this.layerList.filter;
   }

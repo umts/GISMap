@@ -169,6 +169,8 @@ view.when(() => {
     layerList: layerList
   });
 
+  const customWindows = [layersWindow, directionsWindow, shareWindow];
+
   /*
     Create the main navigation widget.
     The main navigation widget is the box that contains most of the
@@ -181,7 +183,9 @@ view.when(() => {
     }),
     directionsExpand: new WindowExpand({
       name: 'directions',
-      iconName: 'directions'
+      iconName: 'directions',
+      window: directionsWindow,
+      windows: customWindows
     }),
     home: new Home({
       view: view,
@@ -189,7 +193,9 @@ view.when(() => {
     }),
     layersExpand: new WindowExpand({
       name: 'layers',
-      iconName: 'layers'
+      iconName: 'layers',
+      window: layersWindow,
+      windows: customWindows
     }),
     locate: new Locate({
       view: view
@@ -212,9 +218,11 @@ view.when(() => {
     customFilter: customFilter,
     shareExpand: new WindowExpand({
       name: 'share',
-      iconName: 'link'
+      iconName: 'link',
+      window: shareWindow,
+      windows: customWindows
     }),
-    customWindows: [layersWindow, directionsWindow, shareWindow]
+    customWindows: customWindows
   });
 
   // Add the main navigation widget to the map

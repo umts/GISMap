@@ -85,7 +85,22 @@ const sectionRendererInfo = {
   }
 }
 
-let _filterInfo: Array<SearchFilter> = [];
+let _filterInfo: Array<SearchFilter> = [
+  {
+    name: 'Metered/Visitor Parking',
+    tags: ['meter', 'paystation', 'pink', 'visitor'],
+    visible: true,
+    clauses: [
+      {layerName: 'Sections', clause: "SectionColor = 'Pink'"},
+      {layerName: 'Spaces', clause: "ParkingSpaceSubCategory in ('Meter-Coin','Meter-Paystation')"}
+    ]
+  }, {
+    name: 'ParkMobile Lots',
+    tags: ['parkmobile'],
+    visible: true,
+    clauses: [{layerName: 'Sections', clause: "ParkmobileZoneID is not null"}]
+  }
+];
 
 ['Red', 'Blue', 'Purple', 'Yellow', 'Green'].forEach((color) => {
   _filterInfo.push({
