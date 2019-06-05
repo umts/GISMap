@@ -43,9 +43,6 @@ class CustomWindow extends declared(Widget) {
 
   // Render this widget by returning JSX which is converted to HTML
   render() {
-    if (!this.visible) {
-      return;
-    }
     let renderedElements: Array<JSX.Element> = [];
     /*
       Render each widget label pair in this window and put the result into
@@ -73,7 +70,8 @@ class CustomWindow extends declared(Widget) {
     return (
       <div
         class='navigation-window custom-window'
-        key={`${this.name}-window`}>
+        key={`${this.name}-window`}
+        style={`display: ${this.visible ? 'block' : 'none'}`}>
         {closeButton}
         {renderedElements}
       </div>
