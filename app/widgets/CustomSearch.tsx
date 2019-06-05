@@ -68,16 +68,12 @@ class CustomSearch extends declared(Widget) {
     this.showSuggestions = false;
     this.required = properties.required || false;
     this.mainSearch = properties.mainSearch || false;
+    this.sources = new CustomSearchSources({locationsOnly: !properties.mainSearch});
 
-    if (properties.mainSearch) {
-      this.sources = new CustomSearchSources({locationsOnly: false});
-    } else {
-      this.sources = new CustomSearchSources({locationsOnly: true});
-    }
-
+    // Hide suggestions when the escape key is pressed
     window.addEventListener('keydown', (event) => {
-      // Do nothing if the event was already processed
-      if (event.defaultPrevented) {
+      // Do nothing if the event was already processed or the input is not visible
+      if (event.defaultPrevented || !this._inputElement()) {
         return;
       }
       if (event.key === 'Escape') {
@@ -298,6 +294,7 @@ class CustomSearch extends declared(Widget) {
     this.searchResult = null;
     this.suggestions = [];
     this._inputElement().value = '';
+    this._inputElement().focus();
   }
 
   // Called when a suggestion is clicked

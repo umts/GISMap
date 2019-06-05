@@ -3,6 +3,7 @@ import { subclass, declared, property } from 'esri/core/accessorSupport/decorato
 import esriRequest = require('esri/request');
 import Accessor = require('esri/core/Accessor');
 
+import { umassLongLat } from 'app/latLong';
 import { filterInfo } from 'app/rendering';
 import {
   SearchSourceType,
@@ -130,7 +131,9 @@ class CustomSearchSources extends declared(Accessor) {
             query: {
               text: searchTerm,
               f: 'json',
-              outSR: '{"wkid":4326}'
+              outSR: '{"wkid":4326}',
+              location: umassLongLat.join(','),
+              distance: 10000
             }
           }
         ));
