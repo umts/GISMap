@@ -277,7 +277,8 @@ class CustomSearch extends declared(Widget) {
 
   /*
     Called when a suggestion term is clicked.
-    It will search the geolocator services for the exact suggestion.
+    For location suggestions it will search the geolocator services for the
+    exact suggestion.
   */
   private _setSearch(suggestion: Suggestion) {
     this.sources.search(suggestion).then((searchResult) => {
