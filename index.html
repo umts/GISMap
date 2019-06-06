@@ -19,6 +19,10 @@
           }
         ]
       };
+      // Browserify dependencies (for IE compatibility)
+      if (/MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
+        document.write('<script src="bundle.js"><\/script>');
+      }
     </script>
     <script src="https://js.arcgis.com/4.10"></script>
   </head>

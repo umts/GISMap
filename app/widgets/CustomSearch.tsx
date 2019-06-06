@@ -76,7 +76,8 @@ class CustomSearch extends declared(Widget) {
       if (event.defaultPrevented || !this._inputElement()) {
         return;
       }
-      if (event.key === 'Escape') {
+      // Regular people use `key`, IE uses `keyCode`
+      if (event.key === 'Escape' || event.keyCode === 27) {
         this._hideSuggestions();
       }
     });
@@ -116,6 +117,7 @@ class CustomSearch extends declared(Widget) {
           </div>
         );
       });
+      // Push the loading text
       if (this.loadingSuggestions) {
         suggestionElements.push(
           <div
@@ -222,7 +224,7 @@ class CustomSearch extends declared(Widget) {
   }
 
   // Called when the main search is submitted
-  private _submitSearch() {
+  private _submitSearch(): boolean {
     if (this.searchResult) {
       if (this.searchResult.sourceType === SearchSourceType.Location) {
         // Go to a location result
@@ -245,6 +247,8 @@ class CustomSearch extends declared(Widget) {
         }
       }
     }
+    // Don't submit the form
+    return false;
   }
 
   // Update suggestions based on the most recent input

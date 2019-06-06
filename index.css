@@ -37,7 +37,7 @@ body,
   font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: 0 1rem 0 1rem;
   padding: 0.5rem;
-  background-color: #000000bb;
+  background-color: black;
   color: white;
 }
 
@@ -160,7 +160,7 @@ body,
 
 .custom-filter-close {
   flex-shrink: 0;
-  background-color: #000000bb !important;
+  background-color: black !important;
   color: white !important;
 }
 

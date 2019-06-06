@@ -45,7 +45,7 @@ function searchTermMatchesTags(searchTerm: string, tags: Array<string>): boolean
   let searchWords = searchTerm.split(' ');
   return searchWords.some((word) => {
     return tags.some((tag) => {
-      if (tag.toUpperCase().includes(word.toUpperCase())) {
+      if (tag.toUpperCase().indexOf(word.toUpperCase()) !== -1) {
         return true;
       }
       return false;
