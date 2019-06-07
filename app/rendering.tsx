@@ -1,3 +1,5 @@
+import { tsx } from 'esri/widgets/support/widget';
+
 import WebMap = require('esri/WebMap');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import LabelClass = require('esri/layers/support/LabelClass');
@@ -200,6 +202,46 @@ function getElementStyleSize(element: Element, property: string): number {
   }
 }
 
+// Return an expandable element containing mainElement. Title should be unique.
+function expandable(
+  title: string,
+  startExpanded: boolean,
+  mainElement: JSX.Element
+): JSX.Element {
+  return (
+    <div>
+      <div
+        class='expandable-header'
+        data-title={title}
+        onclick={_expandExpandable}>
+        <span
+          data-title={title}
+          class={`expandable-icon esri-icon ${startExpanded ? 'esri-icon-down-arrow' : 'esri-icon-right-triangle-arrow'}`}
+          id={`expandable-icon-${title}`}></span>
+        {title}
+      </div>
+      <div id={`expandable-content-${title}`} style={`display: ${startExpanded ? 'block' : 'none'};`}>
+        {mainElement}
+      </div>
+    </div>
+  );
+}
+
+// Expand an expandable element by a unique title
+function _expandExpandable(event: any) {
+  const icon = document.getElementById(`expandable-icon-${event.target.dataset.title}`);
+  const content = document.getElementById(`expandable-content-${event.target.dataset.title}`);
+  if (content.style.display === 'block') {
+    content.style.display = 'none';
+    icon.classList.remove('esri-icon-down-arrow');
+    icon.classList.add('esri-icon-right-triangle-arrow');
+  } else {
+    content.style.display = 'block';
+    icon.classList.remove('esri-icon-right-triangle-arrow');
+    icon.classList.add('esri-icon-down-arrow');
+  }
+}
+
 /*
   Export helper functions related to rendering so they can be
   imported and used in other files.
@@ -209,5 +251,6 @@ export {
   updateLabeling,
   spaceRendererInfo,
   sectionRendererInfo,
-  getElementStyleSize
+  getElementStyleSize,
+  expandable
 };

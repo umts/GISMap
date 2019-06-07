@@ -53,6 +53,19 @@ body,
   z-index: -1;
 }
 
+.expandable-header {
+  background-color: #63666a;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.expandable-icon {
+  padding-right: 0.5rem;
+}
+
 .custom-window-close {
   float: right;
 }

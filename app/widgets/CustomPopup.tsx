@@ -9,7 +9,7 @@ import Widget = require('esri/widgets/Widget');
 import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
-import { spaceRendererInfo } from 'app/rendering';
+import { spaceRendererInfo, expandable } from 'app/rendering';
 
 @subclass('esri.widgets.CustomPopup')
 class CustomPopup extends declared(Widget) {
@@ -239,11 +239,35 @@ class CustomPopup extends declared(Widget) {
       permitInfo = <p>Visitor and non-permit parking.</p>;
     }
 
+    let spaceCountElements: Array<JSX.Element> = [];
+    if (feature.attributes.SpaceCounts) {
+      const spaceCounts = JSON.parse(feature.attributes.SpaceCounts);
+      Object.keys(spaceCounts).forEach((category) => {
+        if (spaceRendererInfo().hasOwnProperty(category)) {
+          spaceCountElements.push(
+            <li>
+              {spaceRendererInfo()[category].label}: {spaceCounts[category]}
+            </li>
+          );
+        }
+      });
+    }
+
+    let spaceCountExpand;
+    if (spaceCountElements.length > 0) {
+      spaceCountExpand = expandable(
+        'Spaces',
+        false,
+        <ul>{spaceCountElements}</ul>
+      );
+    }
+
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
         {title}
-        {permitInfo}
-        {parkmobile}
+        <p><b>{feature.attributes.SectionAddress}</b></p>
+        {expandable('Description', true, <div>{permitInfo}{parkmobile}</div>)}
+        {spaceCountExpand}
       </div>
     );
   }
@@ -254,7 +278,13 @@ class CustomPopup extends declared(Widget) {
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
         <p class='widget-label'>{feature.attributes.Building_Name}</p>
         <p><b>{feature.attributes.Address}</b></p>
-        <img height='160px' src={feature.attributes.PhotoURL} />
+        {
+          expandable(
+            'Image',
+            false,
+            <img height='160px' src={feature.attributes.PhotoURL} />
+          )
+        }
       </div>
     );
   }
@@ -267,9 +297,12 @@ class CustomPopup extends declared(Widget) {
     if (iconUrl) {
       icon = <img class='image-in-text' width='24px' height='24px' src={iconUrl} />;
     }
-    let description;
+    let description = '';
     if (feature.attributes.ParkingSpaceSubCategory === 'R-15Min') {
-      description = '15 minute loading zone.';
+      description += '15 minute loading zone.';
+    }
+    if (feature.attributes.ParkingSpaceClientPublic) {
+      description += `Reserved for: ${feature.attributes.ParkingSpaceClientPublic}`;
     }
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
@@ -277,14 +310,6 @@ class CustomPopup extends declared(Widget) {
           {categoryInfo.description}{icon}
         </p>
         <p>{description}</p>
-        <p>
-          {
-            feature.attributes.ParkingSpaceClient &&
-            feature.attributes.ParkingSpaceClient !== 'Parking Services' ?
-            'Reserved for: ' + feature.attributes.ParkingSpaceClient :
-            ''
-          }
-        </p>
       </div>
     );
   }
