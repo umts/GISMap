@@ -216,6 +216,19 @@ class CustomPopup extends declared(Widget) {
       parkmobile = <p>No {parkmobileLink} available.</p>
     }
 
+    let sectionHours;
+    let parkingType = 'Permit';
+    if (feature.attributes.SectionColor === 'Pink') {
+      parkingType = 'Payment';
+    }
+    if (feature.attributes.SectionHours === 'BusinessHours') {
+      sectionHours = <p>{parkingType} required 7:00 AM to 5:00 PM Monday through Friday.</p>;
+    } else if (feature.attributes.SectionHours === 'Weekdays') {
+      sectionHours = <p>{parkingType} required any time Monday through Friday.</p>;
+    } else if (feature.attributes.SectionHours === '24Hour') {
+      sectionHours = <p>{parkingType} required at all times.</p>;
+    }
+
     const permitLink = (
       <a target='_blank' href='https://umass.t2hosted.com/cmn/auth_ext.aspx'>
         Permits
@@ -243,10 +256,10 @@ class CustomPopup extends declared(Widget) {
     if (feature.attributes.SpaceCounts) {
       const spaceCounts = JSON.parse(feature.attributes.SpaceCounts);
       Object.keys(spaceCounts).forEach((category) => {
-        if (spaceRendererInfo().hasOwnProperty(category)) {
+        if (spaceRendererInfo.hasOwnProperty(category)) {
           spaceCountElements.push(
             <li>
-              {spaceRendererInfo()[category].label}: {spaceCounts[category]}
+              {spaceRendererInfo[category].label}: {spaceCounts[category]}
             </li>
           );
         }
@@ -266,7 +279,7 @@ class CustomPopup extends declared(Widget) {
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
         {title}
         <p><b>{feature.attributes.SectionAddress}</b></p>
-        {expandable('Description', true, <div>{permitInfo}{parkmobile}</div>)}
+        {expandable('Description', true, <div>{sectionHours}{permitInfo}{parkmobile}</div>)}
         {spaceCountExpand}
       </div>
     );
