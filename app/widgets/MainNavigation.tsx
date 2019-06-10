@@ -18,6 +18,8 @@ import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom } from "app/widgets/CustomZoom";
 import WindowExpand = require("app/widgets/WindowExpand");
 
+import { resetUrlTimer } from 'app/url';
+
 interface ScreenPoint {
   x: number;
   y: number;
@@ -103,6 +105,9 @@ class MainNavigation extends declared(Widget) {
     // Set up popup and popup event listener
     this.popup = new CustomPopup({view: this.view});
     this.view.on('click', (event) => { this._updatePopup(event) });
+    this.popup.watch('featureForUrl', (featureForUrl) => {
+      resetUrlTimer(this);
+    });
   }
 
   // Render this widget by returning JSX which is converted to HTML
@@ -139,6 +144,27 @@ class MainNavigation extends declared(Widget) {
         {this.popup.render()}
       </div>
     );
+  }
+
+  openPopupFromUrl(featureForUrl: any) {
+    const layer = this._getLayer(featureForUrl.layer);
+    let query = layer.createQuery();
+    query.where = `OBJECTID_1 = '${featureForUrl.id}'`;
+
+    this.popup.reset();
+
+    layer.queryFeatures(query)
+    .then((results) => {
+      if (results.features.length > 0) {
+        console.log(results.features[0].geometry.getPoint());
+        // Add more features to the popup
+        this.popup.features = this.popup.features.concat(results.features);
+        this.popup.point = results.features[0].geometry.getPoint();
+        this.popup.visible = true;
+      }
+    }, (error) => {
+      console.error(error);
+    });
   }
 
   private _element(): HTMLElement {

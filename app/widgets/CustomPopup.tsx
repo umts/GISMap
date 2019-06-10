@@ -44,6 +44,10 @@ class CustomPopup extends declared(Widget) {
   @renderable()
   page: number;
 
+  // Base 64 encoded reference to popup
+  @property()
+  featureForUrl: string;
+
   // Pass in any properties
   constructor(properties?: any) {
     super();
@@ -53,12 +57,27 @@ class CustomPopup extends declared(Widget) {
     this.page = 0;
   }
 
+  postInitialize() {
+    this.watch(['page', 'features'], () => {
+      if (this.page >= 0 && this.page < this.features.length) {
+        const feature = this.features[this.page];
+        this.featureForUrl = btoa(JSON.stringify({
+          id: feature.attributes.OBJECTID_1,
+          layer: feature.layer.title
+        })).split('=')[0];
+      } else {
+        this.featureForUrl = '';
+      }
+    });
+  }
+
   // Render this widget by returning JSX which is converted to HTML
   render() {
     let featureInfo;
     if (this.page >= 0 && this.page < this.features.length) {
+      const feature = this.features[this.page];
       this._updateSelectionGraphic();
-      featureInfo = this._renderFeature(this.features[this.page]);
+      featureInfo = this._renderFeature(feature);
     }
 
     const pageCounter = (
