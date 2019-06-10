@@ -3,12 +3,11 @@ import { renderable, tsx } from "esri/widgets/support/widget";
 
 import Widget = require("esri/widgets/Widget");
 
+import CustomWindow = require('app/widgets/CustomWindow');
+
 @subclass("esri.widgets.WindowExpand")
 class WindowExpand extends declared(Widget) {
-  /*
-    The reference name used to open the corresponding custom window by the
-    same name.
-  */
+  // A descriptive name for the window this expand will open
   @property()
   @renderable()
   name: string;
@@ -18,8 +17,16 @@ class WindowExpand extends declared(Widget) {
   @renderable()
   iconName: string;
 
-  // Pass in a name and an icon name
-  constructor(properties?: { name: string, iconName: string }) {
+  // The window that this expand will actually open
+  @property()
+  window: CustomWindow;
+
+  // Any other windows that need to be closed before this window can be opened
+  @property()
+  windows: Array<CustomWindow>;
+
+  // Pass in any properties
+  constructor(properties?: any) {
     super();
   }
 
@@ -42,16 +49,16 @@ class WindowExpand extends declared(Widget) {
     is closed, and close the window if it is open.
   */
   private _expand() {
-    const attachedWindow = document.getElementById(`${this.name}-window`);
-    if (attachedWindow.style.display === 'block') {
-      attachedWindow.style.display = 'none';
+    if (this.window.visible) {
+      // Close this window
+      this.window.visible = false;
     } else {
       // Close any other custom windows before opening this one
-      const customWindows = document.getElementsByClassName('custom-window');
-      for (let i = 0; i < customWindows.length; i += 1) {
-        (customWindows[i] as HTMLElement).style.display = 'none';
-      }
-      attachedWindow.style.display = 'block';
+      this.windows.forEach((window) => {
+        window.visible = false;
+      });
+      // Open this window
+      this.window.visible = true;
     }
   }
 }

@@ -8,7 +8,14 @@ body,
 }
 
 #main-navigation {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
   width: 24rem;
+}
+
+#main-navigation-window {
+  margin-bottom: 0;
 }
 
 .navigation-window {
@@ -20,7 +27,18 @@ body,
 }
 
 .custom-window {
-  display: none;
+  overflow: auto;
+}
+
+#filter-window {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 0 1rem 0 1rem;
+  padding: 0.5rem;
+  background-color: black;
+  color: white;
 }
 
 .custom-popup-container {
@@ -104,9 +122,17 @@ body,
 .form-row > input {
   width: 100%;
 }
+.form-row-input {
+  display: flex;
+  justify-content: space-between;
+}
 
 .button-right {
   float: right;
+}
+
+.button-input {
+  flex-shrink: 0;
 }
 
 .input-container-left {
@@ -122,10 +148,10 @@ body,
 
 #widgets-list ul li.widget-list-item {
   display: inline-block;
-  padding: 0 0.4rem 0.4rem 0;
+  margin: 0 0.4rem 0.4rem 0;
 }
 #widgets-list ul li.widget-list-item:last-of-type {
-  padding: 0 0 0.4rem 0;
+  margin: 0 0 0.4rem 0;
 }
 
 .horizontal-list-item {
@@ -166,6 +192,12 @@ body,
   color: white !important;
 }
 
+.custom-filter-close {
+  flex-shrink: 0;
+  background-color: black !important;
+  color: white !important;
+}
+
 .esri-icon,
 .esri-icon-search,
 .esri-icon-close,
@@ -177,13 +209,18 @@ body,
   width: 100%;
   border: 1px solid #881c1c;
   border-radius: 0;
+  box-sizing: border-box;
 }
 .esri-search {
   width: 100%;
   margin-bottom: 0.8rem;
 }
 .custom-search-container {
+  width: 100%;
+}
+.custom-search-pane-container {
   position: relative;
+  z-index: 1;
 }
 .custom-search-pane {
   position: absolute;
@@ -223,6 +260,10 @@ body,
   margin-right: 0.8rem;
 }
 
+.standalone-text {
+  margin: 0;
+}
+
 .image-right {
   float: right;
 }
@@ -252,6 +293,10 @@ body,
     border-top: 0;
     border-right: 0;
     border-left: 0;
+    margin: 0;
+  }
+
+  #filter-window {
     margin: 0;
   }
 

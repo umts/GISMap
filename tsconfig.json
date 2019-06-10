@@ -6,6 +6,10 @@
     "jsx": "react",
     "jsxFactory": "tsx",
     "target": "es5",
+    "lib": [
+      "es2015",
+      "dom"
+    ],
     "experimentalDecorators": true,
     "preserveConstEnums": true,
     "suppressImplicitAnyIndexErrors": true,

@@ -10,10 +10,10 @@ import Home = require("esri/widgets/Home");
 import LayerList = require("esri/widgets/LayerList");
 import Locate = require("esri/widgets/Locate");
 import Print = require("esri/widgets/Print");
-import Search = require("esri/widgets/Search");
 
 import MainNavigation = require("app/widgets/MainNavigation");
 import CustomDirections = require("app/widgets/CustomDirections");
+import CustomFilter = require('app/widgets/CustomFilter');
 import CustomLayerList = require("app/widgets/CustomLayerList");
 import CustomSearch = require("app/widgets/CustomSearch");
 import CustomWindow = require("app/widgets/CustomWindow");
@@ -23,7 +23,6 @@ import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
 import { homeGoToOverride, umassLongLat } from "app/latLong";
 import { updateRenderers, updateLabeling } from 'app/rendering';
-import { searchGoToOverride, searchSources } from "app/search";
 import { resetUrlTimer, updatePositionFromUrl } from "app/url";
 
 // Set the map to load data from our ArcGIS Online web map
@@ -84,6 +83,14 @@ view.when(() => {
   // Set labels on layers
   updateLabeling(map);
 
+  /*
+    We will give this to both the layer window and the custom filter, that
+    way the custom filter can filter based on this widget.
+  */
+  const layerList = new CustomLayerList({
+    view: view
+  });
+
   // Create a layer window that will be hidden until opened by a window expand
   const layersWindow = new CustomWindow({
     name: 'layers',
@@ -92,31 +99,23 @@ view.when(() => {
     widgets: [
       {
         label: 'Layers',
-        widget: new CustomLayerList({
-          view: view
-        })
+        widget: layerList,
       }
     ]
   });
 
-  const searchProperties = {
-    view: view,
-    includeDefaultSources: false,
-    popupEnabled: false,
-    goToOverride: searchGoToOverride,
-    sources: searchSources()
-  };
-
   const customDirections = new CustomDirections({
     startSearch: new CustomSearch({
+      view: view,
       name: 'directions-origin',
       placeholder: 'Origin',
-      search: new Search(searchProperties)
+      required: true
     }),
     endSearch: new CustomSearch({
+      view: view,
       name: 'directions-destination',
       placeholder: 'Destination',
-      search: new Search(searchProperties)
+      required: true
     })
   });
 
@@ -175,6 +174,17 @@ view.when(() => {
     ]
   });
 
+  const customFilter = new CustomFilter({
+    view: view,
+    layerList: layerList
+  });
+
+  /*
+    Every window needs to know about the other windows, that way a single
+    window can close the other windows when it needs to open.
+  */
+  const customWindows = [layersWindow, directionsWindow, shareWindow];
+
   /*
     Create the main navigation widget.
     The main navigation widget is the box that contains most of the
@@ -187,7 +197,9 @@ view.when(() => {
     }),
     directionsExpand: new WindowExpand({
       name: 'directions',
-      iconName: 'directions'
+      iconName: 'directions',
+      window: directionsWindow,
+      windows: customWindows
     }),
     home: new Home({
       view: view,
@@ -195,7 +207,9 @@ view.when(() => {
     }),
     layersExpand: new WindowExpand({
       name: 'layers',
-      iconName: 'layers'
+      iconName: 'layers',
+      window: layersWindow,
+      windows: customWindows
     }),
     locate: new Locate({
       view: view
@@ -208,12 +222,21 @@ view.when(() => {
       view: view,
       direction: ZoomDirection.Out
     }),
-    search: new Search(searchProperties),
+    search: new CustomSearch({
+      view: view,
+      name: 'main',
+      placeholder: 'Search',
+      customFilter: customFilter,
+      mainSearch: true
+    }),
+    customFilter: customFilter,
     shareExpand: new WindowExpand({
       name: 'share',
-      iconName: 'link'
+      iconName: 'link',
+      window: shareWindow,
+      windows: customWindows
     }),
-    customWindows: [layersWindow, directionsWindow, shareWindow]
+    customWindows: customWindows
   });
 
   // Add the main navigation widget to the map

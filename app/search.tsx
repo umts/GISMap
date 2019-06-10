@@ -1,49 +1,67 @@
-import Locator = require("esri/tasks/Locator");
-import MapView = require("esri/views/MapView");
-
-/*
-  Called when search widget changes the view to center on a location.
-  This will blur any text inputs to hide mobile keyboards after completing a
-  search.
-*/
-function searchGoToOverride(view: MapView, goToParams: any) {
-  const inputs = document.getElementsByClassName('esri-input');
-  for (let i = 0; i < inputs.length; i += 1) {
-    (inputs[i] as HTMLElement).blur();
-  }
-  return view.goTo(goToParams.target, goToParams.options);
+// The different types of sources used for searching
+enum SearchSourceType {
+  Location = 0,
+  Filter = 1
 }
 
-// Return the sources that a search widget should search in
-function searchSources() {
-  return [{ 
-    locator: new Locator({
-      url: "https://maps.umass.edu/arcgis/rest/services/Locators/CampusAddressLocatorWithSuggestions/GeocodeServer"
-    }),
-    singleLineFieldName: "SingleLine",
-    name: "On-campus locations",
-    placeholder: "Find on-campus locations",
-    exactMatch: false,
-    suggestionsEnabled: true
-  }, {
-    locator: new Locator({
-      url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
-    }),
-    singleLineFieldName: "SingleLine",
-    outFields: ["Addr_type"],
-    name: "Off-campus locations",
-    placeholder: "Find off-campus locations",
-    localSearchOptions: {
-      minScale: 300000,
-      distance: 50000
-    },
-    exactMatch: false,
-    suggestionsEnabled: true
-  }]
+interface SearchFilterClause {
+  layerName: string;
+  clause?: string;
+  labelsVisible?: boolean,
+}
+
+interface SearchFilter {
+  // The clauses to filter by. There should only be one per layer.
+  clauses: Array<SearchFilterClause>;
+  // Whether or not the filter should be visible in its own window
+  visible: boolean;
+  // The name of the filter to be displayed in the filter window
+  name?: string;
+  // Strings to identify this filter in a search
+  tags?: Array<string>;
+  subFilters?: Array<SearchFilter>;
+}
+
+// Everything needed to store a suggestion for future search
+interface Suggestion {
+  text: string;
+  key: string;
+  sourceType: SearchSourceType;
+  locationSourceIndex?: number;
+  filter?: SearchFilter;
+}
+
+// Everything needed to store what a user has searched
+interface SearchResult {
+  name: string;
+  sourceType: SearchSourceType;
+  latitude?: number;
+  longitude?: number;
+  filter?: SearchFilter;
+}
+
+// Return true if the search term matches one of the tags
+function searchTermMatchesTags(searchTerm: string, tags: Array<string>): boolean {
+  let searchWords = searchTerm.split(' ');
+  return searchWords.some((word) => {
+    return tags.some((tag) => {
+      if (tag.toUpperCase().indexOf(word.toUpperCase()) !== -1) {
+        return true;
+      }
+      return false;
+    });
+  })
 }
 
 /*
-  Export helper functions related to search so they can be
+  Export helper types related to search so they can be
   imported and used in other files.
 */
-export { searchGoToOverride, searchSources };
+export {
+  SearchSourceType,
+  SearchFilter,
+  SearchFilterClause,
+  Suggestion,
+  SearchResult,
+  searchTermMatchesTags
+};

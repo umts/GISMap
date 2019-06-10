@@ -11,101 +11,126 @@ import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
 import TextSymbol = require('esri/symbols/TextSymbol');
 
 import { rootUrl } from 'app/url';
+import { SearchFilter } from 'app/search';
 
 const iconsPath = 'assets/icons';
 
-// Return info that should be used to render different types of spaces
-function spaceRendererInfo(): any {
-  return {
-    'R-Handicapped': {
-      label: 'Handicapped Spaces',
-      description: 'Handicapped space',
-      checked: 'checked',
-      iconUrl: `${rootUrl()}/${iconsPath}/handicapped-space.png`
-    },
-    'R-Carpool': {
-      label: 'Carpool Spaces',
-      description: 'Carpool space',
-      iconUrl: `${rootUrl()}/${iconsPath}/carpool-space.png`
-    },
-    'R-State': {
-      label: 'State Vehicle Spaces',
-      description: 'State vehicle space',
-      iconUrl: `${rootUrl()}/${iconsPath}/state-space.png`
-    },
-    'Meter-Paystation': {
-      label: 'Paystation Spaces',
-      description: 'Paystation space',
-      iconUrl: `${rootUrl()}/${iconsPath}/paystation-space.png`
-    },
-    'Meter-Coin': {
-      label: 'Meter Spaces',
-      description: 'Meter space',
-      iconUrl: `${rootUrl()}/${iconsPath}/meter-space.png`
-    },
-    'R-EV Stations': {
-      label: 'Electric Vehicle Charging Stations',
-      description: 'Electric vehicle charging station',
-      iconUrl: `${rootUrl()}/${iconsPath}/electric-space.png`
-    },
-    'R-Visitor': {
-      label: 'Visitor Spaces',
-      description: 'Visitor space',
-      iconUrl: `${rootUrl()}/${iconsPath}/visitor-space.png`
-    },
-    'R-Client': {
-      label: 'Reserved Spaces',
-      description: 'Reserved space',
-      iconUrl: `${rootUrl()}/${iconsPath}/reserved-space.png`
-    },
-    'R-15Min': {
-      label: 'Loading Zones',
-      description: 'Loading zone',
-      iconUrl: `${rootUrl()}/${iconsPath}/loading-zone.png`
-    }
-  };
+// Info that should be used to render different types of spaces
+const spaceRendererInfo = {
+  'R-Handicapped': {
+    label: 'Handicapped Spaces',
+    description: 'Handicapped space',
+    checked: 'checked',
+    iconUrl: `${rootUrl()}/${iconsPath}/handicapped-space.png`
+  },
+  'R-Carpool': {
+    label: 'Carpool Spaces',
+    description: 'Carpool space',
+    iconUrl: `${rootUrl()}/${iconsPath}/carpool-space.png`
+  },
+  'R-State': {
+    label: 'State Vehicle Spaces',
+    description: 'State vehicle space',
+    iconUrl: `${rootUrl()}/${iconsPath}/state-space.png`
+  },
+  'Meter-Paystation': {
+    label: 'Paystation Spaces',
+    description: 'Paystation space',
+    iconUrl: `${rootUrl()}/${iconsPath}/paystation-space.png`
+  },
+  'Meter-Coin': {
+    label: 'Meter Spaces',
+    description: 'Meter space',
+    iconUrl: `${rootUrl()}/${iconsPath}/meter-space.png`
+  },
+  'R-EV Stations': {
+    label: 'Electric Vehicle Charging Stations',
+    description: 'Electric vehicle charging station',
+    iconUrl: `${rootUrl()}/${iconsPath}/electric-space.png`
+  },
+  'R-Visitor': {
+    label: 'Visitor Spaces',
+    description: 'Visitor space',
+    iconUrl: `${rootUrl()}/${iconsPath}/visitor-space.png`
+  },
+  'R-Client': {
+    label: 'Reserved Spaces',
+    description: 'Reserved space',
+    iconUrl: `${rootUrl()}/${iconsPath}/reserved-space.png`
+  },
+  'R-15Min': {
+    label: 'Loading Zones',
+    description: 'Loading zone',
+    iconUrl: `${rootUrl()}/${iconsPath}/loading-zone.png`
+  }
+};
+
+// Info that should be used to render different section colors
+const sectionRendererInfo = {
+  'Red': {
+    label: 'Red Lots',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/red-lot.png`
+  },
+  'Blue': {
+    label: 'Blue Lots',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/blue-lot.png`
+  },
+  'Purple': {
+    label: 'Purple Lots',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/purple-lot.png`
+  },
+  'Yellow': {
+    label: 'Yellow Lots',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/yellow-lot.png`
+  },
+  'Green': {
+    label: 'Green Lots',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/green-lot.png`
+  },
+  'Pink': {
+    label: 'Meter Lots',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/meter-lot.png`
+  },
+  'Null': {
+    label: 'Other Lots',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/other-lot.png`
+  }
 }
 
-// Return info that should be used to render different section colors
-function sectionRendererInfo(): any {
-  return {
-    'Red': {
-      label: 'Red Lots',
-      checked: 'checked',
-      iconUrl: `${iconsPath}/red-lot.png`
-    },
-    'Blue': {
-      label: 'Blue Lots',
-      checked: 'checked',
-      iconUrl: `${iconsPath}/blue-lot.png`
-    },
-    'Purple': {
-      label: 'Purple Lots',
-      checked: 'checked',
-      iconUrl: `${iconsPath}/purple-lot.png`
-    },
-    'Yellow': {
-      label: 'Yellow Lots',
-      checked: 'checked',
-      iconUrl: `${iconsPath}/yellow-lot.png`
-    },
-    'Green': {
-      label: 'Green Lots',
-      checked: 'checked',
-      iconUrl: `${iconsPath}/green-lot.png`
-    },
-    'Pink': {
-      label: 'Meter Lots',
-      checked: 'checked',
-      iconUrl: `${iconsPath}/meter-lot.png`
-    },
-    'Null': {
-      label: 'Other Lots',
-      checked: 'checked',
-      iconUrl: `${iconsPath}/other-lot.png`
-    }
-  };
-}
+let _filterInfo: Array<SearchFilter> = [
+  {
+    name: 'Metered/Visitor Parking',
+    tags: ['meter', 'paystation', 'pink', 'visitor'],
+    visible: true,
+    clauses: [
+      {layerName: 'Sections', clause: "SectionColor = 'Pink'"},
+      {layerName: 'Spaces', clause: "ParkingSpaceSubCategory in ('Meter-Coin','Meter-Paystation')"}
+    ]
+  }, {
+    name: 'ParkMobile Lots',
+    tags: ['parkmobile'],
+    visible: true,
+    clauses: [{layerName: 'Sections', clause: "ParkmobileZoneID is not null"}]
+  }
+];
+
+['Red', 'Blue', 'Purple', 'Yellow', 'Green'].forEach((color) => {
+  _filterInfo.push({
+    name: `${color} Lots`,
+    tags: [color],
+    visible: true,
+    clauses: [{layerName: 'Sections', clause: `SectionColor = '${color}'`}]
+  });
+});
+// For simplicity we should never be modifying filterInfo outside of this file
+const filterInfo = _filterInfo;
 
 // Update the renderers of layers to add our own icons
 function updateRenderers(map: WebMap) {
@@ -120,8 +145,8 @@ function updateRenderers(map: WebMap) {
       })
     }),
     defaultLabel: 'Other Spaces',
-    uniqueValueInfos: Object.keys(spaceRendererInfo()).map((spaceCategory) => {
-      const rendererInfo = spaceRendererInfo()[spaceCategory];
+    uniqueValueInfos: Object.keys(spaceRendererInfo).map((spaceCategory) => {
+      const rendererInfo = spaceRendererInfo[spaceCategory];
       if (rendererInfo.iconUrl) {
         return {
           value: spaceCategory,
@@ -251,6 +276,7 @@ export {
   updateLabeling,
   spaceRendererInfo,
   sectionRendererInfo,
-  getElementStyleSize,
-  expandable
+  filterInfo,
+  expandable,
+  getElementStyleSize
 };
