@@ -193,14 +193,25 @@ class CustomPopup extends declared(Widget) {
 
   // Return a JSX element describing a section
   private _renderSection(feature: Graphic): JSX.Element {
+    let title;
+    if (feature.attributes.SectionColor) {
+      title = <p class='widget-label'>
+        {feature.attributes.SectionName} ({feature.attributes.SectionColor})
+      </p>;
+    } else {
+      title = <p class='widget-label'>
+        {feature.attributes.SectionName}
+      </p>;
+    }
+
     const parkmobileLink = (
-      <a target='_blank' href='https://parkmobile.io/'>
-        Parkmobile
+      <a target='_blank' href='https://www.umass.edu/transportation/pay-cell-parkmobile'>
+        ParkMobile
       </a>
     );
     let parkmobile;
     if (feature.attributes.ParkmobileZoneID) {
-      parkmobile = <p>{parkmobileLink} Zone #: {feature.attributes.ParkmobileZoneID}</p>
+      parkmobile = <p>{parkmobileLink} Zone: {feature.attributes.ParkmobileZoneID}</p>
     } else {
       parkmobile = <p>No {parkmobileLink} available.</p>
     }
@@ -230,9 +241,7 @@ class CustomPopup extends declared(Widget) {
 
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
-        <p class='widget-label'>
-          {feature.attributes.SectionName} ({feature.attributes.SectionColor})
-        </p>
+        {title}
         {permitInfo}
         {parkmobile}
       </div>
@@ -244,11 +253,7 @@ class CustomPopup extends declared(Widget) {
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
         <p class='widget-label'>{feature.attributes.Building_Name}</p>
-        <b>{feature.attributes.Address}</b>
-        <p>
-          {feature.attributes.Total_Usable_Floors}
-          {feature.attributes.Total_Usable_Floors === 1 ? ' floor' : ' floors'}
-        </p>
+        <p><b>{feature.attributes.Address}</b></p>
         <img height='160px' src={feature.attributes.PhotoURL} />
       </div>
     );
@@ -262,11 +267,16 @@ class CustomPopup extends declared(Widget) {
     if (iconUrl) {
       icon = <img class='image-in-text' width='24px' height='24px' src={iconUrl} />;
     }
+    let description;
+    if (feature.attributes.ParkingSpaceSubCategory === 'R-15Min') {
+      description = '15 minute loading zone.';
+    }
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
         <p class='widget-label'>
           {categoryInfo.description}{icon}
         </p>
+        <p>{description}</p>
         <p>
           {
             feature.attributes.ParkingSpaceClient &&

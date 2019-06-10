@@ -81,6 +81,24 @@ body,
   font-weight: bold;
 }
 
+.widget-label-icon {
+  padding: 0.5rem;
+}
+
+.widget-tab {
+  border-bottom: 1px solid #881c1c;
+  cursor: pointer;
+  display: inline-block;
+  padding: 0.5rem;
+  background-color: #ccc;
+}
+
+.widget-tab-active {
+  border: 1px solid #881c1c;
+  border-bottom: 0;
+  background-color: white;
+}
+
 .form-row {
   display: block;
   margin-bottom: 0.8rem;

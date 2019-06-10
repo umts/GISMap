@@ -136,9 +136,13 @@ class FilteredLayerList extends declared(Widget) {
   // Return the where clause to filter a layer by
   private _clause(columnName: string, options: Array<string>): string {
     if (options.length > 0) {
-      return `${columnName} in (${options.map((option: any) => {return "'" + option + "'"} ).join()})`;
+      let clause = `${columnName} in (${options.map((option: any) => {return "'" + option + "'"} ).join()})`;
+      if (options.indexOf('Null') > -1) {
+        clause += `or ${columnName} is null`;
+      }
+      return clause;
     } else {
-      return `${columnName} is null and ${columnName} is not null`;
+      return `0 = 1`;
     }
   }
 }

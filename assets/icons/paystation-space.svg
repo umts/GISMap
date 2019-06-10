@@ -11,14 +11,11 @@
    viewBox="0 0 24.000516 23.968749"
    width="100%"
    version="1.1"
-   id="svg2"
+   id="svg4684"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="paystation-space.svg"
-   inkscape:export-filename="/Users/liambrandt/programming/GISMap/assets/icons/meter-space.png"
-   inkscape:export-xdpi="259.36209"
-   inkscape:export-ydpi="259.36209">
+   sodipodi:docname="paystation-space.svg">
   <defs
-     id="defs13" />
+     id="defs4695" />
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -28,19 +25,19 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1108"
-     inkscape:window-height="763"
-     id="namedview11"
+     inkscape:window-width="1321"
+     inkscape:window-height="756"
+     id="namedview4693"
      showgrid="false"
-     inkscape:zoom="9.8461543"
-     inkscape:cx="12.000258"
-     inkscape:cy="17.995243"
-     inkscape:window-x="100"
+     inkscape:zoom="12.140809"
+     inkscape:cx="1.6580578"
+     inkscape:cy="13.3967"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
-     inkscape:current-layer="layer3" />
+     inkscape:current-layer="layer1" />
   <metadata
-     id="metadata4">
+     id="metadata4686">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -54,34 +51,25 @@
   <g
      inkscape:groupmode="layer"
      id="layer1"
-     inkscape:label="coin-back" />
-  <g
-     inkscape:groupmode="layer"
-     id="layer2"
-     inkscape:label="coin-front">
-    <rect
-       style="fill:#ffd636;fill-opacity:1;stroke:#ba9400;stroke-width:1.09524584;stroke-opacity:1"
-       id="rect4194"
-       width="22.451628"
-       height="18.693817"
-       x="0.86012286"
-       y="2.5866854" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer3"
-     inkscape:label="coin-text">
+     inkscape:label="paystation-square"
+     style="display:inline">
+    <path
+       style="fill:#13379c;fill-rule:evenodd;stroke:#13379c;stroke-width:9;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       d="m 5,18.968749 0,-14 14,0 0,14 z"
+       id="path4799"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ba9400;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="7.0078125"
-       y="16.554688"
-       id="text4171"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="5.7077303"
+       y="19.076408"
+       id="text4801"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan4173"
-         x="7.0078125"
-         y="16.554688"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#ba9400;fill-opacity:1">$</tspan></text>
+         id="tspan4803"
+         x="5.7077303"
+         y="19.076408"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:20px;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#ffffff;fill-opacity:1">P</tspan></text>
   </g>
 </svg>
