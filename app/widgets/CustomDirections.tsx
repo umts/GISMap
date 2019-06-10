@@ -27,12 +27,8 @@ class CustomDirections extends declared(Widget) {
     return (
       <div class='esri-widget'>
         <form>
-          <div class='form-row'>
-            {this.startSearch.render()}
-          </div>
-          <div class='form-row'>
-            {this.endSearch.render()}
-          </div>
+          {this.startSearch.render()}
+          {this.endSearch.render()}
           <div class='form-row'>
             <select id='directions-service' class='umass-theme-button' required>
               <option value='google' selected>Google Maps</option>

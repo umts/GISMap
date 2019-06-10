@@ -7,6 +7,7 @@ import Widget = require('esri/widgets/Widget');
 
 import FilteredLayerList = require('app/widgets/FilteredLayerList');
 import { spaceRendererInfo, sectionRendererInfo } from 'app/rendering';
+import { SearchFilter, SearchFilterClause } from 'app/search';
 
 @subclass('esri.widgets.CustomLayerList')
 class CustomLayerList extends declared(Widget) {
@@ -25,23 +26,41 @@ class CustomLayerList extends declared(Widget) {
   @renderable()
   spaceLayers: FilteredLayerList;
 
+  /*
+    The filter representing how the map layers should be filtered by the
+    custom filter widget.
+  */
+  @property()
+  @renderable()
+  filter: SearchFilter
+
   // Pass in any properties
   constructor(properties?: { view: MapView }) {
     super();
     this.sectionLayers = new FilteredLayerList({
-      layer: properties.view.map.layers.find((layer: any) => {
-        return layer.title === 'Sections';
-      }),
       filterColumnName: 'SectionColor',
-      filterOptionInfos: sectionRendererInfo()
+      filterOptionInfos: sectionRendererInfo
     });
     this.spaceLayers = new FilteredLayerList({
-      layer: properties.view.map.layers.find((layer: any) => {
-        return layer.title === 'Spaces';
-      }),
       filterColumnName: 'ParkingSpaceSubCategory',
-      filterOptionInfos: spaceRendererInfo()
+      filterOptionInfos: spaceRendererInfo
     })
+  }
+
+  // Run after this widget is ready 
+  postInitialize() {
+    /*
+      Check the filtered layer lists for clause changes, and update our filter
+      when that happens.
+    */
+    this.sectionLayers.watch('clause', (_clause) => {
+      this._updateFilter();
+    });
+    this.spaceLayers.watch('clause', (_clause) => {
+      this._updateFilter();
+    });
+    // Set our initial filter
+    this._updateFilter();
   }
 
   // Render this widget by returning JSX which is converted to HTML
@@ -59,6 +78,10 @@ class CustomLayerList extends declared(Widget) {
     );
   }
 
+  /*
+    Render a generic checkbox that will trigger generic checkbox events in
+    this widget.
+  */
   private _renderCustomCheckbox(uniqueId: string, text: string): JSX.Element {
     return (
       <div
@@ -81,6 +104,11 @@ class CustomLayerList extends declared(Widget) {
     );
   }
 
+  // Return a checkbox by id
+  private _checkbox(id: string): HTMLInputElement {
+    return document.getElementById(id) as HTMLInputElement;
+  }
+
   // Given an event on a checkbox perform the corresponding event
   private _checkboxEvent(event: any) {
     if (event.target.id === 'lots-checkbox') {
@@ -89,19 +117,8 @@ class CustomLayerList extends declared(Widget) {
         the event is coming from.
       */
       this.sectionLayers.toggleFilters(event.target.checked);
-    } else if (event.target.id === 'lot-labels-checkbox') {
-      // Toggle the visibility of the lot labels
-      const sectionsLayer = this.view.map.layers.find((layer) => {
-        return layer.title === 'Sections';
-      }) as FeatureLayer;
-      sectionsLayer.labelsVisible = event.target.checked;
-    } else if (event.target.id === 'building-labels-checkbox') {
-      // Toggle the visibility of the lot labels
-      const buildingsLayer = this.view.map.layers.find((layer) => {
-        return layer.title === 'Campus Buildings';
-      }) as FeatureLayer;
-      buildingsLayer.labelsVisible = event.target.checked;
     }
+    this._updateFilter();
   }
 
   /*
@@ -111,13 +128,47 @@ class CustomLayerList extends declared(Widget) {
   private _toggleCheckbox(event: any) {
     const checkboxId = event.target.dataset.checkboxId;
     if (checkboxId) {
-      const checkbox = document.getElementById(checkboxId) as HTMLInputElement;
+      const checkbox = this._checkbox(checkboxId);
       if (checkbox.checked) {
         checkbox.checked = false;
       } else {
         checkbox.checked = true;
       }
       this._checkboxEvent({target: checkbox});
+    }
+  }
+
+  /*
+    Update our filter based on the state of our own checkboxes and the
+    filtered layer list checkboxes.
+  */
+  private _updateFilter() {
+    let lotLabelsVisible = true;
+    let buildingLabelsVisible = true;
+
+    const lotLabelsCheckbox = this._checkbox('lot-labels-checkbox');
+    if (lotLabelsCheckbox) {
+      lotLabelsVisible = lotLabelsCheckbox.checked;
+    }
+    const buildingLabelsCheckbox = this._checkbox('building-labels-checkbox');
+    if (buildingLabelsCheckbox) {
+      buildingLabelsVisible = buildingLabelsCheckbox.checked;
+    }
+    this.filter = {
+      visible: false,
+      clauses: [
+        {
+          layerName: 'Sections',
+          clause: this.sectionLayers.clause,
+          labelsVisible: lotLabelsVisible
+        }, {
+          layerName: 'Spaces',
+          clause: this.spaceLayers.clause
+        }, {
+          layerName: 'Campus Buildings',
+          labelsVisible: buildingLabelsVisible
+        }
+      ]
     }
   }
 }

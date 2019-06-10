@@ -1,31 +1,20 @@
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
-import { renderable, tsx } from "esri/widgets/support/widget";
+import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { renderable, tsx } from 'esri/widgets/support/widget';
 
-import esriRequest = require("esri/request");
-import Search = require("esri/widgets/Search");
-import LocatorSearchSource = require("esri/widgets/Search/LocatorSearchSource");
-import Widget = require("esri/widgets/Widget");
+import MapView = require('esri/views/MapView');
+import Search = require('esri/widgets/Search');
+import Widget = require('esri/widgets/Widget');
 
-// Everything needed to store what a user has searched
-interface SearchResult {
-  latitude: number;
-  longitude: number;
-  name: string;
-}
+import { SearchSourceType, SearchResult, Suggestion } from 'app/search';
+import CustomSearchSources = require('app/CustomSearchSources');
+import CustomFilter = require('app/widgets/CustomFilter');
 
-// Everything needed to store a suggestion for future search
-interface Suggestion {
-  key: string;
-  sourceIndex: number;
-  text: string;
-}
-
-@subclass("esri.widgets.CustomSearch")
+@subclass('esri.widgets.CustomSearch')
 class CustomSearch extends declared(Widget) {
-  // The search widget that this widget wraps
+  // The main map view
   @property()
   @renderable()
-  search: Search;
+  view: MapView;
 
   // Name used to uniquely identify elements
   @property()
@@ -51,11 +40,47 @@ class CustomSearch extends declared(Widget) {
   @property()
   searchResult: SearchResult;
 
+  // Many sources operating under one set of functions
+  @property()
+  sources: CustomSearchSources;
+
+  // The main filter widget we can apply filters to
+  @property()
+  customFilter: CustomFilter;
+
+  // Whether or not this input should be required in a form
+  @property()
+  required: boolean;
+
+  // Whether or not this is the main search bar for the entire app
+  @property()
+  mainSearch: boolean;
+
+  // Whether or not we are waiting for the suggestions to load
+  @property()
+  @renderable()
+  loadingSuggestions: boolean;
+
   // Pass in any properties
   constructor(properties?: any) {
     super();
     this.suggestions = [];
     this.showSuggestions = false;
+    this.required = properties.required || false;
+    this.mainSearch = properties.mainSearch || false;
+    this.sources = new CustomSearchSources({locationsOnly: !properties.mainSearch});
+
+    // Hide suggestions when the escape key is pressed
+    window.addEventListener('keydown', (event) => {
+      // Do nothing if the event was already processed or the input is not visible
+      if (event.defaultPrevented || !this._inputElement()) {
+        return;
+      }
+      // Regular people use `key`, IE uses `keyCode`
+      if (event.key === 'Escape' || event.keyCode === 27) {
+        this._hideSuggestions();
+      }
+    });
   }
 
   // Render this widget by returning JSX which is converted to HTML
@@ -64,18 +89,19 @@ class CustomSearch extends declared(Widget) {
       Render suggestions assuming suggestions from the same source are
       consecutive.
     */
-    let suggestionElements = [];
-    let visitedSources = [];
+    let suggestionElements: Array<JSX.Element> = [];
+    let visitedSources: Array<string> = [];
     if (this.showSuggestions) {
-      for (let i = 0; i < this.suggestions.length; i += 1) {
+      this.suggestions.forEach((suggestion, i) => {
+        const header = this.sources.suggestionHeader(suggestion);
         // Push a source header if the suggestions are from a new source
-        if (visitedSources.indexOf(this.suggestions[i].sourceIndex) === -1) {
-          visitedSources.push(this.suggestions[i].sourceIndex);
+        if (visitedSources.indexOf(header) === -1) {
+          visitedSources.push(header);
           suggestionElements.push(
             <div
               class='custom-search-header suggestion-item'
-              key={`${this.suggestions[i].key}-header`}>
-              {this.search.sources.getItemAt(this.suggestions[i].sourceIndex).name}
+              key={`${suggestion.key}-header`}>
+              {header}
             </div>
           );
         }
@@ -85,20 +111,55 @@ class CustomSearch extends declared(Widget) {
             bind={this}
             class='custom-search-suggestion suggestion-item'
             data-index={`${i}`}
-            key={this.suggestions[i].key}
+            key={suggestion.key}
             onclick={this._suggestionClicked}>
-            {this.suggestions[i].text}
+            {suggestion.text}
+          </div>
+        );
+      });
+      // Push the loading text
+      if (this.loadingSuggestions) {
+        suggestionElements.push(
+          <div
+            class='custom-search-header suggestion-item'
+            key='loading-header'>
+            Loading...
           </div>
         );
       }
     }
 
-    return (
-      <div
-        bind={this}
-        onfocus={this._showSuggestions}
-        onblur={this._hideSuggestions}
-        tabindex="-1">
+    let clearButton;
+    if (this._inputElement() && this._inputElement().value) {
+      clearButton = (
+        <div
+          bind={this}
+          class='esri-widget esri-widget--button button-input'
+          onclick={this._clearSearch}
+          tabindex='0'
+          title='Clear search'>
+          <span class='esri-icon esri-icon-close'></span>
+        </div>
+      );
+    }
+
+    let submitButton;
+    if (this.mainSearch) {
+      submitButton = (
+        <div
+          bind={this}
+          class='esri-widget esri-widget--button button-input'
+          onclick={this._submitSearch}
+          tabindex='0'
+          title='Search'>
+          <span class='esri-icon esri-icon-search'></span>
+        </div>
+      );
+    }
+
+    let mainElement;
+    const input = (
+      <div class='form-row-input'>
         <input
           bind={this}
           class='esri-input'
@@ -108,13 +169,36 @@ class CustomSearch extends declared(Widget) {
           onblur={this._hideSuggestions}
           placeholder={this.placeholder}
           type='text'
-          required />
-        <div class='custom-search-container'>
-          <div class='custom-search-pane'>
-            {suggestionElements}
+          required={this.required} />
+        {clearButton}
+        {submitButton}
+      </div>
+    );
+    mainElement = input;
+    if (this.mainSearch) {
+      mainElement = (
+        <form bind={this} onsubmit={this._submitSearch}>
+          {input}
+        </form>
+      );
+    }
+
+    return (
+      <div class='form-row'>
+        <div
+          bind={this}
+          class='custom-search-container'
+          onfocus={this._showSuggestions}
+          onblur={this._hideSuggestions}
+          tabindex="-1">
+          {mainElement}
+          <div class='custom-search-pane-container'>
+            <div class='custom-search-pane'>
+              {suggestionElements}
+            </div>
           </div>
-        </div>
-        <div id={`${this.name}-validation-warning`} class="validation-warning hide">
+          <div id={`${this.name}-validation-warning`} class="validation-warning hide">
+          </div>
         </div>
       </div>
     );
@@ -139,74 +223,86 @@ class CustomSearch extends declared(Widget) {
     this._warningElement().classList.add("hide");
   }
 
-  /*
-    Called when a suggestion term is clicked.
-    It will search the geolocator services for the exact suggestion.
-  */
-  private _setSearch(suggestion: Suggestion) {
-    // Determine which locator we should look in for the suggestion
-    const locator = (this.search.sources.getItemAt(
-      Number(suggestion.sourceIndex)
-    ) as LocatorSearchSource).locator;
-    /*
-      Build our own request to the API so we can explicitly request the same
-      output spatial reference to be in latitude and longitude.
-      Otherwise different locators return coordinates in different spatial
-      references depending on the location.
-    */
-    esriRequest(locator.url + "/findAddressCandidates",
-      {
-        query: {
-          magicKey: suggestion.key,
-          f: "json",
-          maxLocations: 1,
-          outSR: '{"wkid":4326}'
+  // Called when the main search is submitted
+  private _submitSearch(): boolean {
+    if (this.searchResult) {
+      if (this.searchResult.sourceType === SearchSourceType.Location) {
+        // Go to a location result
+        this.view.goTo({
+          target: [this.searchResult.longitude, this.searchResult.latitude],
+          zoom: 18
+        });
+        this._hideSuggestions();
+      } else if (this.searchResult.sourceType === SearchSourceType.Filter) {
+        // Filter by a filter result
+        this.customFilter.filter = this.searchResult.filter;
+      }
+    // No search result, so use the first suggestion
+    } else {
+      for (let i = 0; i < this.suggestions.length; i += 1) {
+        const suggestion = this.suggestions[i];
+        if (suggestion.sourceType === SearchSourceType.Location) {
+          this._setSearch(suggestion);
+          break;
         }
       }
-    ).then((response) => {
-      if (response.data.candidates.length > 0) {
-        const topResult = response.data.candidates[0];
-        // Set the internal search result
-        this.searchResult = {
-          latitude: topResult.location.y,
-          longitude: topResult.location.x,
-          name: topResult.address
-        };
-        // Set the search input text to the name of the search result
-        (document.getElementById(this.name) as HTMLInputElement)
-          .value = this.searchResult.name;
-      } else {
-        console.error(`Could not find search result for suggestion
-          with magicKey ${suggestion.key}`);
-      }
-      this._hideSuggestions();
-      this._hideWarning();
-    });
+    }
+    // Don't submit the form
+    return false;
   }
 
   // Update suggestions based on the most recent input
   private _setSuggestions() {
-    const inputValue = this._inputElement().value;
+    const searchTerm = this._inputElement().value.trim();
     // Reset the last search result if the user is typing something different
-    if (this.searchResult && inputValue !== this.searchResult.name) {
+    if (this.searchResult && searchTerm !== this.searchResult.name) {
       this.searchResult = null;
     }
     // Reset previous suggestions
     this.suggestions = [];
-    if (inputValue === '') {
+    if (searchTerm === '') {
       return;
     }
+    this.loadingSuggestions = true;
     // Find new suggestions
-    this.search.suggest(inputValue).then((response) => {
-      // Iterate over each source
-      for (let i = 0; i < response.results.length; i += 1) {
-        // Iterate over each result from that source
-        for (let j = 0; j < response.results[i].results.length; j += 1) {
-          this.suggestions.push(response.results[i].results[j]);
-        }
-      }
+    this.sources.suggest(searchTerm).then((suggestions) => {
+      this.suggestions = suggestions;
       this._showSuggestions();
+      this.loadingSuggestions = false;
+    }).catch((error) => {
+      console.log(error);
+      this.loadingSuggestions = false;
     });
+  }
+
+  /*
+    Called when a suggestion term is clicked.
+    For location suggestions it will search the geolocator services for the
+    exact suggestion.
+  */
+  private _setSearch(suggestion: Suggestion) {
+    this.sources.search(suggestion).then((searchResult) => {
+      this.searchResult = searchResult;
+      // Set the search input text to the name of the search result
+      (document.getElementById(this.name) as HTMLInputElement)
+        .value = this.searchResult.name;
+      this._hideSuggestions();
+      this._hideWarning();
+      // When this is the main search bar submit when a suggestion is selected
+      if (this.mainSearch) {
+        this._submitSearch();
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  // Completely clear the search bar
+  private _clearSearch() {
+    this.searchResult = null;
+    this.suggestions = [];
+    this._inputElement().value = '';
+    this._inputElement().focus();
   }
 
   // Called when a suggestion is clicked
@@ -220,6 +316,7 @@ class CustomSearch extends declared(Widget) {
 
   private _hideSuggestions() {
     this.showSuggestions = false;
+    this._inputElement().blur();
   }
 
   // Get this input element

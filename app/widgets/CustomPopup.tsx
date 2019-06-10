@@ -261,7 +261,7 @@ class CustomPopup extends declared(Widget) {
 
   // Return a JSX element describing a space
   private _renderSpace(feature: Graphic): JSX.Element {
-    const categoryInfo = spaceRendererInfo()[feature.attributes.ParkingSpaceSubCategory];
+    const categoryInfo = spaceRendererInfo[feature.attributes.ParkingSpaceSubCategory];
     let icon;
     const iconUrl = categoryInfo.iconUrl;
     if (iconUrl) {

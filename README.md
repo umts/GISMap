@@ -8,14 +8,15 @@ GIS map being developed with AFS (initially for Parking Services)
 ## Setup
 [Install Yarn](https://yarnpkg.com/en/docs/install)
 
-Install TypeScript with:
+Install compilation dependencies with:
 ```
 yarn global add typescript
+yarn global add browserify
 ```
 
-Transpile the application with:
+Compile the application with:
 ```
-tsc
+./compile.sh
 ```
 
 ## Reference
