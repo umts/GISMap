@@ -87,6 +87,8 @@ view.when(() => {
   // Create a layer window that will be hidden until opened by a window expand
   const layersWindow = new CustomWindow({
     name: 'layers',
+    iconName: 'layers',
+    useTabs: false,
     widgets: [
       {
         label: 'Layers',
@@ -137,6 +139,8 @@ view.when(() => {
   */
   const directionsWindow = new CustomWindow({
     name: 'directions',
+    iconName: 'directions',
+    useTabs: true,
     widgets: [
       {
         label: 'Driving directions',
@@ -152,6 +156,8 @@ view.when(() => {
   // Create a share window that will be hidden until opened by a window expand
   const shareWindow = new CustomWindow({
     name: 'share',
+    iconName: 'link',
+    useTabs: false,
     widgets: [
       {
         label: "Share link",

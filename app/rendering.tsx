@@ -46,9 +46,21 @@ function spaceRendererInfo(): any {
       description: 'Electric vehicle charging station',
       iconUrl: `${rootUrl()}/${iconsPath}/electric-space.png`
     },
-    'R-Visitor': {label: 'Visitor Spaces', description: 'Visitor space'},
-    'R-Client': {label: 'Reserved Spaces', description: 'Reserved space'},
-    'R-15Min': {label: '15 Minute Spaces', description: '15 minute space'}
+    'R-Visitor': {
+      label: 'Visitor Spaces',
+      description: 'Visitor space',
+      iconUrl: `${rootUrl()}/${iconsPath}/visitor-space.png`
+    },
+    'R-Client': {
+      label: 'Reserved Spaces',
+      description: 'Reserved space',
+      iconUrl: `${rootUrl()}/${iconsPath}/reserved-space.png`
+    },
+    'R-15Min': {
+      label: 'Loading Zones',
+      description: 'Loading zone',
+      iconUrl: `${rootUrl()}/${iconsPath}/loading-zone.png`
+    }
   };
 }
 
@@ -84,6 +96,11 @@ function sectionRendererInfo(): any {
       label: 'Meter Lots',
       checked: 'checked',
       iconUrl: `${iconsPath}/meter-lot.png`
+    },
+    'Null': {
+      label: 'Other Lots',
+      checked: 'checked',
+      iconUrl: `${iconsPath}/other-lot.png`
     }
   };
 }
