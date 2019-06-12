@@ -241,5 +241,22 @@ view.when(() => {
 
   // Add the main navigation widget to the map
   view.ui.add(mainNavigation, "manual");
+
+  /*
+    Set body to waiting class to display that the view is loading external
+    resources.
+  */
+  const waitingClass = 'progress-cursor';
+  document.body.classList.add(waitingClass);
+  mainNavigation.layersExpand.loadingIcon = true;
+  view.watch('updating', (updating) => {
+    if (updating) {
+      document.body.classList.add(waitingClass);
+      mainNavigation.layersExpand.loadingIcon = true;
+    } else {
+      document.body.classList.remove(waitingClass);
+      mainNavigation.layersExpand.loadingIcon = false;
+    }
+  });
 })
 .otherwise((error) => console.warn(error));
