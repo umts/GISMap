@@ -271,6 +271,7 @@ class CustomPopup extends declared(Widget) {
       spaceCountExpand = expandable(
         'Spaces',
         false,
+        'expandable-header',
         <ul>{spaceCountElements}</ul>
       );
     }
@@ -279,7 +280,12 @@ class CustomPopup extends declared(Widget) {
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
         {title}
         <p><b>{feature.attributes.SectionAddress}</b></p>
-        {expandable('Description', true, <div>{sectionHours}{permitInfo}{parkmobile}</div>)}
+        {expandable(
+          'Description',
+          true,
+          'expandable-header',
+          <div>{sectionHours}{permitInfo}{parkmobile}</div>
+        )}
         {spaceCountExpand}
       </div>
     );
@@ -295,6 +301,7 @@ class CustomPopup extends declared(Widget) {
           expandable(
             'Image',
             false,
+            'expandable-header',
             <img height='160px' src={feature.attributes.PhotoURL} />
           )
         }

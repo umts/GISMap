@@ -71,13 +71,20 @@ body,
   z-index: -1;
 }
 
-.expandable-header {
-  background-color: #63666a;
-  color: white;
+.expandable {
   cursor: pointer;
   display: flex;
   align-items: center;
   padding: 0.5rem;
+}
+
+.expandable-filter {
+  background-color: black;
+  color: white;
+}
+.expandable-header {
+  background-color: #63666a;
+  color: white;
   margin-bottom: 0.5rem;
 }
 .expandable-header:active {

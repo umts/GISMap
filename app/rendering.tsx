@@ -107,6 +107,7 @@ const sectionRendererInfo = {
 let _filterInfo: Array<SearchFilter> = [
   {
     name: 'Metered/Visitor Parking',
+    description: 'Locations to park without a permit. Pay at a meter or a paystation.',
     tags: ['meter', 'paystation', 'pink', 'visitor'],
     visible: true,
     clauses: [
@@ -115,9 +116,22 @@ let _filterInfo: Array<SearchFilter> = [
     ]
   }, {
     name: 'ParkMobile Lots',
+    description: 'Payment in these lots available using the ParkMobile app.',
     tags: ['parkmobile'],
     visible: true,
     clauses: [{layerName: 'Sections', clause: "ParkmobileZoneID is not null"}]
+  }, {
+    name: 'Free Parking (On Weekends)',
+    description: 'These lots are free to park in on the weekend, with the exception of special events.',
+    tags: ['free', 'weekend'],
+    visible: true,
+    clauses: [{layerName: 'Sections', clause: "SectionHours in ('Weekdays','BusinessHours')"}]
+  }, {
+    name: 'Free Parking (After Business Hours)',
+    description: 'These lots are free to park in after business hours, with the exception of special events. They are restricted on weekdays from 7:00 AM to 5:00 PM.',
+    tags: ['free', 'business'],
+    visible: true,
+    clauses: [{layerName: 'Sections', clause: "SectionHours in ('BusinessHours')"}]
   }
 ];
 
@@ -231,12 +245,13 @@ function getElementStyleSize(element: Element, property: string): number {
 function expandable(
   title: string,
   startExpanded: boolean,
+  className: string,
   mainElement: JSX.Element
 ): JSX.Element {
   return (
     <div>
       <div
-        class='expandable-header'
+        class={`expandable ${className}`}
         data-title={title}
         onclick={_expandExpandable}>
         <span
