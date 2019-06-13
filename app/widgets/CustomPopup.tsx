@@ -89,9 +89,10 @@ class CustomPopup extends declared(Widget) {
         bind={this}
         class="esri-widget esri-widget--button custom-window-close"
         onclick={this._close}
+        role='button'
         tabindex='0'
-        title={`Close popup`}>
-        <span class={`esri-icon esri-icon-close`}></span>
+        title={`Close feature information`}>
+        <span aria-hidden='true' class={`esri-icon esri-icon-close`}></span>
       </div>
     );
 
@@ -108,7 +109,9 @@ class CustomPopup extends declared(Widget) {
           <div class='popup-pointer'></div>
         </div>
         <div
-          class='navigation-window custom-popup'>
+          aria-label='Feature information'
+          class='navigation-window custom-popup'
+          role='dialog'>
           {closeButton}
           {pageCounter}
           {featureInfo}
@@ -195,11 +198,11 @@ class CustomPopup extends declared(Widget) {
   private _renderSection(feature: Graphic): JSX.Element {
     let title;
     if (feature.attributes.SectionColor) {
-      title = <p class='widget-label'>
+      title = <p class='widget-label' role='heading'>
         {feature.attributes.SectionName} ({feature.attributes.SectionColor})
       </p>;
     } else {
-      title = <p class='widget-label'>
+      title = <p class='widget-label' role='heading'>
         {feature.attributes.SectionName}
       </p>;
     }
@@ -252,9 +255,12 @@ class CustomPopup extends declared(Widget) {
   private _renderBuilding(feature: Graphic): JSX.Element {
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
-        <p class='widget-label'>{feature.attributes.Building_Name}</p>
+        <p class='widget-label' role='heading'>{feature.attributes.Building_Name}</p>
         <p><b>{feature.attributes.Address}</b></p>
-        <img height='160px' src={feature.attributes.PhotoURL} />
+        <img
+          height='160px'
+          src={feature.attributes.PhotoURL}
+          alt={feature.attributes.Building_Name} />
       </div>
     );
   }
@@ -273,7 +279,7 @@ class CustomPopup extends declared(Widget) {
     }
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
-        <p class='widget-label'>
+        <p class='widget-label' role='heading'>
           {categoryInfo.description}{icon}
         </p>
         <p>{description}</p>

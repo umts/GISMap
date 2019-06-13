@@ -30,7 +30,11 @@ class CustomDirections extends declared(Widget) {
           {this.startSearch.render()}
           {this.endSearch.render()}
           <div class='form-row'>
-            <select id='directions-service' class='umass-theme-button' required>
+            <select
+              aria-label='Direction service'
+              id='directions-service'
+              class='umass-theme-button'
+              required>
               <option value='google' selected>Google Maps</option>
               <option value='osm'>OpenStreetMap</option>
             </select>

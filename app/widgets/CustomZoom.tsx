@@ -48,14 +48,17 @@ class CustomZoom extends declared(Widget) {
       iconClass = "esri-icon-minus";
     }
 
+    const title = `Zoom ${(this.direction === ZoomDirection.In) ? "in" : "out"}`;
     return (
       <div
+        aria-label={title}
         bind={this}
         class="esri-widget esri-widget--button"
         onclick={this._zoom}
+        role='button'
         tabindex='0'
-        title={`Zoom ${(this.direction === ZoomDirection.In) ? "in" : "out"}`}>
-        <span class={`esri-icon ${iconClass}`}></span>
+        title={title}>
+        <span aria-hidden='true' class={`esri-icon ${iconClass}`}></span>
       </div>
     );
   }

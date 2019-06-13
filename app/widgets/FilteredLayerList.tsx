@@ -41,9 +41,11 @@ class FilteredLayerList extends declared(Widget) {
     this.filterOptions.forEach((filterOption) => {
       let icon;
       const iconUrl = this.filterOptionInfos[filterOption].iconUrl;
+      const altText = this.filterOptionInfos[filterOption].altText;
       // If we have an image for this filter use it
       if (iconUrl) {
         icon = <img
+          alt={altText}
           class='image-right'
           data-filter-option={filterOption}
           width='24px'
@@ -55,8 +57,10 @@ class FilteredLayerList extends declared(Widget) {
           bind={this}
           class='layer-checkbox'
           onclick={this._toggleFilterCheckbox}
-          data-filter-option={filterOption}>
-          <label for={filterOption} data-filter-option={filterOption}>
+          data-filter-option={filterOption}
+          role='presentation'>
+          {icon}
+          <label for={this._checkboxId(filterOption)} data-filter-option={filterOption}>
             <input
               bind={this}
               class='layer-checkbox-input'
@@ -65,7 +69,6 @@ class FilteredLayerList extends declared(Widget) {
               onchange={this.setSelectedFilters}
               type='checkbox'
               checked={this.filterOptionInfos[filterOption].checked} />
-            {icon}
             {this.filterOptionInfos[filterOption].label}
           </label>
         </div>

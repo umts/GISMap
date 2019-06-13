@@ -71,7 +71,8 @@ class CustomWindow extends declared(Widget) {
             bind={this}
             onclick={this._clickTab}
             class={classes}
-            data-index={`${i}`}>
+            data-index={`${i}`}
+            role='tab'>
             {this.widgets[i].label}
           </div>
         );
@@ -89,10 +90,15 @@ class CustomWindow extends declared(Widget) {
         let widgetIcon;
         // Only include the icon on the first widget or on every tab
         if (i === 0 || this.useTabs) {
-          widgetIcon = <span class={`widget-label-icon esri-icon esri-icon-${this.iconName}`}></span>;
+          widgetIcon = (
+            <span
+              aria-hidden='true'
+              class={`widget-label-icon esri-icon esri-icon-${this.iconName}`}>
+            </span>
+          );
         }
         widgetLabel = (
-          <p class="widget-label">
+          <p role='heading' class="widget-label">
             {widgetIcon}
             {widgetWithLabel.label}
           </p>
@@ -109,14 +115,16 @@ class CustomWindow extends declared(Widget) {
         bind={this}
         class="esri-widget esri-widget--button custom-window-close"
         onclick={this._close}
+        role='button'
         tabindex='0'
-        title={`Close ${this.name}`}>
-        <span class={`esri-icon esri-icon-close`}></span>
+        title={`Close ${this.name} window`}>
+        <span aria-hidden='true' class={`esri-icon esri-icon-close`}></span>
       </div>
     );
 
     return (
       <div
+        aria-label={`${this.name} window`}
         class='navigation-window custom-window'
         key={`${this.name}-window`}
         style={`display: ${this.visible ? 'block' : 'none'}`}>

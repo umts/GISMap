@@ -88,7 +88,8 @@ class CustomLayerList extends declared(Widget) {
         bind={this}
         class='layer-checkbox'
         onclick={this._toggleCheckbox}
-        data-checkbox-id={`${uniqueId}-checkbox`}>
+        data-checkbox-id={`${uniqueId}-checkbox`}
+        role='presentation'>
         <label for={uniqueId} data-checkbox-id={`${uniqueId}-checkbox`}>
           <input
             bind={this}

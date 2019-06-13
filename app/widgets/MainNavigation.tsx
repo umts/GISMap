@@ -120,20 +120,23 @@ class MainNavigation extends declared(Widget) {
     });
 
     return (
-      <div id="main-navigation">
-        <div id="main-navigation-window" class="navigation-window">
+      <div id="main-navigation" role='presentation'>
+        <div
+          aria-label='Main navigation window'
+          id="main-navigation-window"
+          class="navigation-window">
           {this.search.render()}
 
-          <div id="widgets-list">
-            <ul>
-              <li class="widget-list-item">{this.zoomIn.render()}</li>
-              <li class="widget-list-item">{this.zoomOut.render()}</li>
-              <li class="widget-list-item">{this.compass.render()}</li>
-              <li class="widget-list-item">{this.home.render()}</li>
-              <li class="widget-list-item">{this.locate.render()}</li>
-              <li class="widget-list-item">{this.layersExpand.render()}</li>
-              <li class="widget-list-item">{this.directionsExpand.render()}</li>
-              <li class="widget-list-item">{this.shareExpand.render()}</li>
+          <div id="widgets-list" role='presentation'>
+            <ul aria-label='Main menu' role='menubar'>
+              <li class="widget-list-item" role='menuitem'>{this.zoomIn.render()}</li>
+              <li class="widget-list-item" role='menuitem'>{this.zoomOut.render()}</li>
+              <li class="widget-list-item" role='menuitem'>{this.compass.render()}</li>
+              <li class="widget-list-item" role='menuitem'>{this.home.render()}</li>
+              <li class="widget-list-item" role='menuitem'>{this.locate.render()}</li>
+              <li class="widget-list-item" role='menuitem'>{this.layersExpand.render()}</li>
+              <li class="widget-list-item" role='menuitem'>{this.directionsExpand.render()}</li>
+              <li class="widget-list-item" role='menuitem'>{this.shareExpand.render()}</li>
             </ul>
           </div>
         </div>

@@ -100,7 +100,8 @@ class CustomSearch extends declared(Widget) {
           suggestionElements.push(
             <div
               class='custom-search-header suggestion-item'
-              key={`${suggestion.key}-header`}>
+              key={`${suggestion.key}-header`}
+              role='heading'>
               {header}
             </div>
           );
@@ -112,7 +113,9 @@ class CustomSearch extends declared(Widget) {
             class='custom-search-suggestion suggestion-item'
             data-index={`${i}`}
             key={suggestion.key}
-            onclick={this._suggestionClicked}>
+            onclick={this._suggestionClicked}
+            role='option'
+            tabindex='0'>
             {suggestion.text}
           </div>
         );
@@ -122,7 +125,8 @@ class CustomSearch extends declared(Widget) {
         suggestionElements.push(
           <div
             class='custom-search-header suggestion-item'
-            key='loading-header'>
+            key='loading-header'
+            role='heading'>
             Loading...
           </div>
         );
@@ -136,8 +140,12 @@ class CustomSearch extends declared(Widget) {
       https://stackoverflow.com/a/25953721/674863
     */
     const suggestionContainer = (
-      <p class='custom-search-pane-container' style='margin: 0;'>
-        <p class='custom-search-pane' style='margin: 0;'>
+      <p class='custom-search-pane-container' style='margin: 0;' role='presentation'>
+        <p
+          aria-label='Search results'
+          class='custom-search-pane'
+          style='margin: 0;'
+          role='listbox'>
           {suggestionElements}
         </p>
       </p>
@@ -150,9 +158,10 @@ class CustomSearch extends declared(Widget) {
           bind={this}
           class='esri-widget esri-widget--button button-input'
           onclick={this._clearSearch}
+          role='button'
           tabindex='0'
           title='Clear search'>
-          <span class='esri-icon esri-icon-close'></span>
+          <span aria-hidden='true' class='esri-icon esri-icon-close'></span>
         </div>
       );
     }
@@ -164,9 +173,10 @@ class CustomSearch extends declared(Widget) {
           bind={this}
           class='esri-widget esri-widget--button button-input'
           onclick={this._submitSearch}
+          role='button'
           tabindex='0'
           title='Search'>
-          <span class='esri-icon esri-icon-search'></span>
+          <span aria-hidden='true' class='esri-icon esri-icon-search'></span>
         </div>
       );
     }
@@ -204,6 +214,7 @@ class CustomSearch extends declared(Widget) {
           class='custom-search-container'
           onfocus={this._showSuggestions}
           onblur={this._hideSuggestions}
+          role='search'
           tabindex="-1">
           {mainElement}
           {suggestionContainer}
@@ -325,7 +336,7 @@ class CustomSearch extends declared(Widget) {
   }
 
   private _hideSuggestions() {
-    this.showSuggestions = false;
+    //this.showSuggestions = false;
     this._inputElement().blur();
   }
 

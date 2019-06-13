@@ -42,14 +42,17 @@ class WindowExpand extends declared(Widget) {
       iconClass = 'loading-indicator';
     }
 
+    const title = `Open ${this.name} window`;
     return (
       <div
+        aria-label={title}
         bind={this}
         class="esri-widget esri-widget--button"
         onclick={this._expand}
+        role='button'
         tabindex='0'
-        title={this.name.charAt(0).toUpperCase() + this.name.slice(1)}>
-        <span class={`esri-icon esri-icon-${iconClass}`}></span>
+        title={title}>
+        <span aria-hidden='true' class={`esri-icon esri-icon-${iconClass}`}></span>
       </div>
     );
   }
