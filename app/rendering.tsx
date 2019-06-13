@@ -122,16 +122,22 @@ let _filterInfo: Array<SearchFilter> = [
     clauses: [{layerName: 'Sections', clause: "ParkmobileZoneID is not null"}]
   }, {
     name: 'Free Parking (On Weekends)',
-    description: 'These lots are free to park in on the weekend, with the exception of special events.',
+    description: 'These lots are only free to park in on the weekend, with the exception of special events.',
     tags: ['free', 'weekend'],
     visible: true,
-    clauses: [{layerName: 'Sections', clause: "SectionHours in ('Weekdays','BusinessHours')"}]
+    clauses: [
+      {layerName: 'Sections', clause: "SectionHours in ('Weekdays','BusinessHours')"},
+      {layerName: 'Spaces', clause: '0 = 1'}
+    ]
   }, {
     name: 'Free Parking (After Business Hours)',
-    description: 'These lots are free to park in after business hours, with the exception of special events. They are restricted on weekdays from 7:00 AM to 5:00 PM.',
+    description: 'These lots are only free to park in after business hours, with the exception of special events. They are restricted on weekdays from 7:00 AM to 7:00 PM.',
     tags: ['free', 'business'],
     visible: true,
-    clauses: [{layerName: 'Sections', clause: "SectionHours in ('BusinessHours')"}]
+    clauses: [
+      {layerName: 'Sections', clause: "SectionHours in ('BusinessHours')"},
+      {layerName: 'Spaces', clause: '0 = 1'}
+    ]
   }
 ];
 

@@ -217,16 +217,18 @@ class CustomPopup extends declared(Widget) {
     }
 
     let sectionHours;
+    let paymentInfo;
     let parkingType = 'Permit';
     if (feature.attributes.SectionColor === 'Pink') {
       parkingType = 'Payment';
+      paymentInfo = ' Payment is $1.50 per hour.';
     }
     if (feature.attributes.SectionHours === 'BusinessHours') {
-      sectionHours = <p>{parkingType} required 7:00 AM to 5:00 PM Monday through Friday.</p>;
+      sectionHours = <p>{parkingType} required 7:00 AM to 5:00 PM Monday through Friday.{paymentInfo}</p>;
     } else if (feature.attributes.SectionHours === 'Weekdays') {
-      sectionHours = <p>{parkingType} required any time Monday through Friday.</p>;
+      sectionHours = <p>{parkingType} required any time Monday through Friday.{paymentInfo}</p>;
     } else if (feature.attributes.SectionHours === '24Hour') {
-      sectionHours = <p>{parkingType} required at all times.</p>;
+      sectionHours = <p>{parkingType} required at all times.{paymentInfo}</p>;
     }
 
     const permitLink = (
@@ -320,6 +322,8 @@ class CustomPopup extends declared(Widget) {
     let description = '';
     if (feature.attributes.ParkingSpaceSubCategory === 'R-15Min') {
       description += '15 minute loading zone.';
+    } else if (['Meter-Paystation', 'Meter-Coin'].indexOf(feature.attributes.ParkingSpaceSubCategory) !== -1) {
+      description += '$1.50 per hour.';
     }
     if (feature.attributes.ParkingSpaceClientPublic) {
       description += `Reserved for: ${feature.attributes.ParkingSpaceClientPublic}`;
