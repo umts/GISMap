@@ -191,7 +191,7 @@ function updateRenderers(map: WebMap) {
 function updateLabeling(map: WebMap) {
   const sectionLabel = new LabelClass({
     labelExpressionInfo: {
-      expression: 'IIf($feature.SectionColor != "Pink", $feature.SectionName, "")'
+      expression: '$feature.SectionCode'
     },
     labelPlacement: 'always-horizontal',
     symbol: new TextSymbol({
