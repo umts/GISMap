@@ -56,11 +56,12 @@ class FilteredLayerList extends declared(Widget) {
         <div
           bind={this}
           class='layer-checkbox'
-          onclick={this._toggleFilterCheckbox}
           data-filter-option={filterOption}
           role='presentation'>
-          {icon}
-          <label for={this._checkboxId(filterOption)} data-filter-option={filterOption}>
+          <label
+            for={this._checkboxId(filterOption)}
+            data-filter-option={filterOption}>
+            {icon}
             <input
               bind={this}
               class='layer-checkbox-input'
@@ -76,7 +77,7 @@ class FilteredLayerList extends declared(Widget) {
     });
 
     return (
-      <div>
+      <div role='group'>
         {checkboxes}
       </div>
     );
@@ -120,6 +121,7 @@ class FilteredLayerList extends declared(Widget) {
     attribute.
   */
   private _toggleFilterCheckbox(event: any) {
+    event.preventDefault();
     const filterOption = event.target.dataset.filterOption;
     if (filterOption) {
       this._toggleCheckbox(this._checkbox(filterOption));

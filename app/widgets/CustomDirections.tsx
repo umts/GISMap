@@ -31,7 +31,7 @@ class CustomDirections extends declared(Widget) {
           {this.endSearch.render()}
           <div class='form-row'>
             <select
-              aria-label='Direction service'
+              aria-label='Directions service'
               id='directions-service'
               class='umass-theme-button'
               required>

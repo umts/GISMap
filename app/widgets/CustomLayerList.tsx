@@ -90,7 +90,7 @@ class CustomLayerList extends declared(Widget) {
         onclick={this._toggleCheckbox}
         data-checkbox-id={`${uniqueId}-checkbox`}
         role='presentation'>
-        <label for={uniqueId} data-checkbox-id={`${uniqueId}-checkbox`}>
+        <label for={`${uniqueId}-checkbox`} data-checkbox-id={`${uniqueId}-checkbox`}>
           <input
             bind={this}
             class='layer-checkbox-input'
@@ -127,6 +127,7 @@ class CustomLayerList extends declared(Widget) {
     function will toggle the corresponding checkbox.
   */
   private _toggleCheckbox(event: any) {
+    event.preventDefault();
     const checkboxId = event.target.dataset.checkboxId;
     if (checkboxId) {
       const checkbox = this._checkbox(checkboxId);

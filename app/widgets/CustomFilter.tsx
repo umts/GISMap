@@ -62,15 +62,18 @@ class CustomFilter extends declared(Widget) {
     let filterWindow;
     if (this.filter && this.filter.visible) {
       filterWindow = (
-        <div id='filter-window' key='filter-window'>
-          <p class='standalone-text'>Filtering by: {this.filter.name}</p>
+        <div aria-label='Filter window' id='filter-window' key='filter-window'>
+          <p class='standalone-text' role='heading'>
+            Filtering by: {this.filter.name}
+          </p>
           <div
             bind={this}
             class='esri-widget esri-widget--button custom-filter-close'
             onclick={this.resetFilter}
+            role='button'
             tabindex='0'
             title='Stop filtering'>
-            <span class='esri-icon esri-icon-close'></span>
+            <span aria-hidden='true' class='esri-icon esri-icon-close'></span>
           </div>
         </div>
       );

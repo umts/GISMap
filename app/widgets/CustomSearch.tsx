@@ -114,8 +114,7 @@ class CustomSearch extends declared(Widget) {
             data-index={`${i}`}
             key={suggestion.key}
             onclick={this._suggestionClicked}
-            role='option'
-            tabindex='0'>
+            role='option'>
             {suggestion.text}
           </div>
         );
@@ -210,6 +209,7 @@ class CustomSearch extends declared(Widget) {
     return (
       <div class='form-row'>
         <div
+          aria-label='Search bar'
           bind={this}
           class='custom-search-container'
           onfocus={this._showSuggestions}
@@ -336,7 +336,7 @@ class CustomSearch extends declared(Widget) {
   }
 
   private _hideSuggestions() {
-    //this.showSuggestions = false;
+    this.showSuggestions = false;
     this._inputElement().blur();
   }
 

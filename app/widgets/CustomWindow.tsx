@@ -72,7 +72,8 @@ class CustomWindow extends declared(Widget) {
             onclick={this._clickTab}
             class={classes}
             data-index={`${i}`}
-            role='tab'>
+            role='tab'
+            tabindex='0'>
             {this.widgets[i].label}
           </div>
         );

@@ -271,26 +271,30 @@ class CustomPopup extends declared(Widget) {
     let icon;
     const iconUrl = categoryInfo.iconUrl;
     if (iconUrl) {
-      icon = <img class='image-in-text' width='24px' height='24px' src={iconUrl} />;
+      icon = (
+        <img
+          class='image-in-text'
+          width='24px'
+          height='24px'
+          src={iconUrl}
+          alt={categoryInfo.altText} />
+      );
     }
     let description;
     if (feature.attributes.ParkingSpaceSubCategory === 'R-15Min') {
-      description = '15 minute loading zone.';
+      description = <p>15 minute loading zone.</p>;
+    }
+    let parkingSpaceClient;
+    if (feature.attributes.ParkingSpaceClient) {
+      parkingSpaceClient = <p>Reserved for: {feature.attributes.ParkingSpaceClient}</p>;
     }
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
         <p class='widget-label' role='heading'>
           {categoryInfo.description}{icon}
         </p>
-        <p>{description}</p>
-        <p>
-          {
-            feature.attributes.ParkingSpaceClient &&
-            feature.attributes.ParkingSpaceClient !== 'Parking Services' ?
-            'Reserved for: ' + feature.attributes.ParkingSpaceClient :
-            ''
-          }
-        </p>
+        {description}
+        {parkingSpaceClient}
       </div>
     );
   }
