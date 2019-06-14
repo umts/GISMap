@@ -84,24 +84,19 @@ class CustomLayerList extends declared(Widget) {
   */
   private _renderCustomCheckbox(uniqueId: string, text: string): JSX.Element {
     return (
-      <div
-        bind={this}
+      <label
         class='layer-checkbox'
-        onclick={this._toggleCheckbox}
-        data-checkbox-id={`${uniqueId}-checkbox`}
-        role='presentation'>
-        <label for={`${uniqueId}-checkbox`} data-checkbox-id={`${uniqueId}-checkbox`}>
-          <input
-            bind={this}
-            class='layer-checkbox-input'
-            id={`${uniqueId}-checkbox`}
-            name={uniqueId}
-            onchange={this._checkboxEvent}
-            type='checkbox'
-            checked />
-          {text}
-        </label>
-      </div>
+        for={`${uniqueId}-checkbox`}>
+        <input
+          bind={this}
+          class='layer-checkbox-input'
+          id={`${uniqueId}-checkbox`}
+          name={uniqueId}
+          onchange={this._checkboxEvent}
+          type='checkbox'
+          checked />
+        {text}
+      </label>
     );
   }
 
@@ -120,24 +115,6 @@ class CustomLayerList extends declared(Widget) {
       this.sectionLayers.toggleFilters(event.target.checked);
     }
     this._updateFilter();
-  }
-
-  /*
-    Any element with the attribute data-checkbox-id that triggers this
-    function will toggle the corresponding checkbox.
-  */
-  private _toggleCheckbox(event: any) {
-    event.preventDefault();
-    const checkboxId = event.target.dataset.checkboxId;
-    if (checkboxId) {
-      const checkbox = this._checkbox(checkboxId);
-      if (checkbox.checked) {
-        checkbox.checked = false;
-      } else {
-        checkbox.checked = true;
-      }
-      this._checkboxEvent({target: checkbox});
-    }
   }
 
   /*

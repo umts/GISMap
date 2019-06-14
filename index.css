@@ -239,8 +239,9 @@ input:focus {
 }
 
 .layer-checkbox {
-  padding: 0.3rem;
+  display: block;
   cursor: pointer;
+  padding: 0.3rem;
 }
 .layer-checkbox * {
   cursor: pointer;
