@@ -232,21 +232,6 @@ function updateLabeling(map: WebMap) {
   buildingsLayer.labelingInfo = [buildingLabel];
 }
 
-/*
-  Return the current padding or margin in pixels of an element assuming the
-  padding or margin is uniform on every side.
-*/
-function getElementStyleSize(element: Element, property: string): number {
-  if (['padding', 'margin'].indexOf(property) > -1) {
-    return Number(
-      window.getComputedStyle(element)
-        .getPropertyValue(`${property}-top`).slice(0, -2)
-      );
-  } else {
-    return 0;
-  }
-}
-
 // Return an expandable element containing mainElement. Title should be unique.
 function expandable(
   title: string,
@@ -298,6 +283,5 @@ export {
   spaceRendererInfo,
   sectionRendererInfo,
   filterInfo,
-  expandable,
-  getElementStyleSize
+  expandable
 };
