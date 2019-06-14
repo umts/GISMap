@@ -219,12 +219,19 @@ class CustomPopup extends declared(Widget) {
     let sectionHours;
     let paymentInfo;
     let parkingType = 'Permit';
+    /*
+      Enforcement end time for lots that are restricted during business hours
+      if different for metered lots.
+    */
+    let endTime = '5:00 PM';
+    // Changes in wording for metered lots
     if (feature.attributes.SectionColor === 'Pink') {
       parkingType = 'Payment';
+      endTime = '7:00 PM';
       paymentInfo = ' Payment is $1.50 per hour.';
     }
     if (feature.attributes.SectionHours === 'BusinessHours') {
-      sectionHours = <p>{parkingType} required 7:00 AM to 5:00 PM Monday through Friday.{paymentInfo}</p>;
+      sectionHours = <p>{parkingType} required 7:00 AM to {endTime} Monday through Friday.{paymentInfo}</p>;
     } else if (feature.attributes.SectionHours === 'Weekdays') {
       sectionHours = <p>{parkingType} required any time Monday through Friday.{paymentInfo}</p>;
     } else if (feature.attributes.SectionHours === '24Hour') {
@@ -236,6 +243,7 @@ class CustomPopup extends declared(Widget) {
         Permits
       </a>
     );
+    // Who can park here or buy a permit here
     let permitInfo;
     if (feature.attributes.SectionColor === 'Red') {
       permitInfo = <p>{permitLink} for this lot sold to faculty and staff only.</p>;
