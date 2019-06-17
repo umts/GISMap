@@ -114,7 +114,8 @@ class CustomSearch extends declared(Widget) {
             data-index={`${i}`}
             key={suggestion.key}
             onclick={this._suggestionClicked}
-            role='option'>
+            role='option'
+            tabindex='0'>
             {suggestion.text}
           </div>
         );
@@ -188,8 +189,6 @@ class CustomSearch extends declared(Widget) {
           class='esri-input'
           id={this.name}
           oninput={this._setSuggestions}
-          onfocus={this._showSuggestions}
-          onblur={this._hideSuggestions}
           placeholder={this.placeholder}
           type='text'
           required={this.required} />
@@ -206,14 +205,23 @@ class CustomSearch extends declared(Widget) {
       );
     }
 
+    /*
+      Event capturing. Capture a focus or blur event on a child of the
+      container using the container.
+    */
+    const containerElement = document.getElementById(`${this.name}-search-container`);
+    if (containerElement) {
+      containerElement.addEventListener('blur', this._hideSuggestions, true);
+      containerElement.addEventListener('focus', this._showSuggestions, true);
+    }
+
     return (
       <div class='form-row'>
         <div
           aria-label='Search bar'
           bind={this}
           class='custom-search-container'
-          onfocus={this._showSuggestions}
-          onblur={this._hideSuggestions}
+          id={`${this.name}-search-container`}
           role='search'
           tabindex="-1">
           {mainElement}
@@ -331,11 +339,11 @@ class CustomSearch extends declared(Widget) {
     this._setSearch(this.suggestions[event.target.dataset.index]);
   }
 
-  private _showSuggestions() {
+  private _showSuggestions = () => {
     this.showSuggestions = true;
   }
 
-  private _hideSuggestions() {
+  private _hideSuggestions = () => {
     this.showSuggestions = false;
     this._inputElement().blur();
   }

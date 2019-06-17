@@ -177,6 +177,7 @@ body,
   color: white !important;
 }
 
+.custom-search-suggestion:focus,
 .esri-widget--button:focus,
 .esri-button:focus,
 .umass-theme-button:focus,
