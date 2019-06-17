@@ -266,7 +266,8 @@ function expandable(
         id={`expandable-header-${title}`}
         onclick={_expandExpandable}
         onkeydown={clickOnSpaceOrEnter}
-        role='button'>
+        role='button'
+        tabindex='0'>
         <span
           aria-hidden='true'
           data-title={title}
