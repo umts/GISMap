@@ -5,9 +5,8 @@ import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
-import { iconButton } from 'app/rendering';
 import { SearchFilter } from 'app/search';
-import { expandable } from 'app/rendering';
+import { expandable, iconButton } from 'app/rendering';
 import CustomLayerList = require('app/widgets/CustomLayerList');
 
 @subclass('esri.widgets.CustomFilter')

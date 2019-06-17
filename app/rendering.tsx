@@ -259,16 +259,25 @@ function expandable(
   return (
     <div>
       <div
+        aria-expanded={startExpanded ? 'true' : 'false'}
+        aria-label={startExpanded ? `Collapse ${title}` : `Expand ${title}`}
         class={`expandable ${className}`}
         data-title={title}
-        onclick={_expandExpandable}>
+        id={`expandable-header-${title}`}
+        onclick={_expandExpandable}
+        onkeydown={clickOnSpaceOrEnter}
+        role='button'>
         <span
+          aria-hidden='true'
           data-title={title}
           class={`expandable-icon esri-icon ${startExpanded ? 'esri-icon-down-arrow' : 'esri-icon-right-triangle-arrow'}`}
           id={`expandable-icon-${title}`}></span>
         {title}
       </div>
-      <div id={`expandable-content-${title}`} style={`display: ${startExpanded ? 'block' : 'none'};`}>
+      <div
+        aria-label={title}
+        id={`expandable-content-${title}`}
+        style={`display: ${startExpanded ? 'block' : 'none'};`}>
         {mainElement}
       </div>
     </div>
@@ -277,13 +286,18 @@ function expandable(
 
 // Expand an expandable element by a unique title
 function _expandExpandable(event: any) {
+  const header = document.getElementById(`expandable-header-${event.target.dataset.title}`);
   const icon = document.getElementById(`expandable-icon-${event.target.dataset.title}`);
   const content = document.getElementById(`expandable-content-${event.target.dataset.title}`);
   if (content.style.display === 'block') {
+    header.setAttribute('aria-expanded', 'false');
+    header.setAttribute('aria-label', `Expand ${header.dataset.title}`);
     content.style.display = 'none';
     icon.classList.remove('esri-icon-down-arrow');
     icon.classList.add('esri-icon-right-triangle-arrow');
   } else {
+    header.setAttribute('aria-expanded', 'true');
+    header.setAttribute('aria-label', `Collapse ${header.dataset.title}`);
     content.style.display = 'block';
     icon.classList.remove('esri-icon-right-triangle-arrow');
     icon.classList.add('esri-icon-down-arrow');

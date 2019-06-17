@@ -1,12 +1,17 @@
+/*
+  If space or enter is pressed while focused on an element then click that
+  element.
+*/
 function clickOnSpaceOrEnter(event: KeyboardEvent) {
   if (event.key === 'Space' || event.key === 'Enter' ||
-    event.keyCode === 13 || event.keyCode === 32
+    event.keyCode === 32 || event.keyCode === 13
   ) {
-    clickElement(event.target as HTMLElement);
+    _clickElement(event.target as HTMLElement);
   }
 }
 
-function clickElement(element: HTMLElement) {
+// Send a mouse click event to an element
+function _clickElement(element: HTMLElement) {
   const event = new MouseEvent('click', {
     bubbles: true,
     cancelable: true,

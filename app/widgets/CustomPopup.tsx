@@ -9,7 +9,7 @@ import Widget = require('esri/widgets/Widget');
 import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
-import { spaceRendererInfo, expandable } from 'app/rendering';
+import { spaceRendererInfo, expandable, iconButton } from 'app/rendering';
 
 @subclass('esri.widgets.CustomPopup')
 class CustomPopup extends declared(Widget) {
@@ -84,17 +84,13 @@ class CustomPopup extends declared(Widget) {
       </div>
     );
 
-    const closeButton = (
-      <div
-        bind={this}
-        class="esri-widget esri-widget--button custom-window-close"
-        onclick={this._close}
-        role='button'
-        tabindex='0'
-        title={`Close feature information`}>
-        <span aria-hidden='true' class={`esri-icon esri-icon-close`}></span>
-      </div>
-    );
+    const closeButton = iconButton({
+      object: this,
+      onclick: this._close,
+      name: 'Close feature information',
+      iconName: 'close',
+      classes: ['custom-window-close']
+    });
 
     let screenPoint = this.view.toScreen(this.point);
     return (

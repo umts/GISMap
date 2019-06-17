@@ -63,6 +63,11 @@ class CustomSearch extends declared(Widget) {
   @renderable()
   loadingSuggestions: boolean;
 
+  // The warning to show related to the search input
+  @property()
+  @renderable()
+  warning: string;
+
   // Pass in any properties
   constructor(properties?: any) {
     super();
@@ -70,6 +75,7 @@ class CustomSearch extends declared(Widget) {
     this.showSuggestions = false;
     this.required = properties.required || false;
     this.mainSearch = properties.mainSearch || false;
+    this.warning = properties.warning || '';
     this.sources = new CustomSearchSources({locationsOnly: !properties.mainSearch});
 
     // Hide suggestions when the escape key is pressed
@@ -200,6 +206,18 @@ class CustomSearch extends declared(Widget) {
       );
     }
 
+    let warningElement;
+    if (this.warning) {
+      warningElement = (
+        <div
+          class='validation-warning'
+          key={`${this.name}-validation-warning`}
+          role='alert'>
+          {this.warning}
+        </div>
+      );
+    }
+
     /*
       Event capturing. Capture a focus or blur event on a child of the
       container using the container.
@@ -221,8 +239,7 @@ class CustomSearch extends declared(Widget) {
           tabindex="-1">
           {mainElement}
           {suggestionContainer}
-          <div id={`${this.name}-validation-warning`} class="validation-warning hide">
-          </div>
+          {warningElement}
         </div>
       </div>
     );
@@ -238,13 +255,12 @@ class CustomSearch extends declared(Widget) {
 
   // Show the validation warning with the given message
   showWarning(message: string) {
-    this._warningElement().innerHTML = message;
-    this._warningElement().classList.remove("hide");
+    this.warning = message;
   }
 
   // Hide the validation warning
   private _hideWarning() {
-    this._warningElement().classList.add("hide");
+    this.warning = '';
   }
 
   // Called when the main search is submitted
@@ -354,11 +370,6 @@ class CustomSearch extends declared(Widget) {
   // Get this input element
   private _inputElement(): HTMLInputElement {
     return (document.getElementById(this.name) as HTMLInputElement);
-  }
-
-  // Get this warning element
-  private _warningElement(): HTMLElement {
-    return (document.getElementById(`${this.name}-validation-warning`) as HTMLElement);
   }
 }
 
