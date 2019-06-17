@@ -17,6 +17,8 @@ interface SearchFilter {
   visible: boolean;
   // The name of the filter to be displayed in the filter window
   name?: string;
+  // The description to be displayed in the filter window
+  description?: string;
   // Strings to identify this filter in a search
   tags?: Array<string>;
   subFilters?: Array<SearchFilter>;
