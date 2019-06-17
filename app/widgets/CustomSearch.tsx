@@ -5,6 +5,8 @@ import MapView = require('esri/views/MapView');
 import Search = require('esri/widgets/Search');
 import Widget = require('esri/widgets/Widget');
 
+import { clickOnSpaceOrEnter } from 'app/events';
+import { iconButton } from 'app/rendering';
 import { SearchSourceType, SearchResult, Suggestion } from 'app/search';
 import CustomSearchSources = require('app/CustomSearchSources');
 import CustomFilter = require('app/widgets/CustomFilter');
@@ -114,6 +116,7 @@ class CustomSearch extends declared(Widget) {
             data-index={`${i}`}
             key={suggestion.key}
             onclick={this._suggestionClicked}
+            onkeydown={clickOnSpaceOrEnter}
             role='option'
             tabindex='0'>
             {suggestion.text}
@@ -153,32 +156,24 @@ class CustomSearch extends declared(Widget) {
 
     let clearButton;
     if (this._inputElement() && this._inputElement().value) {
-      clearButton = (
-        <div
-          bind={this}
-          class='esri-widget esri-widget--button button-input'
-          onclick={this._clearSearch}
-          role='button'
-          tabindex='0'
-          title='Clear search'>
-          <span aria-hidden='true' class='esri-icon esri-icon-close'></span>
-        </div>
-      );
+      clearButton = iconButton({
+        object: this,
+        onclick: this._clearSearch,
+        name: 'Clear search',
+        iconName: 'close',
+        classes: ['button-input']
+      });
     }
 
     let submitButton;
     if (this.mainSearch) {
-      submitButton = (
-        <div
-          bind={this}
-          class='esri-widget esri-widget--button button-input'
-          onclick={this._submitSearch}
-          role='button'
-          tabindex='0'
-          title='Search'>
-          <span aria-hidden='true' class='esri-icon esri-icon-search'></span>
-        </div>
-      );
+      submitButton = iconButton({
+        object: this,
+        onclick: this._submitSearch,
+        name: 'Search',
+        iconName: 'search',
+        classes: ['button-input']
+      });
     }
 
     let mainElement;
@@ -339,10 +334,18 @@ class CustomSearch extends declared(Widget) {
     this._setSearch(this.suggestions[event.target.dataset.index]);
   }
 
+  /*
+    Show suggestions. Needs to be a lambda function in order to be called
+    from addEventListener without using bind.
+  */
   private _showSuggestions = () => {
     this.showSuggestions = true;
   }
 
+  /*
+    Hide suggestions. Needs to be a lambda function in order to be called
+    from addEventListener without using bind.
+  */
   private _hideSuggestions = () => {
     this.showSuggestions = false;
     this._inputElement().blur();

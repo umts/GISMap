@@ -5,6 +5,7 @@ import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
+import { iconButton } from 'app/rendering';
 import { SearchFilter } from 'app/search';
 import CustomLayerList = require('app/widgets/CustomLayerList');
 
@@ -66,15 +67,13 @@ class CustomFilter extends declared(Widget) {
           <p class='standalone-text' role='heading'>
             Filtering by: {this.filter.name}
           </p>
-          <div
-            bind={this}
-            class='esri-widget esri-widget--button custom-filter-close'
-            onclick={this.resetFilter}
-            role='button'
-            tabindex='0'
-            title='Stop filtering'>
-            <span aria-hidden='true' class='esri-icon esri-icon-close'></span>
-          </div>
+          {iconButton({
+            object: this,
+            onclick: this.resetFilter,
+            name: 'Stop filtering',
+            iconName: 'close',
+            classes: ['custom-filter-close']
+          })}
         </div>
       );
     }

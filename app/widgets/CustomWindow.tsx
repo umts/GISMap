@@ -3,7 +3,8 @@ import { renderable, tsx } from "esri/widgets/support/widget";
 
 import Widget = require("esri/widgets/Widget");
 
-import { getElementStyleSize } from 'app/rendering';
+import { clickOnSpaceOrEnter } from 'app/events';
+import { iconButton } from 'app/rendering';
 
 // Interface for objects with a render method
 interface RenderableWidget {
@@ -70,6 +71,7 @@ class CustomWindow extends declared(Widget) {
           <div
             bind={this}
             onclick={this._clickTab}
+            onkeydown={clickOnSpaceOrEnter}
             class={classes}
             data-index={`${i}`}
             role='tab'
@@ -111,17 +113,13 @@ class CustomWindow extends declared(Widget) {
       }
     });
 
-    const closeButton = (
-      <div
-        bind={this}
-        class="esri-widget esri-widget--button custom-window-close"
-        onclick={this._close}
-        role='button'
-        tabindex='0'
-        title={`Close ${this.name} window`}>
-        <span aria-hidden='true' class={`esri-icon esri-icon-close`}></span>
-      </div>
-    );
+    const closeButton = iconButton({
+      object: this,
+      onclick: this._close,
+      name: `Close ${this.name} window`,
+      iconName: 'close',
+      classes: ['custom-window-close']
+    });
 
     return (
       <div

@@ -1,3 +1,5 @@
+import { tsx } from 'esri/widgets/support/widget';
+
 import WebMap = require('esri/WebMap');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import LabelClass = require('esri/layers/support/LabelClass');
@@ -8,6 +10,7 @@ import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
 import TextSymbol = require('esri/symbols/TextSymbol');
 
+import { clickOnSpaceOrEnter } from 'app/events';
 import { rootUrl } from 'app/url';
 import { SearchFilter } from 'app/search';
 
@@ -242,6 +245,38 @@ function getElementStyleSize(element: Element, property: string): number {
 }
 
 /*
+  Return an icon button that handles keyboard events for clicks and calls a
+  function when clicked.
+*/
+function iconButton(properties: {
+  object: any,
+  onclick: Function,
+  name: string,
+  iconName: string,
+  classes?: Array<string>
+}): JSX.Element {
+  let allClasses = ['esri-widget', 'esri-widget--button'];
+  if (properties.classes) {
+    properties.classes.forEach((someClass) => { allClasses.push(someClass) });
+  }
+  return (
+    <div
+      bind={properties.object}
+      class={allClasses.join(' ')}
+      onclick={properties.onclick}
+      onkeydown={clickOnSpaceOrEnter}
+      role='button'
+      tabindex='0'
+      title={properties.name}>
+      <span
+        aria-hidden='true'
+        class={`esri-icon esri-icon-${properties.iconName}`}>
+      </span>
+    </div>
+  );
+}
+
+/*
   Export helper functions related to rendering so they can be
   imported and used in other files.
 */
@@ -251,5 +286,6 @@ export {
   spaceRendererInfo,
   sectionRendererInfo,
   filterInfo,
-  getElementStyleSize
+  getElementStyleSize,
+  iconButton
 };
