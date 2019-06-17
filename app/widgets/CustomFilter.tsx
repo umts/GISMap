@@ -6,6 +6,7 @@ import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
 import { SearchFilter } from 'app/search';
+import { expandable } from 'app/rendering';
 import CustomLayerList = require('app/widgets/CustomLayerList');
 
 @subclass('esri.widgets.CustomFilter')
@@ -61,9 +62,21 @@ class CustomFilter extends declared(Widget) {
   render() {
     let filterWindow;
     if (this.filter && this.filter.visible) {
+      const title = `Filtering by: ${this.filter.name}`;
+      let windowContent;
+      if (this.filter.description) {
+        windowContent = expandable(
+          title,
+          false,
+          'expandable-filter',
+          <p class='standalone-text'>{this.filter.description}</p>
+        );
+      } else {
+        windowContent = <p class='standalone-text'>{title}</p>;
+      }
       filterWindow = (
         <div id='filter-window' key='filter-window'>
-          <p class='standalone-text'>Filtering by: {this.filter.name}</p>
+          {windowContent}
           <div
             bind={this}
             class='esri-widget esri-widget--button custom-filter-close'
