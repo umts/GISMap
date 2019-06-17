@@ -61,8 +61,14 @@ class CustomPopup extends declared(Widget) {
     this.watch(['page', 'features'], () => {
       if (this.page >= 0 && this.page < this.features.length) {
         const feature = this.features[this.page];
+        let id;
+        if (feature.layer.title === 'Campus Buildings') {
+          id = feature.attributes.OBJECTID;
+        } else {
+          id = feature.attributes.OBJECTID_1;
+        }
         this.featureForUrl = btoa(JSON.stringify({
-          id: feature.attributes.OBJECTID_1,
+          id: id,
           layer: feature.layer.title
         })).split('=')[0];
       } else {
@@ -114,6 +120,8 @@ class CustomPopup extends declared(Widget) {
       </div>
     );
 
+    console.log("HERES MY POINT");
+    console.log(this.point);
     let screenPoint = this.view.toScreen(this.point);
     return (
       <div
@@ -261,7 +269,7 @@ class CustomPopup extends declared(Widget) {
   // Return a JSX element describing a building
   private _renderBuilding(feature: Graphic): JSX.Element {
     return (
-      <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
+      <div key={feature.layer.title + feature.attributes.OBJECTID}>
         <p class='widget-label'>{feature.attributes.Building_Name}</p>
         <b>{feature.attributes.Address}</b>
         <p>
