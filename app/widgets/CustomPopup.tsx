@@ -2,7 +2,11 @@ import { subclass, declared, property } from 'esri/core/accessorSupport/decorato
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import Graphic = require('esri/Graphic');
+import WebMap = require('esri/WebMap');
 import Point = require('esri/geometry/Point');
+import Polygon = require('esri/geometry/Polygon');
+import SpatialReference = require('esri/geometry/SpatialReference');
+import FeatureLayer = require('esri/layers/FeatureLayer');
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
 import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
@@ -10,6 +14,7 @@ import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
 import { spaceRendererInfo } from 'app/rendering';
+import { FeatureForUrl } from 'app/url';
 
 @subclass('esri.widgets.CustomPopup')
 class CustomPopup extends declared(Widget) {
@@ -44,9 +49,9 @@ class CustomPopup extends declared(Widget) {
   @renderable()
   page: number;
 
-  // Base 64 encoded reference to popup
+  // Representation of current feature in the popup for use in the URL
   @property()
-  featureForUrl: string;
+  featureForUrl: FeatureForUrl;
 
   // Pass in any properties
   constructor(properties?: any) {
@@ -58,23 +63,7 @@ class CustomPopup extends declared(Widget) {
   }
 
   postInitialize() {
-    this.watch(['page', 'features'], () => {
-      if (this.page >= 0 && this.page < this.features.length) {
-        const feature = this.features[this.page];
-        let id;
-        if (feature.layer.title === 'Campus Buildings') {
-          id = feature.attributes.OBJECTID;
-        } else {
-          id = feature.attributes.OBJECTID_1;
-        }
-        this.featureForUrl = btoa(JSON.stringify({
-          id: id,
-          layer: feature.layer.title
-        })).split('=')[0];
-      } else {
-        this.featureForUrl = '';
-      }
-    });
+    this.watch(['page', 'features'], this._updateFeatureForUrl);
   }
 
   // Render this widget by returning JSX which is converted to HTML
@@ -113,15 +102,13 @@ class CustomPopup extends declared(Widget) {
       <div
         bind={this}
         class="esri-widget esri-widget--button custom-window-close"
-        onclick={this._close}
+        onclick={this.reset}
         tabindex='0'
         title={`Close popup`}>
         <span class={`esri-icon esri-icon-close`}></span>
       </div>
     );
 
-    console.log("HERES MY POINT");
-    console.log(this.point);
     let screenPoint = this.view.toScreen(this.point);
     return (
       <div
@@ -150,11 +137,6 @@ class CustomPopup extends declared(Widget) {
     this.features = [];
     this.page = 0;
     this._updateSelectionGraphic();
-  }
-
-  // Close this popup by hiding it
-  private _close() {
-    this.visible = false;
   }
 
   // Go to the next page or feature
@@ -201,6 +183,57 @@ class CustomPopup extends declared(Widget) {
       })
     });
     selectionLayer.add(graphic);
+  }
+
+  // Update the popup feature for the url
+  private _updateFeatureForUrl() {
+    if (this.page >= 0 && this.page < this.features.length) {
+      const feature = this.features[this.page];
+      let id;
+      if (feature.layer.title === 'Campus Buildings') {
+        id = feature.attributes.OBJECTID;
+      } else {
+        id = feature.attributes.OBJECTID_1;
+      }
+      this.featureForUrl = {
+        id: id,
+        layer: feature.layer.title
+      };
+    } else {
+      this.featureForUrl = null;
+    }
+  }
+
+  // Open a popup to a feature from the url
+  openFromUrl(featureForUrl: FeatureForUrl) {
+    const layer = (this.view.map as WebMap).layers.find((layer) => {
+      return layer.title === featureForUrl.layer;
+    }) as FeatureLayer;
+    let query = layer.createQuery();
+    let idColumn = 'OBJECTID_1';
+    if (featureForUrl.layer === 'Campus Buildings') {
+      idColumn = 'OBJECTID';
+    }
+    query.where = `${idColumn} = '${featureForUrl.id}'`;
+    query.outSpatialReference = new SpatialReference({"wkid":4326});
+
+    this.reset();
+
+    layer.queryFeatures(query)
+    .then((results) => {
+      if (results.features.length > 0) {
+        // Add more features to the popup
+        this.features = this.features.concat(results.features);
+        this.visible = true;
+        if ((results.features[0].geometry as any).centroid) {
+          this.point = (results.features[0].geometry as Polygon).centroid;
+        } else {
+          this.point = results.features[0].geometry as Point;
+        }
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
   }
 
   /*

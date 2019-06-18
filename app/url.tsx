@@ -4,6 +4,11 @@ import { umassLongLat } from "app/latLong";
 
 import MainNavigation = require('app/widgets/MainNavigation');
 
+interface FeatureForUrl {
+  id: number;
+  layer: string;
+}
+
 // Encode an object as a query string
 function encodeQueryString(data: any): string {
   return "?" + Object.keys(data).map((key) => {
@@ -22,13 +27,15 @@ function decodeQueryString(queryString: string): any {
 }
 
 /*
-  Use the hash parameter of the url to set the position of the view.
+  Use the hash parameter of the url to set the position of the view and
+  the popup of the main navigation.
   If the view is not ready yet, set as parameters, otherwise use the goTo
   method which will animate.
 */
 function updatePositionFromUrl(mainNavigation: MainNavigation) {
   const urlParams = decodeQueryString(window.location.hash.slice(1));
 
+  // Ensure that the URL is valid
   if (paramExistsAsNumber(urlParams, "latitude") &&
     paramExistsAsNumber(urlParams, "longitude")
     ) {
@@ -44,15 +51,24 @@ function updatePositionFromUrl(mainNavigation: MainNavigation) {
     if (paramExistsAsNumber(urlParams, "rotation")) {
       rotation = Number(urlParams.rotation);
     }
-    let popup;
+    let featureForUrl;
     if (urlParams.popup) {
-      popup = JSON.parse(atob(urlParams.popup));
+      try {
+        featureForUrl = JSON.parse(atob(urlParams.popup));
+      } catch(error) {
+        featureForUrl = undefined;
+        console.error(error);
+      }
+      
     }
+    // View is ready, animate the transition
     if (mainNavigation.view.ready) {
       mainNavigation.view.goTo({target: center, zoom: zoom, rotation: rotation});
-      if (popup) {
-        mainNavigation.openPopupFromUrl(popup);
+      // Only set the popup if it is a parameter and the view is ready
+      if (featureForUrl) {
+        mainNavigation.popup.openFromUrl(featureForUrl);
       }
+    // View is not ready, so set the initial parameters
     } else {
       mainNavigation.view.center = center;
       mainNavigation.view.zoom = zoom;
@@ -103,7 +119,10 @@ function updateUrlFromPosition(mainNavigation: MainNavigation) {
     rotation: Math.round(mainNavigation.view.rotation)
   }
   if (mainNavigation.popup.featureForUrl) {
-    queryParams.popup = mainNavigation.popup.featureForUrl;
+    // Encode with base 64 and remove the padding at the end
+    queryParams.popup = btoa(JSON.stringify(
+      mainNavigation.popup.featureForUrl
+    )).split('=')[0];
   }
 
   history.replaceState("", "", "#" + encodeQueryString(queryParams));
@@ -125,4 +144,10 @@ function safeUrl(): string {
   Export helper functions related to urls so they can be
   imported and used in other files.
 */
-export { resetUrlTimer, updatePositionFromUrl, safeUrl, rootUrl };
+export {
+  FeatureForUrl,
+  resetUrlTimer,
+  updatePositionFromUrl,
+  safeUrl,
+  rootUrl
+};

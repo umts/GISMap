@@ -4,7 +4,6 @@ import { renderable, tsx } from "esri/widgets/support/widget";
 import WebMap = require('esri/WebMap');
 import Point = require('esri/geometry/Point');
 import Polygon = require('esri/geometry/Polygon');
-import SpatialReference = require('esri/geometry/SpatialReference');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
@@ -146,35 +145,6 @@ class MainNavigation extends declared(Widget) {
         {this.popup.render()}
       </div>
     );
-  }
-
-  openPopupFromUrl(featureForUrl: any) {
-    const layer = this._getLayer(featureForUrl.layer);
-    let query = layer.createQuery();
-    let idColumn = 'OBJECTID_1';
-    if (featureForUrl.layer === 'Campus Buildings') {
-      idColumn = 'OBJECTID';
-    }
-    query.where = `${idColumn} = '${featureForUrl.id}'`;
-    query.outSpatialReference = new SpatialReference({"wkid":4326});
-
-    this.popup.reset();
-
-    layer.queryFeatures(query)
-    .then((results) => {
-      if (results.features.length > 0) {
-        // Add more features to the popup
-        this.popup.features = this.popup.features.concat(results.features);
-        this.popup.visible = true;
-        if ((results.features[0].geometry as any).centroid) {
-          this.popup.point = (results.features[0].geometry as Polygon).centroid;
-        } else {
-          this.popup.point = results.features[0].geometry as Point;
-        }
-      }
-    }, (error) => {
-      console.error(error);
-    });
   }
 
   private _element(): HTMLElement {
