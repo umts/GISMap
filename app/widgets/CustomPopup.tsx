@@ -63,6 +63,7 @@ class CustomPopup extends declared(Widget) {
   }
 
   postInitialize() {
+    // Update the feature for the URL when the current page or features change
     this.watch(['page', 'features'], this._updateFeatureForUrl);
   }
 
