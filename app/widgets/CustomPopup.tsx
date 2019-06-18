@@ -139,6 +139,38 @@ class CustomPopup extends declared(Widget) {
     this._updateSelectionGraphic();
   }
 
+  // Open a popup to a feature from the url
+  openFromUrl(featureForUrl: FeatureForUrl) {
+    const layer = (this.view.map as WebMap).layers.find((layer) => {
+      return layer.title === featureForUrl.layer;
+    }) as FeatureLayer;
+    let query = layer.createQuery();
+    let idColumn = 'OBJECTID_1';
+    if (featureForUrl.layer === 'Campus Buildings') {
+      idColumn = 'OBJECTID';
+    }
+    query.where = `${idColumn} = '${featureForUrl.id}'`;
+    query.outSpatialReference = new SpatialReference({"wkid":4326});
+
+    this.reset();
+
+    layer.queryFeatures(query)
+    .then((results) => {
+      if (results.features.length > 0) {
+        // Add more features to the popup
+        this.features = this.features.concat(results.features);
+        this.visible = true;
+        if ((results.features[0].geometry as any).centroid) {
+          this.point = (results.features[0].geometry as Polygon).centroid;
+        } else {
+          this.point = results.features[0].geometry as Point;
+        }
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
   // Go to the next page or feature
   private _nextPage() {
     this._changePage(1);
@@ -202,38 +234,6 @@ class CustomPopup extends declared(Widget) {
     } else {
       this.featureForUrl = null;
     }
-  }
-
-  // Open a popup to a feature from the url
-  openFromUrl(featureForUrl: FeatureForUrl) {
-    const layer = (this.view.map as WebMap).layers.find((layer) => {
-      return layer.title === featureForUrl.layer;
-    }) as FeatureLayer;
-    let query = layer.createQuery();
-    let idColumn = 'OBJECTID_1';
-    if (featureForUrl.layer === 'Campus Buildings') {
-      idColumn = 'OBJECTID';
-    }
-    query.where = `${idColumn} = '${featureForUrl.id}'`;
-    query.outSpatialReference = new SpatialReference({"wkid":4326});
-
-    this.reset();
-
-    layer.queryFeatures(query)
-    .then((results) => {
-      if (results.features.length > 0) {
-        // Add more features to the popup
-        this.features = this.features.concat(results.features);
-        this.visible = true;
-        if ((results.features[0].geometry as any).centroid) {
-          this.point = (results.features[0].geometry as Polygon).centroid;
-        } else {
-          this.point = results.features[0].geometry as Point;
-        }
-      }
-    }).catch((error) => {
-      console.error(error);
-    });
   }
 
   /*

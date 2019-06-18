@@ -4,6 +4,7 @@ import { umassLongLat } from "app/latLong";
 
 import MainNavigation = require('app/widgets/MainNavigation');
 
+// The bare minimum required to identify a feature for the URL
 interface FeatureForUrl {
   id: number;
   layer: string;
@@ -59,7 +60,6 @@ function updatePositionFromUrl(mainNavigation: MainNavigation) {
         featureForUrl = undefined;
         console.error(error);
       }
-      
     }
     // View is ready, animate the transition
     if (mainNavigation.view.ready) {
