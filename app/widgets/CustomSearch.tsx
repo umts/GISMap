@@ -129,6 +129,20 @@ class CustomSearch extends declared(Widget) {
       }
     }
 
+    /*
+      This is bad. For some reason IE does not propagate focus events from
+      child divs to parent divs unless the elements in between are NOT divs.
+      That is why we are using p tags here and not div tags.
+      https://stackoverflow.com/a/25953721/674863
+    */
+    const suggestionContainer = (
+      <p class='custom-search-pane-container' style='margin: 0;'>
+        <p class='custom-search-pane' style='margin: 0;'>
+          {suggestionElements}
+        </p>
+      </p>
+    );
+
     let clearButton;
     if (this._inputElement() && this._inputElement().value) {
       clearButton = (
@@ -192,11 +206,7 @@ class CustomSearch extends declared(Widget) {
           onblur={this._hideSuggestions}
           tabindex="-1">
           {mainElement}
-          <div class='custom-search-pane-container'>
-            <div class='custom-search-pane'>
-              {suggestionElements}
-            </div>
-          </div>
+          {suggestionContainer}
           <div id={`${this.name}-validation-warning`} class="validation-warning hide">
           </div>
         </div>

@@ -1,3 +1,5 @@
+import { tsx } from 'esri/widgets/support/widget';
+
 import WebMap = require('esri/WebMap');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import LabelClass = require('esri/layers/support/LabelClass');
@@ -46,9 +48,21 @@ const spaceRendererInfo = {
     description: 'Electric vehicle charging station',
     iconUrl: `${rootUrl()}/${iconsPath}/electric-space.png`
   },
-  'R-Visitor': {label: 'Visitor Spaces', description: 'Visitor space'},
-  'R-Client': {label: 'Reserved Spaces', description: 'Reserved space'},
-  'R-15Min': {label: '15 Minute Spaces', description: '15 minute space'}
+  'R-Visitor': {
+    label: 'Visitor Spaces',
+    description: 'Visitor space',
+    iconUrl: `${rootUrl()}/${iconsPath}/visitor-space.png`
+  },
+  'R-Client': {
+    label: 'Reserved Spaces',
+    description: 'Reserved space',
+    iconUrl: `${rootUrl()}/${iconsPath}/reserved-space.png`
+  },
+  'R-15Min': {
+    label: 'Loading Zones',
+    description: 'Loading zone',
+    iconUrl: `${rootUrl()}/${iconsPath}/loading-zone.png`
+  }
 };
 
 // Info that should be used to render different section colors
@@ -82,12 +96,18 @@ const sectionRendererInfo = {
     label: 'Meter Lots',
     checked: 'checked',
     iconUrl: `${iconsPath}/meter-lot.png`
+  },
+  'Null': {
+    label: 'Other Lots',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/other-lot.png`
   }
 }
 
 let _filterInfo: Array<SearchFilter> = [
   {
     name: 'Metered/Visitor Parking',
+    description: 'Locations to park without a permit. Pay at a meter or a paystation.',
     tags: ['meter', 'paystation', 'pink', 'visitor'],
     visible: true,
     clauses: [
@@ -96,9 +116,28 @@ let _filterInfo: Array<SearchFilter> = [
     ]
   }, {
     name: 'ParkMobile Lots',
+    description: 'Payment in these lots available using the ParkMobile app.',
     tags: ['parkmobile'],
     visible: true,
     clauses: [{layerName: 'Sections', clause: "ParkmobileZoneID is not null"}]
+  }, {
+    name: 'Free Parking (On Weekends)',
+    description: 'These lots are only free to park in on the weekend, with the exception of special events.',
+    tags: ['free', 'weekend'],
+    visible: true,
+    clauses: [
+      {layerName: 'Sections', clause: "SectionHours in ('Weekdays','BusinessHours')"},
+      {layerName: 'Spaces', clause: '0 = 1'}
+    ]
+  }, {
+    name: 'Free Parking (After Business Hours)',
+    description: 'These lots are only free to park in after business hours, with the exception of special events. They are restricted on weekdays from 7:00 AM to 7:00 PM.',
+    tags: ['free', 'business'],
+    visible: true,
+    clauses: [
+      {layerName: 'Sections', clause: "SectionHours in ('BusinessHours')"},
+      {layerName: 'Spaces', clause: '0 = 1'}
+    ]
   }
 ];
 
@@ -152,7 +191,7 @@ function updateRenderers(map: WebMap) {
 function updateLabeling(map: WebMap) {
   const sectionLabel = new LabelClass({
     labelExpressionInfo: {
-      expression: 'IIf($feature.SectionColor != "Pink", $feature.SectionName, "")'
+      expression: '$feature.SectionCode'
     },
     labelPlacement: 'always-horizontal',
     symbol: new TextSymbol({
@@ -193,18 +232,44 @@ function updateLabeling(map: WebMap) {
   buildingsLayer.labelingInfo = [buildingLabel];
 }
 
-/*
-  Return the current padding or margin in pixels of an element assuming the
-  padding or margin is uniform on every side.
-*/
-function getElementStyleSize(element: Element, property: string): number {
-  if (['padding', 'margin'].indexOf(property) > -1) {
-    return Number(
-      window.getComputedStyle(element)
-        .getPropertyValue(`${property}-top`).slice(0, -2)
-      );
+// Return an expandable element containing mainElement. Title should be unique.
+function expandable(
+  title: string,
+  startExpanded: boolean,
+  className: string,
+  mainElement: JSX.Element
+): JSX.Element {
+  return (
+    <div>
+      <div
+        class={`expandable ${className}`}
+        data-title={title}
+        onclick={_expandExpandable}>
+        <span
+          data-title={title}
+          class={`expandable-icon esri-icon ${startExpanded ? 'esri-icon-down-arrow' : 'esri-icon-right-triangle-arrow'}`}
+          id={`expandable-icon-${title}`}></span>
+        {title}
+      </div>
+      <div id={`expandable-content-${title}`} style={`display: ${startExpanded ? 'block' : 'none'};`}>
+        {mainElement}
+      </div>
+    </div>
+  );
+}
+
+// Expand an expandable element by a unique title
+function _expandExpandable(event: any) {
+  const icon = document.getElementById(`expandable-icon-${event.target.dataset.title}`);
+  const content = document.getElementById(`expandable-content-${event.target.dataset.title}`);
+  if (content.style.display === 'block') {
+    content.style.display = 'none';
+    icon.classList.remove('esri-icon-down-arrow');
+    icon.classList.add('esri-icon-right-triangle-arrow');
   } else {
-    return 0;
+    content.style.display = 'block';
+    icon.classList.remove('esri-icon-right-triangle-arrow');
+    icon.classList.add('esri-icon-down-arrow');
   }
 }
 
@@ -218,5 +283,5 @@ export {
   spaceRendererInfo,
   sectionRendererInfo,
   filterInfo,
-  getElementStyleSize
+  expandable
 };

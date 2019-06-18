@@ -106,6 +106,10 @@ class MainNavigation extends declared(Widget) {
     // Set up popup and popup event listener
     this.popup = new CustomPopup({view: this.view});
     this.view.on('click', (event) => { this._updatePopup(event) });
+
+    this._setLoading(true);
+    this.view.watch('updating', (updating) => { this._setLoading(updating) });
+
     this.popup.watch('featureForUrl', (featureForUrl) => {
       resetUrlTimer(this);
     });
@@ -156,6 +160,21 @@ class MainNavigation extends declared(Widget) {
     return (this.view.map as WebMap).layers.find((layer) => {
       return layer.title === name;
     }) as FeatureLayer;
+  }
+
+  /*
+    Set body to waiting class to display that the view is loading external
+    resources. Also set the loading icon for the layers expand.
+  */
+  private _setLoading(loading: boolean) {
+    const waitingClass = 'progress-cursor';
+    if (loading) {
+      document.body.classList.add(waitingClass);
+      this.layersExpand.loadingIcon = true;
+    } else {
+      document.body.classList.remove(waitingClass);
+      this.layersExpand.loadingIcon = false;
+    }
   }
 
   // Update the popup widget based on a mouse click event

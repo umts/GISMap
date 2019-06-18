@@ -25,6 +25,11 @@ class WindowExpand extends declared(Widget) {
   @property()
   windows: Array<CustomWindow>;
 
+  // Whether or not to display the loading icon instead of our icon
+  @property()
+  @renderable()
+  loadingIcon: boolean;
+
   // Pass in any properties
   constructor(properties?: any) {
     super();
@@ -32,6 +37,11 @@ class WindowExpand extends declared(Widget) {
 
   // Render this widget by returning JSX which is converted to HTML
   render() {
+    let iconClass = this.iconName;
+    if (this.loadingIcon) {
+      iconClass = 'loading-indicator';
+    }
+
     return (
       <div
         bind={this}
@@ -39,7 +49,7 @@ class WindowExpand extends declared(Widget) {
         onclick={this._expand}
         tabindex='0'
         title={this.name.charAt(0).toUpperCase() + this.name.slice(1)}>
-        <span class={`esri-icon esri-icon-${this.iconName}`}></span>
+        <span class={`esri-icon esri-icon-${iconClass}`}></span>
       </div>
     );
   }

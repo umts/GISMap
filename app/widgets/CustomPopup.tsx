@@ -13,7 +13,7 @@ import Widget = require('esri/widgets/Widget');
 import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
-import { spaceRendererInfo } from 'app/rendering';
+import { spaceRendererInfo, expandable } from 'app/rendering';
 import { FeatureForUrl } from 'app/url';
 
 @subclass('esri.widgets.CustomPopup')
@@ -253,16 +253,49 @@ class CustomPopup extends declared(Widget) {
 
   // Return a JSX element describing a section
   private _renderSection(feature: Graphic): JSX.Element {
+    let title;
+    if (feature.attributes.SectionColor) {
+      title = <p class='widget-label'>
+        {feature.attributes.SectionName} ({feature.attributes.SectionColor})
+      </p>;
+    } else {
+      title = <p class='widget-label'>
+        {feature.attributes.SectionName}
+      </p>;
+    }
+
     const parkmobileLink = (
-      <a target='_blank' href='https://parkmobile.io/'>
-        Parkmobile
+      <a target='_blank' href='https://www.umass.edu/transportation/pay-cell-parkmobile'>
+        ParkMobile
       </a>
     );
     let parkmobile;
     if (feature.attributes.ParkmobileZoneID) {
-      parkmobile = <p>{parkmobileLink} Zone #: {feature.attributes.ParkmobileZoneID}</p>
+      parkmobile = <p>{parkmobileLink} Zone: {feature.attributes.ParkmobileZoneID}</p>
     } else {
       parkmobile = <p>No {parkmobileLink} available.</p>
+    }
+
+    let sectionHours;
+    let paymentInfo;
+    let parkingType = 'Permit';
+    /*
+      Enforcement end time for lots that are restricted during business hours
+      if different for metered lots.
+    */
+    let endTime = '5:00 PM';
+    // Changes in wording for metered lots
+    if (feature.attributes.SectionColor === 'Pink') {
+      parkingType = 'Payment';
+      endTime = '7:00 PM';
+      paymentInfo = ' Payment is $1.50 per hour.';
+    }
+    if (feature.attributes.SectionHours === 'BusinessHours') {
+      sectionHours = <p>{parkingType} required 7:00 AM to {endTime} Monday through Friday.{paymentInfo}</p>;
+    } else if (feature.attributes.SectionHours === 'Weekdays') {
+      sectionHours = <p>{parkingType} required any time Monday through Friday.{paymentInfo}</p>;
+    } else if (feature.attributes.SectionHours === '24Hour') {
+      sectionHours = <p>{parkingType} required at all times.{paymentInfo}</p>;
     }
 
     const permitLink = (
@@ -270,6 +303,7 @@ class CustomPopup extends declared(Widget) {
         Permits
       </a>
     );
+    // Who can park here or buy a permit here
     let permitInfo;
     if (feature.attributes.SectionColor === 'Red') {
       permitInfo = <p>{permitLink} for this lot sold to faculty and staff only.</p>;
@@ -288,13 +322,41 @@ class CustomPopup extends declared(Widget) {
       permitInfo = <p>Visitor and non-permit parking.</p>;
     }
 
+    let spaceCountElements: Array<JSX.Element> = [];
+    if (feature.attributes.SpaceCounts) {
+      const spaceCounts = JSON.parse(feature.attributes.SpaceCounts);
+      Object.keys(spaceCounts).forEach((category) => {
+        if (spaceRendererInfo.hasOwnProperty(category)) {
+          spaceCountElements.push(
+            <li>
+              {spaceRendererInfo[category].label}: {spaceCounts[category]}
+            </li>
+          );
+        }
+      });
+    }
+
+    let spaceCountExpand;
+    if (spaceCountElements.length > 0) {
+      spaceCountExpand = expandable(
+        'Spaces',
+        false,
+        'expandable-header',
+        <ul>{spaceCountElements}</ul>
+      );
+    }
+
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
-        <p class='widget-label'>
-          {feature.attributes.SectionName} ({feature.attributes.SectionColor})
-        </p>
-        {permitInfo}
-        {parkmobile}
+        {title}
+        <p><b>{feature.attributes.SectionAddress}</b></p>
+        {expandable(
+          'Description',
+          true,
+          'expandable-header',
+          <div>{sectionHours}{permitInfo}{parkmobile}</div>
+        )}
+        {spaceCountExpand}
       </div>
     );
   }
@@ -304,12 +366,15 @@ class CustomPopup extends declared(Widget) {
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID}>
         <p class='widget-label'>{feature.attributes.Building_Name}</p>
-        <b>{feature.attributes.Address}</b>
-        <p>
-          {feature.attributes.Total_Usable_Floors}
-          {feature.attributes.Total_Usable_Floors === 1 ? ' floor' : ' floors'}
-        </p>
-        <img height='160px' src={feature.attributes.PhotoURL} />
+        <p><b>{feature.attributes.Address}</b></p>
+        {
+          expandable(
+            'Image',
+            false,
+            'expandable-header',
+            <img height='160px' src={feature.attributes.PhotoURL} />
+          )
+        }
       </div>
     );
   }
@@ -322,19 +387,21 @@ class CustomPopup extends declared(Widget) {
     if (iconUrl) {
       icon = <img class='image-in-text' width='24px' height='24px' src={iconUrl} />;
     }
+    let description = '';
+    if (feature.attributes.ParkingSpaceSubCategory === 'R-15Min') {
+      description += '15 minute loading zone.';
+    } else if (['Meter-Paystation', 'Meter-Coin'].indexOf(feature.attributes.ParkingSpaceSubCategory) !== -1) {
+      description += '$1.50 per hour.';
+    }
+    if (feature.attributes.ParkingSpaceClientPublic) {
+      description += `Reserved for: ${feature.attributes.ParkingSpaceClientPublic}`;
+    }
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
         <p class='widget-label'>
           {categoryInfo.description}{icon}
         </p>
-        <p>
-          {
-            feature.attributes.ParkingSpaceClient &&
-            feature.attributes.ParkingSpaceClient !== 'Parking Services' ?
-            'Reserved for: ' + feature.attributes.ParkingSpaceClient :
-            ''
-          }
-        </p>
+        <p>{description}</p>
       </div>
     );
   }

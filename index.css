@@ -71,6 +71,29 @@ body,
   z-index: -1;
 }
 
+.expandable {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.expandable-filter {
+  background-color: black;
+  color: white;
+}
+.expandable-header {
+  background-color: #63666a;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+.expandable-header:active {
+  background-color: black;
+}
+.expandable-icon {
+  padding-right: 0.5rem;
+}
+
 .custom-window-close {
   float: right;
 }
@@ -81,9 +104,27 @@ body,
   font-weight: bold;
 }
 
+.widget-label-icon {
+  padding: 0.5rem;
+}
+
+.widget-tab {
+  border-bottom: 1px solid #881c1c;
+  cursor: pointer;
+  display: inline-block;
+  padding: 0.5rem;
+  background-color: #ccc;
+}
+
+.widget-tab-active {
+  border: 1px solid #881c1c;
+  border-bottom: 0;
+  background-color: white;
+}
+
 .form-row {
   display: block;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.6rem;
 }
 .form-row > input {
   width: 100%;
@@ -108,7 +149,7 @@ body,
 
 #widgets-list ul {
   padding: 0;
-  margin: 0;
+  margin: 0 0 -0.4rem 0;
   list-style-type: none;
 }
 
@@ -246,6 +287,24 @@ body,
 }
 .hide {
   display: none;
+}
+
+.progress-cursor {
+  cursor: progress;
+}
+.esri-icon.esri-icon-loading-indicator {
+  animation-name: spin;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 
