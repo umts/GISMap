@@ -1,9 +1,17 @@
 {
   "name": "GISMap",
   "version": "1.0.0",
-  "main": "main.js",
+  "private": true,
   "dependencies": {
     "@types/arcgis-js-api": "^4.10.0",
     "es6-promise": "^4.2.6"
-  }
+  },
+  "devDependencies": {
+    "browserify": "^16.2.3",
+    "typescript": "^3.5.2"
+  },
+  "scripts": {
+    "build": "yarn run tsc && yarn run browserify node_modules/es6-promise/auto.js -o out/bundle.js && cp -R src/* out/"
+  },
+  "license": "MIT"
 }

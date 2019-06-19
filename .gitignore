@@ -1,7 +1,6 @@
 *.DS_Store
 
-app/**/*.js
-app/**/*.js.map
+out/
 bundle.js
 
 node_modules
