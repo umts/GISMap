@@ -147,7 +147,6 @@ class CustomPopup extends declared(Widget) {
 
   // Update the popup widget based on a mouse click event
   openFromMouseClick(event: any) {
-    console.log('OPEN FROM MOUSE CLICK');
     // Reset popup variables
     this.reset();
     this.point = event.mapPoint;
@@ -207,7 +206,6 @@ class CustomPopup extends declared(Widget) {
     layer.queryFeatures(query)
     .then((results) => {
       this.reset();
-      console.log('POPUP FEATURE QUERY RETURNED');
       if (results.features.length > 0) {
         // Add more features to the popup
         this.features = this.features.concat(results.features);
@@ -272,9 +270,6 @@ class CustomPopup extends declared(Widget) {
 
   // Update the popup feature for the url
   private _updateFeatureForUrl() {
-    console.log('UPDATING FEATURE FOR URL');
-    console.log(this.page);
-    console.log(this.features);
     if (this.page >= 0 && this.page < this.features.length) {
       const feature = this.features[this.page];
       let id;
