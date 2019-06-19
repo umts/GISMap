@@ -23,7 +23,7 @@ import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
 import { homeGoToOverride, umassLongLat } from "app/latLong";
 import { updateRenderers, updateLabeling } from 'app/rendering';
-import { resetUrlTimer, updatePositionFromUrl } from "app/url";
+import { resetUrlTimer, updateAppFromUrl } from "app/url";
 
 // Set the map to load data from our ArcGIS Online web map
 const map = new WebMap({
@@ -233,12 +233,12 @@ view.when(() => {
   // Add the main navigation widget to the map
   view.ui.add(mainNavigation, "manual");
 
+  // Set the initial app params from the url
+  updateAppFromUrl(mainNavigation);
   // Set the url hash based on the initial view
   resetUrlTimer(mainNavigation);
-
   // Update the position of the view when the url hash changes
-  updatePositionFromUrl(mainNavigation);
-  window.addEventListener("hashchange", () => { updatePositionFromUrl(mainNavigation) });
+  window.addEventListener("hashchange", () => { updateAppFromUrl(mainNavigation) });
   // Update the url hash when the position of the view changes
   view.watch(["center", "zoom", "rotation"], () => { resetUrlTimer(mainNavigation) });
 })

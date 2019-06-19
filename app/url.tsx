@@ -33,7 +33,7 @@ function decodeQueryString(queryString: string): any {
   If the view is not ready yet, set as parameters, otherwise use the goTo
   method which will animate.
 */
-function updatePositionFromUrl(mainNavigation: MainNavigation) {
+function updateAppFromUrl(mainNavigation: MainNavigation) {
   const urlParams = decodeQueryString(window.location.hash.slice(1));
 
   // Ensure that the URL is valid
@@ -66,6 +66,8 @@ function updatePositionFromUrl(mainNavigation: MainNavigation) {
       mainNavigation.view.goTo({target: center, zoom: zoom, rotation: rotation});
       // Only set the popup if it is a parameter and the view is ready
       if (featureForUrl) {
+        console.log('OPENING FROM URL');
+        console.log(featureForUrl);
         mainNavigation.popup.openFromUrl(featureForUrl);
       }
     // View is not ready, so set the initial parameters
@@ -106,12 +108,13 @@ let urlTimerId: number;
 function resetUrlTimer(mainNavigation: MainNavigation) {
   clearTimeout(urlTimerId);
   urlTimerId = setTimeout(() => {
-    updateUrlFromPosition(mainNavigation);
+    console.log('UPDATING URL FROM APP');
+    updateUrlFromApp(mainNavigation);
   }, 500);
 }
 
 // Update the url hash to use the center and zoom of the view
-function updateUrlFromPosition(mainNavigation: MainNavigation) {
+function updateUrlFromApp(mainNavigation: MainNavigation) {
   let queryParams: any = {
     latitude: mainNavigation.view.center.latitude.toFixed(5),
     longitude: mainNavigation.view.center.longitude.toFixed(5),
@@ -119,6 +122,8 @@ function updateUrlFromPosition(mainNavigation: MainNavigation) {
     rotation: Math.round(mainNavigation.view.rotation)
   }
   if (mainNavigation.popup.featureForUrl) {
+    console.log('ENCODING NEW POPUP PARAM');
+    console.log(mainNavigation.popup.featureForUrl);
     // Encode with base 64 and remove the padding at the end
     queryParams.popup = btoa(JSON.stringify(
       mainNavigation.popup.featureForUrl
@@ -147,7 +152,7 @@ function safeUrl(): string {
 export {
   FeatureForUrl,
   resetUrlTimer,
-  updatePositionFromUrl,
+  updateAppFromUrl,
   safeUrl,
   rootUrl
 };

@@ -16,6 +16,11 @@ import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 import { spaceRendererInfo, expandable } from 'app/rendering';
 import { FeatureForUrl } from 'app/url';
 
+interface ScreenPoint {
+  x: number;
+  y: number;
+}
+
 @subclass('esri.widgets.CustomPopup')
 class CustomPopup extends declared(Widget) {
   // The main map view
@@ -140,11 +145,55 @@ class CustomPopup extends declared(Widget) {
     this._updateSelectionGraphic();
   }
 
+  // Update the popup widget based on a mouse click event
+  openFromMouseClick(event: any) {
+    console.log('OPEN FROM MOUSE CLICK');
+    // Reset popup variables
+    this.reset();
+    this.point = event.mapPoint;
+
+    const queryGeometry = this._circleAt(event.screenPoint);
+
+    [
+      this._getLayer('Sections'),
+      this._getLayer('Campus Buildings'),
+      this._getLayer('Spaces')
+    ].forEach((layer) => {
+      let query = layer.createQuery();
+      /*
+        Query features that intersect the circle around the point from
+        the click event.
+      */
+      query.geometry = queryGeometry;
+      query.spatialRelationship = 'intersects';
+      // Ensure the query returns all fields, in particular the OBJECTID field
+      query.outFields = ['*'];
+
+      layer.queryFeatures(query)
+      .then((results) => {
+        if (results.features.length > 0) {
+          // Add more features to the popup
+          this.features = this.features.concat(results.features);
+          this.visible = true;
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
+    });
+  }
+
   // Open a popup to a feature from the url
   openFromUrl(featureForUrl: FeatureForUrl) {
-    const layer = (this.view.map as WebMap).layers.find((layer) => {
-      return layer.title === featureForUrl.layer;
-    }) as FeatureLayer;
+    // Do not try to load the feature if not all the params exist
+    if (!featureForUrl.id || !featureForUrl.layer) {
+      return;
+    }
+    /*
+      Immediately set this before querying so that the url does not reset to
+      have no popup parameter.
+    */
+    this.featureForUrl = featureForUrl;
+    const layer = this._getLayer(featureForUrl.layer);
     let query = layer.createQuery();
     let idColumn = 'OBJECTID_1';
     if (featureForUrl.layer === 'Campus Buildings') {
@@ -152,15 +201,18 @@ class CustomPopup extends declared(Widget) {
     }
     query.where = `${idColumn} = '${featureForUrl.id}'`;
     query.outSpatialReference = new SpatialReference({"wkid":4326});
-
-    this.reset();
+    // Ensure the query returns all fields, in particular the OBJECTID field
+    query.outFields = ['*'];
 
     layer.queryFeatures(query)
     .then((results) => {
+      this.reset();
+      console.log('POPUP FEATURE QUERY RETURNED');
       if (results.features.length > 0) {
         // Add more features to the popup
         this.features = this.features.concat(results.features);
         this.visible = true;
+        // Grab point from geometry
         if ((results.features[0].geometry as any).centroid) {
           this.point = (results.features[0].geometry as Polygon).centroid;
         } else {
@@ -220,6 +272,9 @@ class CustomPopup extends declared(Widget) {
 
   // Update the popup feature for the url
   private _updateFeatureForUrl() {
+    console.log('UPDATING FEATURE FOR URL');
+    console.log(this.page);
+    console.log(this.features);
     if (this.page >= 0 && this.page < this.features.length) {
       const feature = this.features[this.page];
       let id;
@@ -232,9 +287,47 @@ class CustomPopup extends declared(Widget) {
         id: id,
         layer: feature.layer.title
       };
+    /*
+      There is no popup currently selected, so the feature for the url should
+      be null.
+    */
     } else {
       this.featureForUrl = null;
     }
+  }
+
+  /*
+    Generate a 'circle' in latitude/longitude given a point on the screen in
+    pixels.
+  */
+  private _circleAt(screenPoint: ScreenPoint): Polygon {
+    const delta = 16;
+    const screenVertices: Array<ScreenPoint> = [
+      {x: screenPoint.x - delta, y: screenPoint.y - delta},
+      {x: screenPoint.x + delta, y: screenPoint.y - delta},
+      {x: screenPoint.x + delta, y: screenPoint.y + delta},
+      {x: screenPoint.x - delta, y: screenPoint.y + delta}
+    ]
+
+    const mapVertices = screenVertices.map((screenPoint) => {
+      const mapPoint = this.view.toMap(screenPoint);
+      /*
+        Explicitly grab lat/lon or else the polygon will try to convert back
+        to the MA spatial reference.
+      */
+      return [mapPoint.longitude, mapPoint.latitude];
+    });
+    let circle = new Polygon();
+    // Polygon ring requires the final point to be the same as the first
+    circle.addRing(mapVertices.concat([mapVertices[0]]));
+    return circle;
+  }
+
+  // Return a feature layer by title
+  private _getLayer(name: string): FeatureLayer {
+    return (this.view.map as WebMap).layers.find((layer) => {
+      return layer.title === name;
+    }) as FeatureLayer;
   }
 
   /*
