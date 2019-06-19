@@ -1,10 +1,6 @@
 import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
 import { renderable, tsx } from "esri/widgets/support/widget";
 
-import WebMap = require('esri/WebMap');
-import Point = require('esri/geometry/Point');
-import Polygon = require('esri/geometry/Polygon');
-import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require("esri/views/MapView");
 import Compass = require("esri/widgets/Compass");
 import Home = require("esri/widgets/Home");
@@ -94,20 +90,17 @@ class MainNavigation extends declared(Widget) {
   */
   constructor(properties?: any) {
     super();
+    this.popup = new CustomPopup({view: properties.view});
   }
 
   // Run after this widget is ready
   postInitialize() {
-    // Set up popup and popup event listener
-    this.popup = new CustomPopup({view: this.view});
-    this.view.on('click', (event) => { this.popup.openFromMouseClick(event) });
-
-    this._setLoading(true);
-    this.view.watch('updating', (updating) => { this._setLoading(updating) });
-
+    // Update the url when the feature for URL changes
     this.popup.watch('featureForUrl', (featureForUrl) => {
       resetUrlTimer(this);
     });
+    this._setLoading(true);
+    this.view.watch('updating', (updating) => { this._setLoading(updating) });
   }
 
   // Render this widget by returning JSX which is converted to HTML

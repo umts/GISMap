@@ -16,6 +16,7 @@ import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 import { spaceRendererInfo, expandable } from 'app/rendering';
 import { FeatureForUrl } from 'app/url';
 
+// Represents a point on the screen in pixels
 interface ScreenPoint {
   x: number;
   y: number;
@@ -68,6 +69,8 @@ class CustomPopup extends declared(Widget) {
   }
 
   postInitialize() {
+    // Open popup by click event listener
+    this.view.on('click', (event) => { this.openFromMouseClick(event) });
     // Update the feature for the URL when the current page or features change
     this.watch(['page', 'features'], this._updateFeatureForUrl);
   }
@@ -168,6 +171,7 @@ class CustomPopup extends declared(Widget) {
       // Ensure the query returns all fields, in particular the OBJECTID field
       query.outFields = ['*'];
 
+      // Query features
       layer.queryFeatures(query)
       .then((results) => {
         if (results.features.length > 0) {
@@ -188,8 +192,8 @@ class CustomPopup extends declared(Widget) {
       return;
     }
     /*
-      Immediately set this before querying so that the url does not reset to
-      have no popup parameter.
+      Immediately set featureForUrl before querying so that the url does
+      not reset to have no popup parameter.
     */
     this.featureForUrl = featureForUrl;
     const layer = this._getLayer(featureForUrl.layer);
@@ -203,6 +207,7 @@ class CustomPopup extends declared(Widget) {
     // Ensure the query returns all fields, in particular the OBJECTID field
     query.outFields = ['*'];
 
+    // Query feature
     layer.queryFeatures(query)
     .then((results) => {
       this.reset();
