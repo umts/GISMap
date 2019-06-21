@@ -3,8 +3,6 @@ import { renderable, tsx } from "esri/widgets/support/widget";
 
 import Widget = require("esri/widgets/Widget");
 
-import { getElementStyleSize } from 'app/rendering';
-
 // Interface for objects with a render method
 interface RenderableWidget {
   render: any;
