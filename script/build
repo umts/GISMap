@@ -2,7 +2,7 @@
 set -ev
 cd "$(dirname "$0")/.."
 
-rm -Rv out/*
+rm -Rvf out/*
 cp -Rv src/* out/
 yarn run tsc
 yarn run browserify node_modules/es6-promise/auto.js -o out/bundle.js
