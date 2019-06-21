@@ -20,11 +20,13 @@ Compile the application with:
 $ yarn run build
 ```
 
-The built site will be in the `out/` directory. Serve it with:
+The built site will be in the `out/` directory. You can start a web server with:
 
 ```
 $ yarn run serve
 ```
+
+And view the application at http://localhost:8080/
 
 ## Reference
 * [TypeScript Docs (see the handbook)](https://www.typescriptlang.org/docs/home.html)
