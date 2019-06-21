@@ -7,12 +7,14 @@
     <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
     <link rel="stylesheet" href="index.css">
     <script>
+      // Current path minus everything after the last forward slash
+      var locationPath = location.pathname.replace(/\/[^\/]*$/, "");
       window.dojoConfig = {
         isDebug: true,
         packages: [
           {
             name: "app",
-            location: location.origin + "/app"
+            location: location.protocol + '//' + location.host + locationPath + "/app"
           }
         ]
       };
