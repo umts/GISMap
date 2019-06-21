@@ -20,6 +20,12 @@ Compile the application with:
 $ yarn run build
 ```
 
+The built site will be in the `out/` directory. Serve it with:
+
+```
+$ yarn run serve
+```
+
 ## Reference
 * [TypeScript Docs (see the handbook)](https://www.typescriptlang.org/docs/home.html)
 * [ArcGIS API for JavaScript](https://developers.arcgis.com/javascript/latest/api-reference/index.html)

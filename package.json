@@ -8,11 +8,13 @@
   },
   "devDependencies": {
     "browserify": "^16.2.3",
+    "node-static": "^0.7.11",
     "typescript": "^3.5.2"
   },
   "scripts": {
     "build": "script/build",
-    "compress": "script/compress"
+    "compress": "script/compress",
+    "serve": "yarn run static out/"
   },
   "license": "MIT"
 }
