@@ -23,6 +23,7 @@ import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
 import { homeGoToOverride, umassLongLat } from "app/latLong";
 import { updateRenderers, updateLabeling } from 'app/rendering';
+import { esriSearchSources } from 'app/search';
 import { resetUrlTimer, updatePositionFromUrl } from "app/url";
 
 // Set the map to load data from our ArcGIS Online web map
@@ -121,12 +122,17 @@ view.when(() => {
 
   const customPedestrianDirections = new Directions({
     view: view,
-    routeServiceUrl: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route'
+    routeServiceUrl: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route',
+    searchProperties: {
+      sources: esriSearchSources
+    }
   });
   /*
     These parameters must be set outside the constructor. If we try to set
     them on the view model within the constructor the widget will break.
   */
+  // Do not use the default search sources
+  customPedestrianDirections.searchProperties.viewModel.includeDefaultSources = false;
   // Pedestrian route service doesn't support hierarchy
   customPedestrianDirections.viewModel.routeParameters.useHierarchy = false;
   // Directions widget seems to want lat and lon

@@ -10,13 +10,10 @@ import {
   SearchFilter,
   SearchResult,
   Suggestion,
+  LocationSearchSourceProperties,
+  locationSearchSourceProperties,
   searchTermMatchesTags
 } from 'app/search';
-
-interface LocationSearchSourceProperties {
-  url: string;
-  title: string;
-}
 
 @subclass('esri.CustomSearchSources')
 class CustomSearchSources extends declared(Accessor) {
@@ -31,14 +28,7 @@ class CustomSearchSources extends declared(Accessor) {
   // Pass in any properties
   constructor(properties?: any) {
     super();
-    this.locationSearchSourceProperties = [{
-        url: 'https://maps.umass.edu/arcgis/rest/services/Locators/CampusAddressLocatorWithSuggestions/GeocodeServer',
-        title: 'On-campus locations'
-      }, {
-        url: 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer',
-        title: 'Off-campus locations'
-      }
-    ];
+    this.locationSearchSourceProperties = locationSearchSourceProperties;
     this.locationsOnly = properties.locationsOnly || false;
   }
 
