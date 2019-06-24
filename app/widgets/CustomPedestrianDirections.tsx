@@ -32,13 +32,16 @@ class CustomPedestrianDirections extends declared(Widget) {
   @renderable()
   endSearch: CustomSearch;
 
+  // The route task to use to query for routes
   @property()
   routeTask: RouteTask;
 
+  // The result of querying using a route task. Contains directions.
   @property()
   @renderable()
   routeResult: RouteResult;
 
+  // Which direction is currently selected both in the menu and on the map
   @property()
   directionIndex: number;
 
@@ -61,6 +64,17 @@ class CustomPedestrianDirections extends declared(Widget) {
       directionsElement = (
         <div class='directions-list'>
           <h2>{this.routeResult.directions.routeName}</h2>
+          <div class='spaced-row'>
+            <p>
+              {imperialDistance(this.routeResult.directions.totalLength)}
+            </p>
+            <button
+              bind={this}
+              class='umass-theme-button'
+              onclick={this._reset}>
+              Clear
+            </button>
+          </div>
           {directions}
         </div>
       );
@@ -159,13 +173,13 @@ class CustomPedestrianDirections extends declared(Widget) {
           ]
         }),
         directionsLengthUnits: 'feet',
+        // Pedestrian route service doesn't support hierarchy
         useHierarchy: false,
         returnDirections: true,
         returnRoutes: true,
-        returnStops: true,
         outSpatialReference: new SpatialReference({wkid: 4326})
       })).then((response: any) => {
-        console.log(response);
+        this._reset();
         this.routeResult = response.routeResults[0];
         this._applyCurrentRoute();
       }).catch((error) => {
@@ -186,7 +200,6 @@ class CustomPedestrianDirections extends declared(Widget) {
 
   // Draw the current route result and move the view to it
   private _applyCurrentRoute() {
-    this._clearRoute();
     const graphic = this.routeResult.route;
     graphic.symbol = new SimpleLineSymbol({
       color: '#99ccff',
@@ -196,8 +209,11 @@ class CustomPedestrianDirections extends declared(Widget) {
     this.view.goTo(graphic);
   }
 
-  private _clearRoute() {
+  // Reset the widget back to its initial state
+  private _reset() {
+    this._getLayer('Directions Selection').removeAll();
     this._getLayer('Directions').removeAll();
+    this.routeResult = null;
   }
 
   private _getLayer(name: string): GraphicsLayer {

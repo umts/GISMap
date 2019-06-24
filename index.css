@@ -136,7 +136,10 @@ h2 {
 }
 .form-row-input {
   display: flex;
-  justify-content: space-between;
+}
+.spaced-row {
+  display: flex;
+  justify-content: space-around;
 }
 
 .button-right {

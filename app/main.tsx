@@ -128,25 +128,21 @@ view.when(() => {
     })
   });
 
-  const customPedestrianDirections = new Directions({
+  const customPedestrianDirections = new CustomPedestrianDirections({
     view: view,
-    routeServiceUrl: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route',
-    searchProperties: {
-      sources: esriSearchSources
-      /*viewModel: new SearchViewModel({
-        includeDefaultSources: false,
-        sources: esriSearchSources
-      })*/
-    }
+    startSearch: new CustomSearch({
+      view: view,
+      name: 'pedestrian-directions-origin',
+      placeholder: 'Origin',
+      required: true
+    }),
+    endSearch: new CustomSearch({
+      view: view,
+      name: 'pedestrian-directions-destination',
+      placeholder: 'Destination',
+      required: true
+    })
   });
-  /*
-    These parameters must be set outside the constructor. If we try to set
-    them on the view model within the constructor the widget will break.
-  */
-  // Pedestrian route service doesn't support hierarchy
-  customPedestrianDirections.viewModel.routeParameters.useHierarchy = false;
-  // Directions widget seems to want lat and lon
-  customPedestrianDirections.viewModel.routeParameters.outSpatialReference = new SpatialReference({wkid: 4326});
 
   /*
     Create a directions window that will be hidden until opened by a
@@ -160,24 +156,6 @@ view.when(() => {
       {
         label: 'Driving directions',
         widget: customDirections
-      },
-      {
-        label: 'Custom',
-        widget: new CustomPedestrianDirections({
-          view: view,
-          startSearch: new CustomSearch({
-            view: view,
-            name: 'pedestrian-directions-origin',
-            placeholder: 'Origin',
-            required: true
-          }),
-          endSearch: new CustomSearch({
-            view: view,
-            name: 'pedestrian-directions-destination',
-            placeholder: 'Destination',
-            required: true
-          })
-        })
       },
       {
         label: 'Walking directions',
