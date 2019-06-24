@@ -63,7 +63,9 @@ class CustomPedestrianDirections extends declared(Widget) {
       })
       directionsElement = (
         <div class='directions-list'>
-          <h2>{this.routeResult.directions.routeName}</h2>
+          <h2 bind={this} class='directions-header' onclick={this._clickHeader}>
+            {this.routeResult.directions.routeName}
+          </h2>
           <div class='spaced-row'>
             <p>
               {imperialDistance(this.routeResult.directions.totalLength)}
@@ -139,6 +141,13 @@ class CustomPedestrianDirections extends declared(Widget) {
     const directionsSelectionLayer = this._getLayer('Directions Selection');
     directionsSelectionLayer.removeAll();
     directionsSelectionLayer.add(graphic);
+  }
+
+  // See the whole route when the directions list header is clicked
+  private _clickHeader() {
+    if (this.routeResult) {
+      this.view.goTo(this.routeResult.route);
+    }
   }
 
   /*

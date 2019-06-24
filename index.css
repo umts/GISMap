@@ -263,6 +263,9 @@ h2 {
 .directions-list {
   clear: both;
 }
+.directions-header {
+  cursor: pointer;
+}
 .direction {
   background-color: #eee;
   display: flex;
