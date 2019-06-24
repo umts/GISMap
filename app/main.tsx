@@ -10,7 +10,6 @@ import Home = require("esri/widgets/Home");
 import LayerList = require("esri/widgets/LayerList");
 import Locate = require("esri/widgets/Locate");
 import Print = require("esri/widgets/Print");
-import SearchViewModel = require('esri/widgets/Search/SearchViewModel');
 
 import MainNavigation = require("app/widgets/MainNavigation");
 import CustomDirections = require("app/widgets/CustomDirections");
@@ -62,13 +61,15 @@ view.when(() => {
   // Set the default basemap
   map.basemap = Basemap.fromId('topo');
 
-  // Special layer for popup feature selection
+  // Layer for directions
   map.add(new GraphicsLayer({
     title: 'Directions'
   }));
+  // Layer for direction selection
   map.add(new GraphicsLayer({
     title: 'Directions Selection'
   }));
+  // Layer for popup feature selection
   map.add(new GraphicsLayer({
     title: 'Selection'
   }));
