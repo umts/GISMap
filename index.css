@@ -98,9 +98,14 @@ body,
   float: right;
 }
 
-.widget-label {
+h1 {
   margin: 0.5rem 0 0.8rem 0;
   font-size: 1.2rem;
+  font-weight: bold;
+}
+h2 {
+  margin: 0.5rem 0 0.8rem 0;
+  font-size: 1rem;
   font-weight: bold;
 }
 
@@ -250,6 +255,30 @@ body,
   padding: 0.4rem 0.8rem 0.4rem 0.8rem;
   background-color: #666666;
   color: white;
+}
+
+.directions-list {
+  clear: both;
+}
+.direction {
+  background-color: #eee;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  cursor: pointer;
+}
+.direction:hover {
+  background-color: #ccc;
+}
+.direction:active {
+  background-color: #aaa;
+}
+.direction.active {
+  background-color: #ccc;
+}
+.direction-distance {
+  flex-shrink: 0;
 }
 
 .layer-checkbox {

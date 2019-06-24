@@ -10,12 +10,14 @@ import Home = require("esri/widgets/Home");
 import LayerList = require("esri/widgets/LayerList");
 import Locate = require("esri/widgets/Locate");
 import Print = require("esri/widgets/Print");
+import SearchViewModel = require('esri/widgets/Search/SearchViewModel');
 
 import MainNavigation = require("app/widgets/MainNavigation");
 import CustomDirections = require("app/widgets/CustomDirections");
 import CustomFilter = require('app/widgets/CustomFilter');
 import CustomLayerList = require("app/widgets/CustomLayerList");
 import CustomSearch = require("app/widgets/CustomSearch");
+import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
 import ShareEmail = require("app/widgets/ShareEmail");
@@ -62,6 +64,12 @@ view.when(() => {
   map.basemap = Basemap.fromId('topo');
 
   // Special layer for popup feature selection
+  map.add(new GraphicsLayer({
+    title: 'Directions'
+  }));
+  map.add(new GraphicsLayer({
+    title: 'Directions Selection'
+  }));
   map.add(new GraphicsLayer({
     title: 'Selection'
   }));
@@ -125,14 +133,16 @@ view.when(() => {
     routeServiceUrl: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route',
     searchProperties: {
       sources: esriSearchSources
+      /*viewModel: new SearchViewModel({
+        includeDefaultSources: false,
+        sources: esriSearchSources
+      })*/
     }
   });
   /*
     These parameters must be set outside the constructor. If we try to set
     them on the view model within the constructor the widget will break.
   */
-  // Do not use the default search sources
-  customPedestrianDirections.searchProperties.viewModel.includeDefaultSources = false;
   // Pedestrian route service doesn't support hierarchy
   customPedestrianDirections.viewModel.routeParameters.useHierarchy = false;
   // Directions widget seems to want lat and lon
@@ -150,6 +160,24 @@ view.when(() => {
       {
         label: 'Driving directions',
         widget: customDirections
+      },
+      {
+        label: 'Custom',
+        widget: new CustomPedestrianDirections({
+          view: view,
+          startSearch: new CustomSearch({
+            view: view,
+            name: 'pedestrian-directions-origin',
+            placeholder: 'Origin',
+            required: true
+          }),
+          endSearch: new CustomSearch({
+            view: view,
+            name: 'pedestrian-directions-destination',
+            placeholder: 'Destination',
+            required: true
+          })
+        })
       },
       {
         label: 'Walking directions',

@@ -90,10 +90,10 @@ class CustomWindow extends declared(Widget) {
           widgetIcon = <span class={`widget-label-icon esri-icon esri-icon-${this.iconName}`}></span>;
         }
         widgetLabel = (
-          <p class="widget-label">
+          <h1>
             {widgetIcon}
             {widgetWithLabel.label}
-          </p>
+          </h1>
         );
       }
       if (!this.useTabs || i === this.widgetIndex) {

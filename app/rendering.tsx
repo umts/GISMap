@@ -232,6 +232,25 @@ function updateLabeling(map: WebMap) {
   buildingsLayer.labelingInfo = [buildingLabel];
 }
 
+/*
+  Given a distance in feet return the imperial distance as a human
+  readable string.
+*/
+function imperialDistance(distanceInFeet: number): string {
+  if (distanceInFeet === 0) {
+    return null;
+  }
+  let distance = distanceInFeet;
+  let unit = 'feet';
+  let places = 0;
+  if (distance > 1000) {
+    distance = distance / 5280;
+    unit = 'miles';
+    places = 1;
+  }
+  return `${distance.toFixed(places)} ${unit}`
+}
+
 // Return an expandable element containing mainElement. Title should be unique.
 function expandable(
   title: string,
@@ -283,5 +302,6 @@ export {
   spaceRendererInfo,
   sectionRendererInfo,
   filterInfo,
+  imperialDistance,
   expandable
 };
