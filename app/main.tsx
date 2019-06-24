@@ -25,7 +25,6 @@ import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
 import { homeGoToOverride, umassLongLat } from "app/latLong";
 import { updateRenderers, updateLabeling } from 'app/rendering';
-import { esriSearchSources } from 'app/search';
 import { resetUrlTimer, updatePositionFromUrl } from "app/url";
 
 // Set the map to load data from our ArcGIS Online web map

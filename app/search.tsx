@@ -1,7 +1,3 @@
-import Collection = require('esri/core/Collection');
-import Locator = require('esri/tasks/Locator');
-import LocatorSearchSource = require('esri/widgets/Search/LocatorSearchSource');
-
 // The different types of sources used for searching
 enum SearchSourceType {
   Location = 0,
@@ -46,48 +42,6 @@ interface SearchResult {
   filter?: SearchFilter;
 }
 
-// Minimum required to query a location from a server
-interface LocationSearchSourceProperties {
-  url: string;
-  title: string;
-}
-
-// Minimum properties needed to directly query locations
-const locationSearchSourceProperties: Array<LocationSearchSourceProperties> = [
-  {
-    url: 'https://maps.umass.edu/arcgis/rest/services/Locators/CampusAddressLocatorWithSuggestions/GeocodeServer',
-    title: 'On-campus locations'
-  }, {
-    url: 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer',
-    title: 'Off-campus locations'
-  }
-];
-
-// Verbose search sources for esri's directions widget
-let _esriSearchSources = new Collection();
-_esriSearchSources.addMany([
-  new LocatorSearchSource({ 
-    locator: new Locator({
-      url: locationSearchSourceProperties[0].url
-    }),
-    singleLineFieldName: 'SingleLine',
-    name: locationSearchSourceProperties[0].title,
-    placeholder: 'Find on-campus locations',
-    suggestionsEnabled: true
-  }),
-  new LocatorSearchSource({
-    locator: new Locator({
-      url: locationSearchSourceProperties[1].url
-    }),
-    singleLineFieldName: 'SingleLine',
-    outFields: ['Addr_type'],
-    name: locationSearchSourceProperties[1].title,
-    placeholder: 'Find off-campus locations',
-    suggestionsEnabled: true
-  })
-]);
-const esriSearchSources: Collection<LocatorSearchSource> = _esriSearchSources;
-
 // Return true if the search term matches one of the tags
 function searchTermMatchesTags(searchTerm: string, tags: Array<string>): boolean {
   let searchWords = searchTerm.split(' ');
@@ -111,8 +65,5 @@ export {
   SearchFilterClause,
   Suggestion,
   SearchResult,
-  LocationSearchSourceProperties,
-  locationSearchSourceProperties,
-  esriSearchSources,
   searchTermMatchesTags
 };
