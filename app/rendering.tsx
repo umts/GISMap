@@ -11,7 +11,6 @@ import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
 import TextSymbol = require('esri/symbols/TextSymbol');
 
 import { clickOnSpaceOrEnter } from 'app/events';
-import { rootUrl } from 'app/url';
 import { SearchFilter } from 'app/search';
 
 const iconsPath = 'assets/icons';
@@ -22,55 +21,55 @@ const spaceRendererInfo = {
     label: 'Handicapped Spaces',
     description: 'Handicapped space',
     checked: 'checked',
-    iconUrl: `${rootUrl()}/${iconsPath}/handicapped-space.png`,
+    iconUrl: `${iconsPath}/handicapped-space.png`,
     altText: 'White H in a blue circle'
   },
   'R-Carpool': {
     label: 'Carpool Spaces',
     description: 'Carpool space',
-    iconUrl: `${rootUrl()}/${iconsPath}/carpool-space.png`,
+    iconUrl: `${iconsPath}/carpool-space.png`,
     altText: 'Black C in an orange circle'
   },
   'R-State': {
     label: 'State Vehicle Spaces',
     description: 'State vehicle space',
-    iconUrl: `${rootUrl()}/${iconsPath}/state-space.png`,
+    iconUrl: `${iconsPath}/state-space.png`,
     altText: 'White M A in a light blue rectangle'
   },
   'Meter-Paystation': {
     label: 'Paystation Spaces',
     description: 'Paystation space',
-    iconUrl: `${rootUrl()}/${iconsPath}/paystation-space.png`,
+    iconUrl: `${iconsPath}/paystation-space.png`,
     altText: 'White P in a dark blue rectangle'
   },
   'Meter-Coin': {
     label: 'Meter Spaces',
     description: 'Meter space',
-    iconUrl: `${rootUrl()}/${iconsPath}/meter-space.png`,
+    iconUrl: `${iconsPath}/meter-space.png`,
     altText: 'Gray parking meter with an M on it'
   },
   'R-EV Stations': {
     label: 'Electric Vehicle Charging Stations',
     description: 'Electric vehicle charging station',
-    iconUrl: `${rootUrl()}/${iconsPath}/electric-space.png`,
+    iconUrl: `${iconsPath}/electric-space.png`,
     altText: 'White charging station in a blue rectangle'
   },
   'R-Visitor': {
     label: 'Visitor Spaces',
     description: 'Visitor space',
-    iconUrl: `${rootUrl()}/${iconsPath}/visitor-space.png`,
+    iconUrl: `${iconsPath}/visitor-space.png`,
     altText: 'Black V in a yellow circle'
   },
   'R-Client': {
     label: 'Reserved Spaces',
     description: 'Reserved space',
-    iconUrl: `${rootUrl()}/${iconsPath}/reserved-space.png`,
+    iconUrl: `${iconsPath}/reserved-space.png`,
     altText: 'White R in a red circle'
   },
   'R-15Min': {
     label: 'Loading Zones',
     description: 'Loading zone',
-    iconUrl: `${rootUrl()}/${iconsPath}/loading-zone.png`,
+    iconUrl: `${iconsPath}/loading-zone.png`,
     altText: 'White L in a green circle'
   }
 };

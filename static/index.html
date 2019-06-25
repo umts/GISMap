@@ -8,14 +8,13 @@
     <link rel="stylesheet" href="index.css">
     <script>
       // Current path minus everything after the last forward slash
-      var locationPath = location.pathname.replace(/\/[^\/]+$/, "");
-      // Dojo wants a very explicit path in order to load our JS package
+      var locationPath = location.pathname.replace(/\/[^\/]*$/, "");
       window.dojoConfig = {
         isDebug: true,
         packages: [
           {
             name: "app",
-            location: location.protocol + "//" + location.host + locationPath + "/app"
+            location: location.protocol + '//' + location.host + locationPath + "/app"
           }
         ]
       };
