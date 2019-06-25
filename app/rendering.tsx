@@ -215,7 +215,7 @@ function updateLabeling(map: WebMap) {
       haloColor: 'white',
       haloSize: '1px',
       font: new Font({
-        size: 12,
+        size: 14,
         family: 'sans-serif',
         weight: 'bold'
       })
