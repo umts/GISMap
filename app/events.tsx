@@ -12,6 +12,7 @@ function clickOnSpaceOrEnter(event: KeyboardEvent) {
 
 // Send a mouse click event to an element
 function _clickElement(element: HTMLElement) {
+  // Create an IE compatible mouse event
   const event = document.createEvent('MouseEvent');
   event.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
   const cancelled = !element.dispatchEvent(event);
