@@ -124,7 +124,7 @@ class MainNavigation extends declared(Widget) {
         <div
           aria-label='Main navigation window'
           id="main-navigation-window"
-          class="navigation-window">
+          class="navigation-window shadow">
           {this.search.render()}
 
           <div id="widgets-list" role='presentation'>

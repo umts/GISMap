@@ -124,7 +124,7 @@ class CustomWindow extends declared(Widget) {
     return (
       <div
         aria-label={`${this.name} window`}
-        class='navigation-window custom-window'
+        class='navigation-window custom-window shadow'
         key={`${this.name}-window`}
         style={`display: ${this.visible ? 'block' : 'none'}`}>
         {closeButton}

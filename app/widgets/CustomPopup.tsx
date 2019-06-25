@@ -106,7 +106,7 @@ class CustomPopup extends declared(Widget) {
         </div>
         <div
           aria-label='Feature information'
-          class='navigation-window custom-popup'
+          class='navigation-window custom-popup shadow'
           role='dialog'>
           {closeButton}
           {pageCounter}
