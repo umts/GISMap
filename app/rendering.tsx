@@ -10,7 +10,6 @@ import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
 import TextSymbol = require('esri/symbols/TextSymbol');
 
-import { rootUrl } from 'app/url';
 import { SearchFilter } from 'app/search';
 
 const iconsPath = 'assets/icons';
@@ -21,47 +20,47 @@ const spaceRendererInfo = {
     label: 'Handicapped Spaces',
     description: 'Handicapped space',
     checked: 'checked',
-    iconUrl: `${rootUrl()}/${iconsPath}/handicapped-space.png`
+    iconUrl: `${iconsPath}/handicapped-space.png`
   },
   'R-Carpool': {
     label: 'Carpool Spaces',
     description: 'Carpool space',
-    iconUrl: `${rootUrl()}/${iconsPath}/carpool-space.png`
+    iconUrl: `${iconsPath}/carpool-space.png`
   },
   'R-State': {
     label: 'State Vehicle Spaces',
     description: 'State vehicle space',
-    iconUrl: `${rootUrl()}/${iconsPath}/state-space.png`
+    iconUrl: `${iconsPath}/state-space.png`
   },
   'Meter-Paystation': {
     label: 'Paystation Spaces',
     description: 'Paystation space',
-    iconUrl: `${rootUrl()}/${iconsPath}/paystation-space.png`
+    iconUrl: `${iconsPath}/paystation-space.png`
   },
   'Meter-Coin': {
     label: 'Meter Spaces',
     description: 'Meter space',
-    iconUrl: `${rootUrl()}/${iconsPath}/meter-space.png`
+    iconUrl: `${iconsPath}/meter-space.png`
   },
   'R-EV Stations': {
     label: 'Electric Vehicle Charging Stations',
     description: 'Electric vehicle charging station',
-    iconUrl: `${rootUrl()}/${iconsPath}/electric-space.png`
+    iconUrl: `${iconsPath}/electric-space.png`
   },
   'R-Visitor': {
     label: 'Visitor Spaces',
     description: 'Visitor space',
-    iconUrl: `${rootUrl()}/${iconsPath}/visitor-space.png`
+    iconUrl: `${iconsPath}/visitor-space.png`
   },
   'R-Client': {
     label: 'Reserved Spaces',
     description: 'Reserved space',
-    iconUrl: `${rootUrl()}/${iconsPath}/reserved-space.png`
+    iconUrl: `${iconsPath}/reserved-space.png`
   },
   'R-15Min': {
     label: 'Loading Zones',
     description: 'Loading zone',
-    iconUrl: `${rootUrl()}/${iconsPath}/loading-zone.png`
+    iconUrl: `${iconsPath}/loading-zone.png`
   }
 };
 

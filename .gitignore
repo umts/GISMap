@@ -1,9 +1,9 @@
-*.DS_Store
+# Compiled site output
+out/
+site.zip
 
-app/**/*.js
-app/**/*.js.map
-bundle.js
-
+# Resolved JS dependencies
 node_modules
-
-yarn-error.log
+yarn-debug.log*
+yarn-error.log*
+.yarn-integrity
