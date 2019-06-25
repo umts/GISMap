@@ -108,7 +108,7 @@ class CustomPopup extends declared(Widget) {
           <div class='popup-pointer'></div>
         </div>
         <div
-          class='navigation-window custom-popup'>
+          class='navigation-window custom-popup shadow'>
           {closeButton}
           {pageCounter}
           {featureInfo}

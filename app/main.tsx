@@ -18,6 +18,7 @@ import CustomLayerList = require("app/widgets/CustomLayerList");
 import CustomSearch = require("app/widgets/CustomSearch");
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
+import Feedback = require('app/widgets/Feedback');
 import ShareEmail = require("app/widgets/ShareEmail");
 import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
@@ -239,6 +240,8 @@ view.when(() => {
     customWindows: customWindows
   });
 
+  // Add the feedback widget to the bottom right
+  view.ui.add(new Feedback(), 'bottom-right');
   // Add the main navigation widget to the map
   view.ui.add(mainNavigation, "manual");
 })

@@ -121,7 +121,7 @@ class MainNavigation extends declared(Widget) {
 
     return (
       <div id="main-navigation">
-        <div id="main-navigation-window" class="navigation-window">
+        <div id="main-navigation-window" class="navigation-window shadow">
           {this.search.render()}
 
           <div id="widgets-list">
