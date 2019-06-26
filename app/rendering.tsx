@@ -42,7 +42,7 @@ const spaceRendererInfo = {
     description: 'Meter space',
     iconUrl: `${iconsPath}/meter-space.png`
   },
-  'R-EV Stations': {
+  'R-EV': {
     label: 'Electric Vehicle Charging Stations',
     description: 'Electric vehicle charging station',
     iconUrl: `${iconsPath}/electric-space.png`
