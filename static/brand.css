@@ -1,0 +1,56 @@
+#umass--global--header {
+  background: #881c1c;
+  font-family: sans-serif;
+  font-size: initial;
+  padding: 0 1rem;
+}
+
+#umass--global--header #container {
+  align-items: center;
+  display: flex;
+  height: 60px;
+  margin: 0 auto;
+  max-width: 1200px !important;
+}
+
+#umass--global--header #umass--global--navigation {
+  flex-grow: 1;
+}
+
+#umass--global--header #umass--global--navigation--navicon {
+
+}
+
+#umass--global--header #umass--global--navigation--links {
+  margin: 0;
+  padding: 0;
+  line-height: 2;
+  list-style: none;
+  text-align: right;
+}
+
+#umass--global--header #umass--global--navigation--links a {
+  color: white;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.ir {
+  background-color: transparent;
+  color: transparent;
+}
+
+@media only screen and (min-width: 600px) {
+  #umass--global--header #umass--global--navigation--navicon {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 785px) {
+  #umass--global--header #wordmark {
+    background-image: url(//www.umass.edu/static/branding/images/UMassAmherst_longform-reversed.svg);
+    background-repeat: no-repeat;
+    height: 30px;
+    width: 411px;
+  }
+}
