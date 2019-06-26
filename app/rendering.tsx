@@ -231,6 +231,16 @@ function updateLabeling(map: WebMap) {
   buildingsLayer.labelingInfo = [buildingLabel];
 }
 
+// Return two elements formatted as row with a label and content
+function attributeRow(label: string, content: string): JSX.Element {
+  return (
+    <div class='space-between attribute-row'>
+      <b class='attribute-row-label'>{label}</b>
+      <p class='attribute-row-content'>{content}</p>
+    </div>
+  );
+}
+
 // Return an expandable element containing mainElement. Title should be unique.
 function expandable(
   title: string,
@@ -282,5 +292,6 @@ export {
   spaceRendererInfo,
   sectionRendererInfo,
   filterInfo,
+  attributeRow,
   expandable
 };

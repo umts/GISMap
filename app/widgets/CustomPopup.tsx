@@ -9,7 +9,7 @@ import Widget = require('esri/widgets/Widget');
 import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
-import { spaceRendererInfo, expandable } from 'app/rendering';
+import { spaceRendererInfo, attributeRow, expandable } from 'app/rendering';
 
 @subclass('esri.widgets.CustomPopup')
 class CustomPopup extends declared(Widget) {
@@ -205,12 +205,13 @@ class CustomPopup extends declared(Widget) {
     }
 
     const parkmobileLink = (
-      <a
-        class='attribute-row-label'
-        target='_blank'
-        href='https://www.umass.edu/transportation/pay-cell-parkmobile'>
-        <b>ParkMobile</b>
-      </a>
+      <b class='attribute-row-label'>
+        <a
+          target='_blank'
+          href='https://www.umass.edu/transportation/pay-cell-parkmobile'>
+          ParkMobile
+        </a>
+      </b>
     );
     let parkmobileDescription;
     if (feature.attributes.ParkmobileZoneID) {
@@ -235,10 +236,7 @@ class CustomPopup extends declared(Widget) {
     if (feature.attributes.SectionColor === 'Pink') {
       parkingType = 'Payment';
       endTime = '7:00 PM';
-      payment = <div class='space-between attribute-row'>
-        <b class='attribute-row-label'>Payment</b>
-        <p class='attribute-row-content'>$1.50 per hour</p>
-      </div>;
+      payment = attributeRow('Payment', '$1.50 per hour');
     }
     if (feature.attributes.SectionHours === 'BusinessHours') {
       sectionHoursDescription = `${parkingType} required 7:00 AM to ${endTime} Monday through Friday`;
@@ -247,10 +245,7 @@ class CustomPopup extends declared(Widget) {
     } else if (feature.attributes.SectionHours === '24Hour') {
       sectionHoursDescription = `${parkingType} required at all times`;
     }
-    const sectionHours = <div class='space-between attribute-row'>
-      <b class='attribute-row-label'>Hours</b>
-      <p class='attribute-row-content'>{sectionHoursDescription}</p>
-    </div>;
+    const sectionHours = attributeRow('Hours', sectionHoursDescription);
 
     // Who can park here or buy a permit here
     let permitInfoDescription;
@@ -267,10 +262,7 @@ class CustomPopup extends declared(Widget) {
     } else if (feature.attributes.SectionColor === 'Pink') {
       permitInfoDescription = 'No permit required';
     }
-    const permitInfo = <div class='space-between attribute-row'>
-      <b class='attribute-row-label'>Permit eligibility</b>
-      <p class='attribute-row-content'>{permitInfoDescription}</p>
-    </div>;
+    const permitInfo = attributeRow('Permit eligibility', permitInfoDescription);
 
     // Render space counts
     let spaceCountElements: Array<JSX.Element> = [];
@@ -342,21 +334,14 @@ class CustomPopup extends declared(Widget) {
     let payment;
     let reserved;
     if (feature.attributes.ParkingSpaceSubCategory === 'R-15Min') {
-      duration = <div class='space-between attribute-row'>
-        <b class='attribute-row-label'>Max duration</b>
-        <p class='attribute-row-content'>15 minutes</p>
-      </div>;
+      duration = attributeRow('Max duration', '15 minutes');
     } else if (['Meter-Paystation', 'Meter-Coin'].indexOf(feature.attributes.ParkingSpaceSubCategory) !== -1) {
-      payment = <div class='space-between attribute-row'>
-        <b class='attribute-row-label'>Payment</b>
-        <p class='attribute-row-content'>$1.50 per hour</p>
-      </div>;
+      payment = attributeRow('Payment', '$1.50 per hour');
     }
     if (feature.attributes.ParkingSpaceClientPublic) {
-      reserved = <div class='space-between attribute-row'>
-        <b class='attribute-row-label'>Reserved for</b>
-        <p class='attribute-row-content'>{feature.attributes.ParkingSpaceClientPublic}</p>
-      </div>;
+      reserved = attributeRow(
+        'Reserved for', feature.attributes.ParkingSpaceClientPublic
+      );
     }
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
