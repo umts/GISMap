@@ -22,9 +22,13 @@ import Feedback = require('app/widgets/Feedback');
 import ShareEmail = require("app/widgets/ShareEmail");
 import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
+import { setupUmassMenu } from 'app/events';
 import { homeGoToOverride, umassLongLat } from "app/latLong";
 import { updateRenderers, updateLabeling } from 'app/rendering';
 import { resetUrlTimer, updatePositionFromUrl } from "app/url";
+
+// Set up the UMass link menu
+setupUmassMenu();
 
 // Set the map to load data from our ArcGIS Online web map
 const map = new WebMap({
@@ -226,7 +230,7 @@ view.when(() => {
     search: new CustomSearch({
       view: view,
       name: 'main',
-      placeholder: 'Search',
+      placeholder: 'Search the map',
       customFilter: customFilter,
       mainSearch: true
     }),

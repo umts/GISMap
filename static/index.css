@@ -3,7 +3,7 @@ body,
 #viewDiv {
   padding: 0;
   margin: 0;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 61px);
   width: 100%;
 }
 
