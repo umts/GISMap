@@ -10,6 +10,7 @@ import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
 import TextSymbol = require('esri/symbols/TextSymbol');
 
+import { clickOnSpaceOrEnter } from 'app/events';
 import { SearchFilter } from 'app/search';
 
 const iconsPath = 'assets/icons';
@@ -20,47 +21,56 @@ const spaceRendererInfo = {
     label: 'Handicapped Spaces',
     description: 'Handicapped space',
     checked: 'checked',
-    iconUrl: `${iconsPath}/handicapped-space.png`
+    iconUrl: `${iconsPath}/handicapped-space.png`,
+    altText: 'White H in a blue circle'
   },
   'R-Carpool': {
     label: 'Carpool Spaces',
     description: 'Carpool space',
-    iconUrl: `${iconsPath}/carpool-space.png`
+    iconUrl: `${iconsPath}/carpool-space.png`,
+    altText: 'Black C in an orange circle'
   },
   'R-State': {
     label: 'State Vehicle Spaces',
     description: 'State vehicle space',
-    iconUrl: `${iconsPath}/state-space.png`
+    iconUrl: `${iconsPath}/state-space.png`,
+    altText: 'White M A in a light blue rectangle'
   },
   'Meter-Paystation': {
     label: 'Paystation Spaces',
     description: 'Paystation space',
-    iconUrl: `${iconsPath}/paystation-space.png`
+    iconUrl: `${iconsPath}/paystation-space.png`,
+    altText: 'White P in a dark blue rectangle'
   },
   'Meter-Coin': {
     label: 'Meter Spaces',
     description: 'Meter space',
-    iconUrl: `${iconsPath}/meter-space.png`
+    iconUrl: `${iconsPath}/meter-space.png`,
+    altText: 'Gray parking meter with an M on it'
   },
   'R-EV Stations': {
     label: 'Electric Vehicle Charging Stations',
     description: 'Electric vehicle charging station',
-    iconUrl: `${iconsPath}/electric-space.png`
+    iconUrl: `${iconsPath}/electric-space.png`,
+    altText: 'White charging station in a blue rectangle'
   },
   'R-Visitor': {
     label: 'Visitor Spaces',
     description: 'Visitor space',
-    iconUrl: `${iconsPath}/visitor-space.png`
+    iconUrl: `${iconsPath}/visitor-space.png`,
+    altText: 'Black V in a yellow circle'
   },
   'R-Client': {
     label: 'Reserved Spaces',
     description: 'Reserved space',
-    iconUrl: `${iconsPath}/reserved-space.png`
+    iconUrl: `${iconsPath}/reserved-space.png`,
+    altText: 'White R in a red circle'
   },
   'R-15Min': {
     label: 'Loading Zones',
     description: 'Loading zone',
-    iconUrl: `${iconsPath}/loading-zone.png`
+    iconUrl: `${iconsPath}/loading-zone.png`,
+    altText: 'White L in a green circle'
   }
 };
 
@@ -69,37 +79,44 @@ const sectionRendererInfo = {
   'Red': {
     label: 'Red Lots',
     checked: 'checked',
-    iconUrl: `${iconsPath}/red-lot.png`
+    iconUrl: `${iconsPath}/red-lot.png`,
+    altText: 'Red rectangle'
   },
   'Blue': {
     label: 'Blue Lots',
     checked: 'checked',
-    iconUrl: `${iconsPath}/blue-lot.png`
+    iconUrl: `${iconsPath}/blue-lot.png`,
+    altText: 'Blue rectangle'
   },
   'Purple': {
     label: 'Purple Lots',
     checked: 'checked',
-    iconUrl: `${iconsPath}/purple-lot.png`
+    iconUrl: `${iconsPath}/purple-lot.png`,
+    altText: 'Purple rectangle'
   },
   'Yellow': {
     label: 'Yellow Lots',
     checked: 'checked',
-    iconUrl: `${iconsPath}/yellow-lot.png`
+    iconUrl: `${iconsPath}/yellow-lot.png`,
+    altText: 'Yellow rectangle'
   },
   'Green': {
     label: 'Green Lots',
     checked: 'checked',
-    iconUrl: `${iconsPath}/green-lot.png`
+    iconUrl: `${iconsPath}/green-lot.png`,
+    altText: 'Green rectangle'
   },
   'Pink': {
     label: 'Meter Lots',
     checked: 'checked',
-    iconUrl: `${iconsPath}/meter-lot.png`
+    iconUrl: `${iconsPath}/meter-lot.png`,
+    altText: 'Pink rectangle'
   },
   'Null': {
     label: 'Other Lots',
     checked: 'checked',
-    iconUrl: `${iconsPath}/other-lot.png`
+    iconUrl: `${iconsPath}/other-lot.png`,
+    altText: 'Gray rectangle'
   }
 }
 
@@ -198,7 +215,7 @@ function updateLabeling(map: WebMap) {
       haloColor: 'white',
       haloSize: '1px',
       font: new Font({
-        size: 12,
+        size: 14,
         family: 'sans-serif',
         weight: 'bold'
       })
@@ -260,16 +277,26 @@ function expandable(
   return (
     <div>
       <div
+        aria-expanded={startExpanded ? 'true' : 'false'}
+        aria-label={startExpanded ? `Collapse ${title}` : `Expand ${title}`}
         class={`expandable ${className}`}
         data-title={title}
-        onclick={_expandExpandable}>
+        id={`expandable-header-${title}`}
+        onclick={_expandExpandable}
+        onkeydown={clickOnSpaceOrEnter}
+        role='button'
+        tabindex='0'>
         <span
+          aria-hidden='true'
           data-title={title}
           class={`expandable-icon esri-icon ${startExpanded ? 'esri-icon-down-arrow' : 'esri-icon-right-triangle-arrow'}`}
           id={`expandable-icon-${title}`}></span>
         {title}
       </div>
-      <div id={`expandable-content-${title}`} style={`display: ${startExpanded ? 'block' : 'none'};`}>
+      <div
+        aria-label={title}
+        id={`expandable-content-${title}`}
+        style={`display: ${startExpanded ? 'block' : 'none'};`}>
         {mainElement}
       </div>
     </div>
@@ -278,17 +305,54 @@ function expandable(
 
 // Expand an expandable element by a unique title
 function _expandExpandable(event: any) {
+  const header = document.getElementById(`expandable-header-${event.target.dataset.title}`);
   const icon = document.getElementById(`expandable-icon-${event.target.dataset.title}`);
   const content = document.getElementById(`expandable-content-${event.target.dataset.title}`);
   if (content.style.display === 'block') {
+    header.setAttribute('aria-expanded', 'false');
+    header.setAttribute('aria-label', `Expand ${header.dataset.title}`);
     content.style.display = 'none';
     icon.classList.remove('esri-icon-down-arrow');
     icon.classList.add('esri-icon-right-triangle-arrow');
   } else {
+    header.setAttribute('aria-expanded', 'true');
+    header.setAttribute('aria-label', `Collapse ${header.dataset.title}`);
     content.style.display = 'block';
     icon.classList.remove('esri-icon-right-triangle-arrow');
     icon.classList.add('esri-icon-down-arrow');
   }
+}
+
+/*
+  Return an icon button that handles keyboard events for clicks and calls a
+  function when clicked.
+*/
+function iconButton(properties: {
+  object: any,
+  onclick: Function,
+  name: string,
+  iconName: string,
+  classes?: Array<string>
+}): JSX.Element {
+  let allClasses = ['esri-widget', 'esri-widget--button'];
+  if (properties.classes) {
+    properties.classes.forEach((someClass) => { allClasses.push(someClass) });
+  }
+  return (
+    <div
+      bind={properties.object}
+      class={allClasses.join(' ')}
+      onclick={properties.onclick}
+      onkeydown={clickOnSpaceOrEnter}
+      role='button'
+      tabindex='0'
+      title={properties.name}>
+      <span
+        aria-hidden='true'
+        class={`esri-icon esri-icon-${properties.iconName}`}>
+      </span>
+    </div>
+  );
 }
 
 /*
@@ -302,5 +366,6 @@ export {
   sectionRendererInfo,
   filterInfo,
   imperialDistance,
-  expandable
+  expandable,
+  iconButton
 };
