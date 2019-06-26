@@ -205,19 +205,26 @@ class CustomPopup extends declared(Widget) {
     }
 
     const parkmobileLink = (
-      <a target='_blank' href='https://www.umass.edu/transportation/pay-cell-parkmobile'>
-        ParkMobile
+      <a
+        class='attribute-row-label'
+        target='_blank'
+        href='https://www.umass.edu/transportation/pay-cell-parkmobile'>
+        <b>ParkMobile</b>
       </a>
     );
-    let parkmobile;
+    let parkmobileDescription;
     if (feature.attributes.ParkmobileZoneID) {
-      parkmobile = <p>{parkmobileLink} Zone: {feature.attributes.ParkmobileZoneID}</p>
+      parkmobileDescription = `Zone #${feature.attributes.ParkmobileZoneID}`;
     } else {
-      parkmobile = <p>No {parkmobileLink} available.</p>
+      parkmobileDescription = 'Not available';
     }
+    const parkmobile = <div class='space-between attribute-row'>
+      {parkmobileLink}
+      <p class='attribute-row-content'>{parkmobileDescription}</p>
+    </div>;
 
-    let sectionHours;
-    let paymentInfo;
+    let payment;
+    let sectionHoursDescription;
     let parkingType = 'Permit';
     /*
       Enforcement end time for lots that are restricted during business hours
@@ -228,40 +235,44 @@ class CustomPopup extends declared(Widget) {
     if (feature.attributes.SectionColor === 'Pink') {
       parkingType = 'Payment';
       endTime = '7:00 PM';
-      paymentInfo = ' Payment is $1.50 per hour.';
+      payment = <div class='space-between attribute-row'>
+        <b class='attribute-row-label'>Payment</b>
+        <p class='attribute-row-content'>$1.50 per hour</p>
+      </div>;
     }
     if (feature.attributes.SectionHours === 'BusinessHours') {
-      sectionHours = <p>{parkingType} required 7:00 AM to {endTime} Monday through Friday.{paymentInfo}</p>;
+      sectionHoursDescription = `${parkingType} required 7:00 AM to ${endTime} Monday through Friday`;
     } else if (feature.attributes.SectionHours === 'Weekdays') {
-      sectionHours = <p>{parkingType} required any time Monday through Friday.{paymentInfo}</p>;
+      sectionHoursDescription = `${parkingType} required any time Monday through Friday`;
     } else if (feature.attributes.SectionHours === '24Hour') {
-      sectionHours = <p>{parkingType} required at all times.{paymentInfo}</p>;
+      sectionHoursDescription = `${parkingType} required at all times`;
     }
+    const sectionHours = <div class='space-between attribute-row'>
+      <b class='attribute-row-label'>Hours</b>
+      <p class='attribute-row-content'>{sectionHoursDescription}</p>
+    </div>;
 
-    const permitLink = (
-      <a target='_blank' href='https://umass.t2hosted.com/cmn/auth_ext.aspx'>
-        Permits
-      </a>
-    );
     // Who can park here or buy a permit here
-    let permitInfo;
+    let permitInfoDescription;
     if (feature.attributes.SectionColor === 'Red') {
-      permitInfo = <p>{permitLink} for this lot sold to faculty and staff only.</p>;
+      permitInfoDescription = 'Faculty and staff only';
     } else if (feature.attributes.SectionColor === 'Blue') {
-      permitInfo = <p>{permitLink} for this lot sold to faculty,
-        staff and graduate students only.</p>;
+      permitInfoDescription = 'Faculty, staff and graduate students only';
     } else if (feature.attributes.SectionColor === 'Green') {
-      permitInfo = <p>{permitLink} for this lot sold to faculty,
-        staff, graduate students and non-residential students only.</p>;
+      permitInfoDescription = 'Faculty, staff, graduate students and non-residential students only';
     } else if (feature.attributes.SectionColor === 'Yellow') {
-      permitInfo = <p>{permitLink} for this lot sold to any
-        university community member.</p>;
+      permitInfoDescription = 'Any university community member';
     } else if (feature.attributes.SectionColor === 'Purple') {
-      permitInfo = <p>{permitLink} for this lot sold to residential students only.</p>;
+      permitInfoDescription = 'Residential students only';
     } else if (feature.attributes.SectionColor === 'Pink') {
-      permitInfo = <p>Visitor and non-permit parking.</p>;
+      permitInfoDescription = 'No permit required';
     }
+    const permitInfo = <div class='space-between attribute-row'>
+      <b class='attribute-row-label'>Permit eligibility</b>
+      <p class='attribute-row-content'>{permitInfoDescription}</p>
+    </div>;
 
+    // Render space counts
     let spaceCountElements: Array<JSX.Element> = [];
     if (feature.attributes.SpaceCounts) {
       const spaceCounts = JSON.parse(feature.attributes.SpaceCounts);
@@ -294,7 +305,7 @@ class CustomPopup extends declared(Widget) {
           'Description',
           true,
           'expandable-header',
-          <div>{sectionHours}{permitInfo}{parkmobile}</div>
+          <div>{sectionHours}{payment}{permitInfo}{parkmobile}</div>
         )}
         {spaceCountExpand}
       </div>
@@ -327,21 +338,32 @@ class CustomPopup extends declared(Widget) {
     if (iconUrl) {
       icon = <img class='image-in-text' width='24px' height='24px' src={iconUrl} />;
     }
-    let description = '';
+    let duration;
+    let payment;
+    let reserved;
     if (feature.attributes.ParkingSpaceSubCategory === 'R-15Min') {
-      description += '15 minute loading zone.';
+      duration = <div class='space-between attribute-row'>
+        <b class='attribute-row-label'>Max duration</b>
+        <p class='attribute-row-content'>15 minutes</p>
+      </div>;
     } else if (['Meter-Paystation', 'Meter-Coin'].indexOf(feature.attributes.ParkingSpaceSubCategory) !== -1) {
-      description += '$1.50 per hour.';
+      payment = <div class='space-between attribute-row'>
+        <b class='attribute-row-label'>Payment</b>
+        <p class='attribute-row-content'>$1.50 per hour</p>
+      </div>;
     }
     if (feature.attributes.ParkingSpaceClientPublic) {
-      description += `Reserved for: ${feature.attributes.ParkingSpaceClientPublic}`;
+      reserved = <div class='space-between attribute-row'>
+        <b class='attribute-row-label'>Reserved for</b>
+        <p class='attribute-row-content'>{feature.attributes.ParkingSpaceClientPublic}</p>
+      </div>;
     }
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
         <p class='widget-label'>
           {categoryInfo.description}{icon}
         </p>
-        <p>{description}</p>
+        {reserved}{payment}{duration}
       </div>
     );
   }
