@@ -13,6 +13,7 @@ import RouteTask = require('esri/tasks/RouteTask');
 import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
+import { clickOnSpaceOrEnter } from 'app/events';
 import { imperialDistance } from 'app/rendering';
 import CustomSearch = require('app/widgets/CustomSearch');
 
@@ -76,13 +77,16 @@ class CustomPedestrianDirections extends declared(Widget) {
               {imperialDistance(this.routeResult.directions.totalLength)}
             </p>
             <button
+              aria-label='Clear directions'
               bind={this}
               class='umass-theme-button'
               onclick={this._reset}>
               Clear
             </button>
           </div>
-          {directions}
+          <div role='list'>
+            {directions}
+          </div>
         </div>
       );
     }
@@ -121,7 +125,12 @@ class CustomPedestrianDirections extends declared(Widget) {
     let distanceElement;
     if (distance) {
       distanceElement = (
-        <div class='direction-distance' data-index={`${index}`}>{distance}</div>
+        <div
+          aria-label='Distance'
+          class='direction-distance'
+          data-index={`${index}`}>
+          {distance}
+        </div>
       );
     }
 
@@ -131,7 +140,10 @@ class CustomPedestrianDirections extends declared(Widget) {
         class={classes.join(' ')}
         data-index={`${index}`}
         key={index}
-        onclick={this._clickDirection}>
+        onclick={this._clickDirection}
+        onkeydown={clickOnSpaceOrEnter}
+        role='listitem'
+        tabindex='0'>
         {graphic.attributes.text}
         {distanceElement}
       </div>

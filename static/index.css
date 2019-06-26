@@ -215,6 +215,7 @@ h2 {
 .umass-theme-button:focus,
 .widget-tab:focus,
 .expandable-header:focus,
+.direction:focus,
 input:focus {
   outline: 2px solid #99ccff;
 }
