@@ -4,6 +4,8 @@ import { renderable, tsx } from "esri/widgets/support/widget";
 import MapView = require("esri/views/MapView");
 import Widget = require("esri/widgets/Widget");
 
+import { iconButton } from 'app/rendering';
+
 /*
   This enum allows us to give a human readable name to numbers that will
   represent which direction the widget can zoom.
@@ -41,23 +43,14 @@ class CustomZoom extends declared(Widget) {
       Set which icon we should use depending on if this widget zooms in or out.
       Use a plus sign for zooming in and a minus sign for zooming out.
     */
-    let iconClass;
-    if (this.direction === ZoomDirection.In) {
-      iconClass = "esri-icon-plus";
-    } else {
-      iconClass = "esri-icon-minus";
-    }
-
-    return (
-      <div
-        bind={this}
-        class="esri-widget esri-widget--button"
-        onclick={this._zoom}
-        tabindex='0'
-        title={`Zoom ${(this.direction === ZoomDirection.In) ? "in" : "out"}`}>
-        <span class={`esri-icon ${iconClass}`}></span>
-      </div>
-    );
+    const iconName = (this.direction === ZoomDirection.In) ? 'plus' : 'minus';
+    const name = `Zoom ${(this.direction === ZoomDirection.In) ? "in" : "out"}`;
+    return iconButton({
+      object: this,
+      onclick: this._zoom,
+      name: name,
+      iconName: iconName
+    });
   }
 
   // Called when widget is clicked

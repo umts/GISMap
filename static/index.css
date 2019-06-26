@@ -149,6 +149,7 @@ body,
 }
 
 #widgets-list ul {
+  display: flex;
   padding: 0;
   margin: 0 0 -0.4rem 0;
   list-style-type: none;
@@ -198,6 +199,16 @@ body,
   background-color: #333333 !important;
   border: 0;
   color: white !important;
+}
+
+.custom-search-suggestion:focus,
+.esri-widget--button:focus,
+.esri-button:focus,
+.umass-theme-button:focus,
+.widget-tab:focus,
+.expandable-header:focus,
+input:focus {
+  outline: 2px solid #99ccff;
 }
 
 .custom-filter-close {
@@ -254,8 +265,9 @@ body,
 }
 
 .layer-checkbox {
-  padding: 0.3rem;
+  display: block;
   cursor: pointer;
+  padding: 0.3rem;
 }
 .layer-checkbox * {
   cursor: pointer;

@@ -41,39 +41,38 @@ class FilteredLayerList extends declared(Widget) {
     this.filterOptions.forEach((filterOption) => {
       let icon;
       const iconUrl = this.filterOptionInfos[filterOption].iconUrl;
+      const altText = this.filterOptionInfos[filterOption].altText;
       // If we have an image for this filter use it
       if (iconUrl) {
         icon = <img
+          alt={altText}
           class='image-right'
-          data-filter-option={filterOption}
           width='24px'
           height='24px'
           src={iconUrl} />;
       }
+      const label = this.filterOptionInfos[filterOption].label;
       checkboxes.push(
-        <div
-          bind={this}
+        <label
+          aria-label={label}
           class='layer-checkbox'
-          onclick={this._toggleFilterCheckbox}
-          data-filter-option={filterOption}>
-          <label for={filterOption} data-filter-option={filterOption}>
-            <input
-              bind={this}
-              class='layer-checkbox-input'
-              id={this._checkboxId(filterOption)}
-              name={filterOption}
-              onchange={this.setSelectedFilters}
-              type='checkbox'
-              checked={this.filterOptionInfos[filterOption].checked} />
-            {icon}
-            {this.filterOptionInfos[filterOption].label}
-          </label>
-        </div>
+          for={this._checkboxId(filterOption)}>
+          {icon}
+          <input
+            bind={this}
+            class='layer-checkbox-input'
+            id={this._checkboxId(filterOption)}
+            name={filterOption}
+            onchange={this.setSelectedFilters}
+            type='checkbox'
+            checked={this.filterOptionInfos[filterOption].checked} />
+          {label}
+        </label>
       );
     });
 
     return (
-      <div>
+      <div role='group'>
         {checkboxes}
       </div>
     );
@@ -110,18 +109,6 @@ class FilteredLayerList extends declared(Widget) {
   // Return the checkbox id for a specific filter
   private _checkboxId(filterOption: string): string {
     return `${this.filterColumnName}-${filterOption}-checkbox`;
-  }
-
-  /*
-    Check or uncheck the corresponding checkbox based on the data-filter-option
-    attribute.
-  */
-  private _toggleFilterCheckbox(event: any) {
-    const filterOption = event.target.dataset.filterOption;
-    if (filterOption) {
-      this._toggleCheckbox(this._checkbox(filterOption));
-      this.setSelectedFilters();
-    }
   }
 
   // Toggle a checkbox

@@ -6,7 +6,7 @@ import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
 import { SearchFilter } from 'app/search';
-import { expandable } from 'app/rendering';
+import { expandable, iconButton } from 'app/rendering';
 import CustomLayerList = require('app/widgets/CustomLayerList');
 
 @subclass('esri.widgets.CustomFilter')
@@ -75,16 +75,15 @@ class CustomFilter extends declared(Widget) {
         windowContent = <p class='standalone-text'>{title}</p>;
       }
       filterWindow = (
-        <div id='filter-window' key='filter-window'>
+        <div aria-label='Filter window' id='filter-window' key='filter-window'>
           {windowContent}
-          <div
-            bind={this}
-            class='esri-widget esri-widget--button custom-filter-close'
-            onclick={this.resetFilter}
-            tabindex='0'
-            title='Stop filtering'>
-            <span class='esri-icon esri-icon-close'></span>
-          </div>
+          {iconButton({
+            object: this,
+            onclick: this.resetFilter,
+            name: 'Stop filtering',
+            iconName: 'close',
+            classes: ['custom-filter-close']
+          })}
         </div>
       );
     }
