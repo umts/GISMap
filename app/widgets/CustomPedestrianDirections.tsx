@@ -45,6 +45,11 @@ class CustomPedestrianDirections extends declared(Widget) {
   @property()
   directionIndex: number;
 
+  // Generic error message to display
+  @property()
+  @renderable()
+  error: string;
+
   // Pass in any properties
   constructor(properties?: any) {
     super();
@@ -81,8 +86,13 @@ class CustomPedestrianDirections extends declared(Widget) {
         </div>
       );
     }
+    let error;
+    if (this.error) {
+      error = <div class='error' role='alert'>{this.error}</div>;
+    }
     return (
       <div class='esri-widget'>
+        {error}
         <form>
           {this.startSearch.render()}
           {this.endSearch.render()}
@@ -155,6 +165,8 @@ class CustomPedestrianDirections extends declared(Widget) {
     directions and return false.
   */
   private _submit(): boolean {
+    // Reset the error message
+    this.error = null;
     const origin = this.startSearch.latitudeLongitude();
     const destination = this.endSearch.latitudeLongitude();
     if (origin && destination) {
@@ -192,6 +204,7 @@ class CustomPedestrianDirections extends declared(Widget) {
         this.routeResult = response.routeResults[0];
         this._applyCurrentRoute();
       }).catch((error) => {
+        this.error = 'Failed to find route. Please try again later.';
         console.error(error);
       });
     } else {

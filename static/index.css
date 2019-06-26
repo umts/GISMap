@@ -333,6 +333,13 @@ input:focus {
   color: black;
   padding: 0.3rem 0.5rem 0.3rem 0.5rem;
 }
+.error {
+  background-color: #fc9c9c;
+  border-radius: 0.5rem;
+  color: black;
+  padding: 0.3rem 0.5rem;
+  margin: 0.5rem 0;
+}
 .hide {
   display: none;
 }
