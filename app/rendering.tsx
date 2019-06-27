@@ -48,7 +48,7 @@ const spaceRendererInfo = {
     iconUrl: `${iconsPath}/meter-space.png`,
     altText: 'Gray parking meter with an M on it'
   },
-  'R-EV Stations': {
+  'R-EV': {
     label: 'Electric Vehicle Charging Stations',
     description: 'Electric vehicle charging station',
     iconUrl: `${iconsPath}/electric-space.png`,
@@ -267,6 +267,16 @@ function imperialDistance(distanceInFeet: number): string {
   return `${distance.toFixed(places)} ${unit}`
 }
 
+// Return two elements formatted as row with a label and content
+function attributeRow(label: string, content: string): JSX.Element {
+  return (
+    <div class='space-between attribute-row'>
+      <b class='attribute-row-label'>{label}</b>
+      <p class='attribute-row-content'>{content}</p>
+    </div>
+  );
+}
+
 // Return an expandable element containing mainElement. Title should be unique.
 function expandable(
   title: string,
@@ -366,6 +376,7 @@ export {
   sectionRendererInfo,
   filterInfo,
   imperialDistance,
+  attributeRow,
   expandable,
   iconButton
 };
