@@ -25,7 +25,7 @@ import WindowExpand = require("app/widgets/WindowExpand");
 import { setupUmassMenu } from 'app/events';
 import { homeGoToOverride, umassLongLat } from "app/latLong";
 import { updateRenderers, updateLabeling } from 'app/rendering';
-import { resetUrlTimer, updatePositionFromUrl } from "app/url";
+import { resetUrlTimer, updateAppFromUrl } from "app/url";
 
 // Set up the UMass link menu
 setupUmassMenu();
@@ -54,12 +54,6 @@ const view = new MapView({
   popup: null
 });
 
-// Update the position of the view when the url hash changes
-updatePositionFromUrl(view);
-window.addEventListener("hashchange", () => { updatePositionFromUrl(view) });
-// Update the url hash when the position of the view changes
-view.watch(["center", "zoom", "rotation"], () => { resetUrlTimer(view) });
-
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
   // Set the default basemap
@@ -69,9 +63,6 @@ view.when(() => {
   map.add(new GraphicsLayer({
     title: 'Selection'
   }));
-
-  // Set the url hash based on the initial view
-  resetUrlTimer(view);
 
   // Hide the lots layer
   map.layers.find((layer) => {
@@ -248,5 +239,14 @@ view.when(() => {
   view.ui.add(new Feedback(), 'bottom-right');
   // Add the main navigation widget to the map
   view.ui.add(mainNavigation, "manual");
+
+  // Set the initial app params from the url
+  updateAppFromUrl(mainNavigation);
+  // Set the url hash based on the initial view
+  resetUrlTimer(mainNavigation);
+  // Update the position of the view when the url hash changes
+  window.addEventListener("hashchange", () => { updateAppFromUrl(mainNavigation) });
+  // Update the url hash when the position of the view changes
+  view.watch(["center", "zoom", "rotation"], () => { resetUrlTimer(mainNavigation) });
 })
 .otherwise((error) => console.warn(error));
