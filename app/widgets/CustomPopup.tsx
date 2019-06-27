@@ -9,7 +9,12 @@ import Widget = require('esri/widgets/Widget');
 import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
-import { spaceRendererInfo, attributeRow, expandable } from 'app/rendering';
+import {
+  spaceRendererInfo,
+  attributeRow,
+  expandable,
+  iconButton
+} from 'app/rendering';
 
 @subclass('esri.widgets.CustomPopup')
 class CustomPopup extends declared(Widget) {
@@ -84,16 +89,13 @@ class CustomPopup extends declared(Widget) {
       </div>
     );
 
-    const closeButton = (
-      <div
-        bind={this}
-        class="esri-widget esri-widget--button custom-window-close"
-        onclick={this._close}
-        tabindex='0'
-        title={`Close popup`}>
-        <span class={`esri-icon esri-icon-close`}></span>
-      </div>
-    );
+    const closeButton = iconButton({
+      object: this,
+      onclick: this._close,
+      name: 'Close feature information',
+      iconName: 'close',
+      classes: ['custom-window-close']
+    });
 
     let screenPoint = this.view.toScreen(this.point);
     return (
@@ -108,7 +110,9 @@ class CustomPopup extends declared(Widget) {
           <div class='popup-pointer'></div>
         </div>
         <div
-          class='navigation-window custom-popup shadow'>
+          aria-label='Feature information'
+          class='navigation-window custom-popup shadow'
+          role='dialog'>
           {closeButton}
           {pageCounter}
           {featureInfo}
@@ -195,11 +199,11 @@ class CustomPopup extends declared(Widget) {
   private _renderSection(feature: Graphic): JSX.Element {
     let title;
     if (feature.attributes.SectionColor) {
-      title = <p class='widget-label'>
+      title = <p class='widget-label' role='heading'>
         {feature.attributes.SectionName} ({feature.attributes.SectionColor})
       </p>;
     } else {
-      title = <p class='widget-label'>
+      title = <p class='widget-label' role='heading'>
         {feature.attributes.SectionName}
       </p>;
     }
@@ -308,14 +312,17 @@ class CustomPopup extends declared(Widget) {
   private _renderBuilding(feature: Graphic): JSX.Element {
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
-        <p class='widget-label'>{feature.attributes.Building_Name}</p>
+        <p class='widget-label' role='heading'>{feature.attributes.Building_Name}</p>
         <p><b>{feature.attributes.Address}</b></p>
         {
           expandable(
             'Image',
             false,
             'expandable-header',
-            <img height='160px' src={feature.attributes.PhotoURL} />
+            <img
+              height='160px'
+              src={feature.attributes.PhotoURL}
+              alt={feature.attributes.Building_Name} />
           )
         }
       </div>
@@ -328,7 +335,14 @@ class CustomPopup extends declared(Widget) {
     let icon;
     const iconUrl = categoryInfo.iconUrl;
     if (iconUrl) {
-      icon = <img class='image-in-text' width='24px' height='24px' src={iconUrl} />;
+      icon = (
+        <img
+          class='image-in-text'
+          width='24px'
+          height='24px'
+          src={iconUrl}
+          alt={categoryInfo.altText} />
+      );
     }
     let duration;
     let payment;
@@ -345,7 +359,7 @@ class CustomPopup extends declared(Widget) {
     }
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
-        <p class='widget-label'>
+        <p class='widget-label' role='heading'>
           {categoryInfo.description}{icon}
         </p>
         {reserved}{payment}{duration}
