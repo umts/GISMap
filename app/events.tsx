@@ -1,4 +1,16 @@
 /*
+  Add an event listener to the UMass menu button to open and close the menu
+  on mobile.
+*/
+function setupUmassMenu() {
+  document.getElementById('umass--global--navigation--navicon').onclick = () => {
+    document.getElementById('umass--global--header').classList.toggle('overlay-active');
+    document.getElementById('umass--global--navigation--links').classList.toggle('is-active');
+    document.getElementById('umass--global--navigation--navicon').classList.toggle('is-active');
+  }
+}
+
+/*
   If space or enter is pressed while focused on an element then click that
   element.
 */
@@ -22,4 +34,4 @@ function _clickElement(element: HTMLElement) {
   Export helper functions related to events so they can be
   imported and used in other files.
 */
-export { clickOnSpaceOrEnter };
+export { setupUmassMenu, clickOnSpaceOrEnter };
