@@ -2,7 +2,11 @@ import { subclass, declared, property } from 'esri/core/accessorSupport/decorato
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import Graphic = require('esri/Graphic');
+import WebMap = require('esri/WebMap');
 import Point = require('esri/geometry/Point');
+import Polygon = require('esri/geometry/Polygon');
+import SpatialReference = require('esri/geometry/SpatialReference');
+import FeatureLayer = require('esri/layers/FeatureLayer');
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
 import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
@@ -10,6 +14,13 @@ import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
 import { spaceRendererInfo, expandable, iconButton } from 'app/rendering';
+import { FeatureForUrl } from 'app/url';
+
+// Represents a point on the screen in pixels
+interface ScreenPoint {
+  x: number;
+  y: number;
+}
 
 @subclass('esri.widgets.CustomPopup')
 class CustomPopup extends declared(Widget) {
@@ -44,6 +55,10 @@ class CustomPopup extends declared(Widget) {
   @renderable()
   page: number;
 
+  // Representation of current feature in the popup for use in the URL
+  @property()
+  featureForUrl: FeatureForUrl;
+
   // Pass in any properties
   constructor(properties?: any) {
     super();
@@ -53,12 +68,20 @@ class CustomPopup extends declared(Widget) {
     this.page = 0;
   }
 
+  postInitialize() {
+    // Open popup by click event listener
+    this.view.on('click', (event) => { this.openFromMouseClick(event) });
+    // Update the feature for the URL when the current page or features change
+    this.watch(['page', 'features'], this._updateFeatureForUrl);
+  }
+
   // Render this widget by returning JSX which is converted to HTML
   render() {
     let featureInfo;
     if (this.page >= 0 && this.page < this.features.length) {
+      const feature = this.features[this.page];
       this._updateSelectionGraphic();
-      featureInfo = this._renderFeature(this.features[this.page]);
+      featureInfo = this._renderFeature(feature);
     }
 
     const pageCounter = (
@@ -86,7 +109,7 @@ class CustomPopup extends declared(Widget) {
 
     const closeButton = iconButton({
       object: this,
-      onclick: this._close,
+      onclick: this.reset,
       name: 'Close feature information',
       iconName: 'close',
       classes: ['custom-window-close']
@@ -124,9 +147,83 @@ class CustomPopup extends declared(Widget) {
     this._updateSelectionGraphic();
   }
 
-  // Close this popup by hiding it
-  private _close() {
-    this.visible = false;
+  // Update the popup widget based on a mouse click event
+  openFromMouseClick(event: any) {
+    // Reset popup variables
+    this.reset();
+    this.point = event.mapPoint;
+
+    const queryGeometry = this._circleAt(event.screenPoint);
+
+    [
+      this._getLayer('Sections'),
+      this._getLayer('Campus Buildings'),
+      this._getLayer('Spaces')
+    ].forEach((layer) => {
+      let query = layer.createQuery();
+      /*
+        Query features that intersect the circle around the point from
+        the click event.
+      */
+      query.geometry = queryGeometry;
+      query.spatialRelationship = 'intersects';
+      // Ensure the query returns all fields, in particular the OBJECTID field
+      query.outFields = ['*'];
+
+      // Query features
+      layer.queryFeatures(query)
+      .then((results) => {
+        if (results.features.length > 0) {
+          // Add more features to the popup
+          this.features = this.features.concat(results.features);
+          this.visible = true;
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
+    });
+  }
+
+  // Open a popup to a feature from the url
+  openFromUrl(featureForUrl: FeatureForUrl) {
+    // Do not try to load the feature if not all the params exist
+    if (!featureForUrl.id || !featureForUrl.layer) {
+      return;
+    }
+    /*
+      Immediately set featureForUrl before querying so that the url does
+      not reset to have no popup parameter.
+    */
+    this.featureForUrl = featureForUrl;
+    const layer = this._getLayer(featureForUrl.layer);
+    let query = layer.createQuery();
+    let idColumn = 'OBJECTID_1';
+    if (featureForUrl.layer === 'Campus Buildings') {
+      idColumn = 'OBJECTID';
+    }
+    query.where = `${idColumn} = '${featureForUrl.id}'`;
+    query.outSpatialReference = new SpatialReference({"wkid":4326});
+    // Ensure the query returns all fields, in particular the OBJECTID field
+    query.outFields = ['*'];
+
+    // Query feature
+    layer.queryFeatures(query)
+    .then((results) => {
+      this.reset();
+      if (results.features.length > 0) {
+        // Add more features to the popup
+        this.features = this.features.concat(results.features);
+        this.visible = true;
+        // Grab point from geometry
+        if ((results.features[0].geometry as any).centroid) {
+          this.point = (results.features[0].geometry as Polygon).centroid;
+        } else {
+          this.point = results.features[0].geometry as Point;
+        }
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
   }
 
   // Go to the next page or feature
@@ -173,6 +270,63 @@ class CustomPopup extends declared(Widget) {
       })
     });
     selectionLayer.add(graphic);
+  }
+
+  // Update the popup feature for the url
+  private _updateFeatureForUrl() {
+    if (this.page >= 0 && this.page < this.features.length) {
+      const feature = this.features[this.page];
+      let id;
+      if (feature.layer.title === 'Campus Buildings') {
+        id = feature.attributes.OBJECTID;
+      } else {
+        id = feature.attributes.OBJECTID_1;
+      }
+      this.featureForUrl = {
+        id: id,
+        layer: feature.layer.title
+      };
+    /*
+      There is no popup currently selected, so the feature for the url should
+      be null.
+    */
+    } else {
+      this.featureForUrl = null;
+    }
+  }
+
+  /*
+    Generate a 'circle' in latitude/longitude given a point on the screen in
+    pixels.
+  */
+  private _circleAt(screenPoint: ScreenPoint): Polygon {
+    const delta = 16;
+    const screenVertices: Array<ScreenPoint> = [
+      {x: screenPoint.x - delta, y: screenPoint.y - delta},
+      {x: screenPoint.x + delta, y: screenPoint.y - delta},
+      {x: screenPoint.x + delta, y: screenPoint.y + delta},
+      {x: screenPoint.x - delta, y: screenPoint.y + delta}
+    ]
+
+    const mapVertices = screenVertices.map((screenPoint) => {
+      const mapPoint = this.view.toMap(screenPoint);
+      /*
+        Explicitly grab lat/lon or else the polygon will try to convert back
+        to the MA spatial reference.
+      */
+      return [mapPoint.longitude, mapPoint.latitude];
+    });
+    let circle = new Polygon();
+    // Polygon ring requires the final point to be the same as the first
+    circle.addRing(mapVertices.concat([mapVertices[0]]));
+    return circle;
+  }
+
+  // Return a feature layer by title
+  private _getLayer(name: string): FeatureLayer {
+    return (this.view.map as WebMap).layers.find((layer) => {
+      return layer.title === name;
+    }) as FeatureLayer;
   }
 
   /*
@@ -303,7 +457,7 @@ class CustomPopup extends declared(Widget) {
   // Return a JSX element describing a building
   private _renderBuilding(feature: Graphic): JSX.Element {
     return (
-      <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
+      <div key={feature.layer.title + feature.attributes.OBJECTID}>
         <p class='widget-label' role='heading'>{feature.attributes.Building_Name}</p>
         <p><b>{feature.attributes.Address}</b></p>
         {

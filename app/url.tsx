@@ -1,7 +1,14 @@
 import Point = require("esri/geometry/Point");
-import MapView = require("esri/views/MapView");
 
 import { umassLongLat } from "app/latLong";
+
+import MainNavigation = require('app/widgets/MainNavigation');
+
+// The bare minimum required to identify a feature for the URL
+interface FeatureForUrl {
+  id: number;
+  layer: string;
+}
 
 // Encode an object as a query string
 function encodeQueryString(data: any): string {
@@ -21,13 +28,15 @@ function decodeQueryString(queryString: string): any {
 }
 
 /*
-  Use the hash parameter of the url to set the position of the view.
+  Use the hash parameter of the url to set the position of the view and
+  the popup of the main navigation.
   If the view is not ready yet, set as parameters, otherwise use the goTo
   method which will animate.
 */
-function updatePositionFromUrl(view: MapView) {
+function updateAppFromUrl(mainNavigation: MainNavigation) {
   const urlParams = decodeQueryString(window.location.hash.slice(1));
 
+  // Ensure that the URL is valid
   if (paramExistsAsNumber(urlParams, "latitude") &&
     paramExistsAsNumber(urlParams, "longitude")
     ) {
@@ -43,16 +52,31 @@ function updatePositionFromUrl(view: MapView) {
     if (paramExistsAsNumber(urlParams, "rotation")) {
       rotation = Number(urlParams.rotation);
     }
-    if (view.ready) {
-      view.goTo({target: center, zoom: zoom, rotation: rotation});
+    let featureForUrl;
+    if (urlParams.popup) {
+      try {
+        featureForUrl = JSON.parse(atob(urlParams.popup));
+      } catch(error) {
+        featureForUrl = undefined;
+        console.error(error);
+      }
+    }
+    // View is ready, animate the transition
+    if (mainNavigation.view.ready) {
+      mainNavigation.view.goTo({target: center, zoom: zoom, rotation: rotation});
+      // Only set the popup if it is a parameter and the view is ready
+      if (featureForUrl) {
+        mainNavigation.popup.openFromUrl(featureForUrl);
+      }
+    // View is not ready, so set the initial parameters
     } else {
-      view.center = center;
-      view.zoom = zoom;
-      view.rotation = rotation;
+      mainNavigation.view.center = center;
+      mainNavigation.view.zoom = zoom;
+      mainNavigation.view.rotation = rotation;
     }
   } else {
     // Url is invalid so reset it
-    resetUrlTimer(view);
+    resetUrlTimer(mainNavigation);
   }
 }
 // Return true if the key exists in the object and its value is a valid number
@@ -79,22 +103,29 @@ let urlTimerId: number;
   Once the view has stopped moving for a moment we will update the url with
   the new position.
 */
-function resetUrlTimer(view: MapView) {
+function resetUrlTimer(mainNavigation: MainNavigation) {
   clearTimeout(urlTimerId);
   urlTimerId = setTimeout(() => {
-    updateUrlFromPosition(view);
+    updateUrlFromApp(mainNavigation);
   }, 500);
 }
 
 // Update the url hash to use the center and zoom of the view
-function updateUrlFromPosition(view: MapView) {
-  const queryString = encodeQueryString({
-    latitude: view.center.latitude.toFixed(5),
-    longitude: view.center.longitude.toFixed(5),
-    zoom: view.zoom.toFixed(1),
-    rotation: Math.round(view.rotation)
-  });
-  history.replaceState("", "", "#" + queryString);
+function updateUrlFromApp(mainNavigation: MainNavigation) {
+  let queryParams: any = {
+    latitude: mainNavigation.view.center.latitude.toFixed(5),
+    longitude: mainNavigation.view.center.longitude.toFixed(5),
+    zoom: mainNavigation.view.zoom.toFixed(1),
+    rotation: Math.round(mainNavigation.view.rotation)
+  }
+  if (mainNavigation.popup.featureForUrl) {
+    // Encode with base 64 and remove the padding at the end
+    queryParams.popup = btoa(JSON.stringify(
+      mainNavigation.popup.featureForUrl
+    )).split('=')[0];
+  }
+
+  history.replaceState("", "", "#" + encodeQueryString(queryParams));
 }
 
 // Return an IE safe root url
@@ -113,4 +144,10 @@ function safeUrl(): string {
   Export helper functions related to urls so they can be
   imported and used in other files.
 */
-export { resetUrlTimer, updatePositionFromUrl, safeUrl, rootUrl };
+export {
+  FeatureForUrl,
+  resetUrlTimer,
+  updateAppFromUrl,
+  safeUrl,
+  rootUrl
+};
