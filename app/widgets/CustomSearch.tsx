@@ -5,6 +5,8 @@ import MapView = require('esri/views/MapView');
 import Search = require('esri/widgets/Search');
 import Widget = require('esri/widgets/Widget');
 
+import { clickOnSpaceOrEnter } from 'app/events';
+import { iconButton } from 'app/rendering';
 import { SearchSourceType, SearchResult, Suggestion } from 'app/search';
 import CustomSearchSources = require('app/CustomSearchSources');
 import CustomFilter = require('app/widgets/CustomFilter');
@@ -61,6 +63,11 @@ class CustomSearch extends declared(Widget) {
   @renderable()
   loadingSuggestions: boolean;
 
+  // The warning to show related to the search input
+  @property()
+  @renderable()
+  warning: string;
+
   // Pass in any properties
   constructor(properties?: any) {
     super();
@@ -68,6 +75,7 @@ class CustomSearch extends declared(Widget) {
     this.showSuggestions = false;
     this.required = properties.required || false;
     this.mainSearch = properties.mainSearch || false;
+    this.warning = properties.warning || '';
     this.sources = new CustomSearchSources({locationsOnly: !properties.mainSearch});
 
     // Hide suggestions when the escape key is pressed
@@ -100,7 +108,8 @@ class CustomSearch extends declared(Widget) {
           suggestionElements.push(
             <div
               class='custom-search-header suggestion-item'
-              key={`${suggestion.key}-header`}>
+              key={`${suggestion.key}-header`}
+              role='heading'>
               {header}
             </div>
           );
@@ -112,7 +121,10 @@ class CustomSearch extends declared(Widget) {
             class='custom-search-suggestion suggestion-item'
             data-index={`${i}`}
             key={suggestion.key}
-            onclick={this._suggestionClicked}>
+            onclick={this._suggestionClicked}
+            onkeydown={clickOnSpaceOrEnter}
+            role='option'
+            tabindex='0'>
             {suggestion.text}
           </div>
         );
@@ -122,7 +134,8 @@ class CustomSearch extends declared(Widget) {
         suggestionElements.push(
           <div
             class='custom-search-header suggestion-item'
-            key='loading-header'>
+            key='loading-header'
+            role='heading'>
             Loading...
           </div>
         );
@@ -136,8 +149,12 @@ class CustomSearch extends declared(Widget) {
       https://stackoverflow.com/a/25953721/674863
     */
     const suggestionContainer = (
-      <p class='custom-search-pane-container' style='margin: 0;'>
-        <p class='custom-search-pane' style='margin: 0;'>
+      <p class='custom-search-pane-container' style='margin: 0;' role='presentation'>
+        <p
+          aria-label='Search results'
+          class='custom-search-pane'
+          style='margin: 0;'
+          role='listbox'>
           {suggestionElements}
         </p>
       </p>
@@ -145,30 +162,24 @@ class CustomSearch extends declared(Widget) {
 
     let clearButton;
     if (this._inputElement() && this._inputElement().value) {
-      clearButton = (
-        <div
-          bind={this}
-          class='esri-widget esri-widget--button button-input'
-          onclick={this._clearSearch}
-          tabindex='0'
-          title='Clear search'>
-          <span class='esri-icon esri-icon-close'></span>
-        </div>
-      );
+      clearButton = iconButton({
+        object: this,
+        onclick: this._clearSearch,
+        name: 'Clear search',
+        iconName: 'close',
+        classes: ['button-input']
+      });
     }
 
     let submitButton;
     if (this.mainSearch) {
-      submitButton = (
-        <div
-          bind={this}
-          class='esri-widget esri-widget--button button-input'
-          onclick={this._submitSearch}
-          tabindex='0'
-          title='Search'>
-          <span class='esri-icon esri-icon-search'></span>
-        </div>
-      );
+      submitButton = iconButton({
+        object: this,
+        onclick: this._submitSearch,
+        name: 'Search',
+        iconName: 'search',
+        classes: ['button-input']
+      });
     }
 
     let mainElement;
@@ -179,8 +190,6 @@ class CustomSearch extends declared(Widget) {
           class='esri-input'
           id={this.name}
           oninput={this._setSuggestions}
-          onfocus={this._showSuggestions}
-          onblur={this._hideSuggestions}
           placeholder={this.placeholder}
           type='text'
           required={this.required} />
@@ -197,18 +206,40 @@ class CustomSearch extends declared(Widget) {
       );
     }
 
+    let warningElement;
+    if (this.warning) {
+      warningElement = (
+        <div
+          class='validation-warning'
+          key={`${this.name}-validation-warning`}
+          role='alert'>
+          {this.warning}
+        </div>
+      );
+    }
+
+    /*
+      Event capturing. Capture a focus or blur event on a child of the
+      container using the container.
+    */
+    const containerElement = document.getElementById(`${this.name}-search-container`);
+    if (containerElement) {
+      containerElement.addEventListener('blur', this._hideSuggestions, true);
+      containerElement.addEventListener('focus', this._showSuggestions, true);
+    }
+
     return (
       <div class='form-row'>
         <div
+          aria-label='Search bar'
           bind={this}
           class='custom-search-container'
-          onfocus={this._showSuggestions}
-          onblur={this._hideSuggestions}
+          id={`${this.name}-search-container`}
+          role='search'
           tabindex="-1">
           {mainElement}
           {suggestionContainer}
-          <div id={`${this.name}-validation-warning`} class="validation-warning hide">
-          </div>
+          {warningElement}
         </div>
       </div>
     );
@@ -224,13 +255,12 @@ class CustomSearch extends declared(Widget) {
 
   // Show the validation warning with the given message
   showWarning(message: string) {
-    this._warningElement().innerHTML = message;
-    this._warningElement().classList.remove("hide");
+    this.warning = message;
   }
 
   // Hide the validation warning
   private _hideWarning() {
-    this._warningElement().classList.add("hide");
+    this.warning = '';
   }
 
   // Called when the main search is submitted
@@ -320,11 +350,19 @@ class CustomSearch extends declared(Widget) {
     this._setSearch(this.suggestions[event.target.dataset.index]);
   }
 
-  private _showSuggestions() {
+  /*
+    Show suggestions. Needs to be a lambda function in order to be called
+    from addEventListener without using bind.
+  */
+  private _showSuggestions = () => {
     this.showSuggestions = true;
   }
 
-  private _hideSuggestions() {
+  /*
+    Hide suggestions. Needs to be a lambda function in order to be called
+    from addEventListener without using bind.
+  */
+  private _hideSuggestions = () => {
     this.showSuggestions = false;
     this._inputElement().blur();
   }
@@ -332,11 +370,6 @@ class CustomSearch extends declared(Widget) {
   // Get this input element
   private _inputElement(): HTMLInputElement {
     return (document.getElementById(this.name) as HTMLInputElement);
-  }
-
-  // Get this warning element
-  private _warningElement(): HTMLElement {
-    return (document.getElementById(`${this.name}-validation-warning`) as HTMLElement);
   }
 }
 

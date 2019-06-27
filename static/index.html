@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Example App</title>
+    <title>Parking Map | UMass Amherst</title>
     <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+    <link rel="stylesheet" href="brand.css">
     <link rel="stylesheet" href="index.css">
     <script>
       // Current path minus everything after the last forward slash
@@ -32,6 +33,62 @@
     <script src="https://js.arcgis.com/4.10"></script>
   </head>
   <body>
+    <!--Mandated UMass header-->
+    <div id="umass--global--header">
+      <div id="container">
+        <a
+          id="wordmark"
+          class="ir"
+          href="https://www.umass.edu/"
+          title="UMass Amherst">
+          The University of Massachusetts Amherst
+        </a>
+        <nav id="umass--global--navigation">
+          <button
+            aria-label="Open UMass Global Links Menu"
+            id="umass--global--navigation--navicon"
+            class="hamburger hamburger--collapse"
+            type="button">
+            <span class="hamburger-box">
+              <span class="hamburger-inner"></span>
+            </span>
+            <span class="umass--global--navigation--navicon--label">
+              Open UMass Global Links Menu
+            </span>
+          </button>
+
+          <ul id="umass--global--navigation--links">
+            <li>
+              <a
+                href="https://www.umass.edu/admissions/visits/visit-campus"
+                id="umass--global--visit">
+                Visit
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.umass.edu/admissions/apply"
+                id="umass--global--apply">
+                Apply
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://securelb.imodules.com/s/1640/rd17/form/form.aspx?sid=1640&amp;gid=2&amp;pgid=443&amp;cid=1121"
+                id="umass--global--give">
+                Give
+              </a>
+            </li>
+            <li>
+              <a href="https://www.umass.edu/search" id="umass--global--search">
+                Search
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <!--The map-->
     <div id="viewDiv"></div>
     <script>require(["app/main"]);</script>
   </body>

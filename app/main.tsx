@@ -18,12 +18,17 @@ import CustomLayerList = require("app/widgets/CustomLayerList");
 import CustomSearch = require("app/widgets/CustomSearch");
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
+import Feedback = require('app/widgets/Feedback');
 import ShareEmail = require("app/widgets/ShareEmail");
 import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
+import { setupUmassMenu } from 'app/events';
 import { homeGoToOverride, umassLongLat } from "app/latLong";
 import { updateRenderers, updateLabeling } from 'app/rendering';
 import { resetUrlTimer, updateAppFromUrl } from "app/url";
+
+// Set up the UMass link menu
+setupUmassMenu();
 
 // Set the map to load data from our ArcGIS Online web map
 const map = new WebMap({
@@ -216,7 +221,7 @@ view.when(() => {
     search: new CustomSearch({
       view: view,
       name: 'main',
-      placeholder: 'Search',
+      placeholder: 'Search the map',
       customFilter: customFilter,
       mainSearch: true
     }),
@@ -230,6 +235,8 @@ view.when(() => {
     customWindows: customWindows
   });
 
+  // Add the feedback widget to the bottom right
+  view.ui.add(new Feedback(), 'bottom-right');
   // Add the main navigation widget to the map
   view.ui.add(mainNavigation, "manual");
 

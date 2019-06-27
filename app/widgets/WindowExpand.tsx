@@ -5,6 +5,8 @@ import Widget = require("esri/widgets/Widget");
 
 import CustomWindow = require('app/widgets/CustomWindow');
 
+import { iconButton } from 'app/rendering';
+
 @subclass("esri.widgets.WindowExpand")
 class WindowExpand extends declared(Widget) {
   // A descriptive name for the window this expand will open
@@ -37,21 +39,14 @@ class WindowExpand extends declared(Widget) {
 
   // Render this widget by returning JSX which is converted to HTML
   render() {
-    let iconClass = this.iconName;
-    if (this.loadingIcon) {
-      iconClass = 'loading-indicator';
-    }
-
-    return (
-      <div
-        bind={this}
-        class="esri-widget esri-widget--button"
-        onclick={this._expand}
-        tabindex='0'
-        title={this.name.charAt(0).toUpperCase() + this.name.slice(1)}>
-        <span class={`esri-icon esri-icon-${iconClass}`}></span>
-      </div>
-    );
+    const iconName = this.loadingIcon ? 'loading-indicator' : this.iconName;
+    const name = `Open ${this.name} window`;
+    return iconButton({
+      object: this,
+      onclick: this._expand,
+      name: name,
+      iconName: iconName
+    });
   }
 
   /*
