@@ -200,6 +200,11 @@ body,
   border: 0;
   color: white !important;
 }
+.esri-widget--button.active,
+.esri-button.active,
+.umass-theme-button.active {
+  background-color: #333333 !important;
+}
 
 .custom-search-suggestion:focus,
 .esri-widget--button:focus,
