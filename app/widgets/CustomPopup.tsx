@@ -21,6 +21,12 @@ import {
 } from 'app/rendering';
 import { FeatureForUrl } from 'app/url';
 
+// Direction the popup window should open towards
+enum Direction {
+  Up = 0,
+  Down = 1
+}
+
 // Represents a point on the screen in pixels
 interface ScreenPoint {
   x: number;
@@ -63,6 +69,11 @@ class CustomPopup extends declared(Widget) {
   // Representation of current feature in the popup for use in the URL
   @property()
   featureForUrl: FeatureForUrl;
+
+  // Direction the popup window should open towards
+  @property()
+  @renderable()
+  direction: Direction;
 
   // Pass in any properties
   constructor(properties?: any) {
@@ -120,10 +131,16 @@ class CustomPopup extends declared(Widget) {
       classes: ['custom-window-close']
     });
 
-    let screenPoint = this.view.toScreen(this.point);
+    const screenPoint = this.view.toScreen(this.point);
+
+    let containerClasses = ['custom-popup-container'];
+    if (this.direction === Direction.Up) {
+      containerClasses.push('direction-up');
+    }
+
     return (
       <div
-        class='custom-popup-container'
+        class={containerClasses.join(' ')}
         style={`
           display: ${this.visible ? 'block' : 'none'};
           left: ${screenPoint.x}px;
@@ -157,6 +174,7 @@ class CustomPopup extends declared(Widget) {
     // Reset popup variables
     this.reset();
     this.point = event.mapPoint;
+    this._setDirection();
 
     const queryGeometry = this._circleAt(event.screenPoint);
 
@@ -225,6 +243,7 @@ class CustomPopup extends declared(Widget) {
         } else {
           this.point = results.features[0].geometry as Point;
         }
+        this._setDirection();
       }
     }).catch((error) => {
       console.error(error);
@@ -251,6 +270,16 @@ class CustomPopup extends declared(Widget) {
     this.page = this.page % this.features.length;
     if (this.page < 0) {
       this.page += this.features.length;
+    }
+  }
+
+  // Set the direction based on where the point currently is on the screen
+  private _setDirection() {
+    const screenPoint = this.view.toScreen(this.point);
+    if (screenPoint.y > this.view.height / 2) {
+      this.direction = Direction.Up;
+    } else {
+      this.direction = Direction.Down;
     }
   }
 
