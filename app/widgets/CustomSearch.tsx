@@ -9,6 +9,7 @@ import { clickOnSpaceOrEnter } from 'app/events';
 import { iconButton } from 'app/rendering';
 import { SearchSourceType, SearchResult, Suggestion } from 'app/search';
 import CustomSearchSources = require('app/CustomSearchSources');
+import RequestSet = require('app/RequestSet');
 import CustomFilter = require('app/widgets/CustomFilter');
 
 @subclass('esri.widgets.CustomSearch')
@@ -32,6 +33,10 @@ class CustomSearch extends declared(Widget) {
   @property()
   @renderable()
   suggestions: Array<Suggestion>;
+
+  // Keep suggestion request promises in chronological order
+  @property()
+  suggestionRequestSet: RequestSet;
 
   // Whether or not to show the suggestions
   @property()
@@ -72,6 +77,7 @@ class CustomSearch extends declared(Widget) {
   constructor(properties?: any) {
     super();
     this.suggestions = [];
+    this.suggestionRequestSet = new RequestSet();
     this.showSuggestions = false;
     this.required = properties.required || false;
     this.mainSearch = properties.mainSearch || false;
@@ -304,15 +310,17 @@ class CustomSearch extends declared(Widget) {
       return;
     }
     this.loadingSuggestions = true;
-    // Find new suggestions
-    this.sources.suggest(searchTerm).then((suggestions) => {
-      this.suggestions = suggestions;
-      this._showSuggestions();
-      this.loadingSuggestions = false;
-    }).catch((error) => {
-      console.log(error);
-      this.loadingSuggestions = false;
-    });
+    // Safely find new suggestions
+    this.suggestionRequestSet.setPromise(this.sources.suggest(searchTerm))
+      .then((suggestions: Array<Suggestion>) => {
+        this.suggestions = suggestions;
+        this._showSuggestions();
+        this.loadingSuggestions = false;
+      }, (error: string) => {
+        console.log(error);
+        this.loadingSuggestions = false;
+      }
+    );
   }
 
   /*

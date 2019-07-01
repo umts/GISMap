@@ -13,6 +13,8 @@ import Widget = require('esri/widgets/Widget');
 import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
+import RequestSet = require('app/RequestSet');
+import { circleAt } from 'app/latLong';
 import {
   spaceRendererInfo,
   attributeRow,
@@ -25,12 +27,6 @@ import { FeatureForUrl } from 'app/url';
 enum Direction {
   Up = 0,
   Down = 1
-}
-
-// Represents a point on the screen in pixels
-interface ScreenPoint {
-  x: number;
-  y: number;
 }
 
 @subclass('esri.widgets.CustomPopup')
@@ -58,6 +54,10 @@ class CustomPopup extends declared(Widget) {
   @renderable()
   features: Array<Graphic>;
 
+  // Keep feature request promises in chronological order
+  @property()
+  featureRequestSet: RequestSet;
+
   /*
     The current index to a feature in features. Represents what feature
     is being displayed at the moment.
@@ -81,6 +81,7 @@ class CustomPopup extends declared(Widget) {
     this.visible = false;
     this.point = new Point();
     this.features = [];
+    this.featureRequestSet = new RequestSet();
     this.page = 0;
   }
 
@@ -171,40 +172,18 @@ class CustomPopup extends declared(Widget) {
 
   // Update the popup widget based on a mouse click event
   openFromMouseClick(event: any) {
-    // Reset popup variables
-    this.reset();
-    this.point = event.mapPoint;
-    this._setDirection();
-
-    const queryGeometry = this._circleAt(event.screenPoint);
-
-    [
-      this._getLayer('Sections'),
-      this._getLayer('Campus Buildings'),
-      this._getLayer('Spaces')
-    ].forEach((layer) => {
-      let query = layer.createQuery();
-      /*
-        Query features that intersect the circle around the point from
-        the click event.
-      */
-      query.geometry = queryGeometry;
-      query.spatialRelationship = 'intersects';
-      // Ensure the query returns all fields, in particular the OBJECTID field
-      query.outFields = ['*'];
-
-      // Query features
-      layer.queryFeatures(query)
-      .then((results) => {
-        if (results.features.length > 0) {
-          // Add more features to the popup
-          this.features = this.features.concat(results.features);
-          this.visible = true;
-        }
-      }).catch((error) => {
-        console.error(error);
-      });
-    });
+    this._queryAndUseFeatures(
+      ['Sections', 'Campus Buildings', 'Spaces'],
+      {
+        geometry: circleAt(event.screenPoint, this.view),
+        spatialRelationship: 'intersects',
+        // Ensure the query returns all fields, in particular the OBJECTID field
+        outFields: ['*'],
+      }, {
+        useGeometry: false,
+        point: event.mapPoint
+      }
+    );
   }
 
   // Open a popup to a feature from the url
@@ -218,34 +197,82 @@ class CustomPopup extends declared(Widget) {
       not reset to have no popup parameter.
     */
     this.featureForUrl = featureForUrl;
-    const layer = this._getLayer(featureForUrl.layer);
-    let query = layer.createQuery();
+
     let idColumn = 'OBJECTID_1';
     if (featureForUrl.layer === 'Campus Buildings') {
       idColumn = 'OBJECTID';
     }
-    query.where = `${idColumn} = '${featureForUrl.id}'`;
-    query.outSpatialReference = new SpatialReference({"wkid":4326});
-    // Ensure the query returns all fields, in particular the OBJECTID field
-    query.outFields = ['*'];
 
-    // Query feature
-    layer.queryFeatures(query)
-    .then((results) => {
+    this._queryAndUseFeatures(
+      [featureForUrl.layer],
+      {
+        where: `${idColumn} = '${featureForUrl.id}'`,
+        outSpatialReference: new SpatialReference({"wkid":4326}),
+        // Ensure the query returns all fields, in particular the OBJECTID field
+        outFields: ['*']
+      }, {
+        useGeometry: true
+      }
+    );
+  }
+
+  /*
+    Use the same query to query features on multiple layers and use them as
+    features for this popup.
+  */
+  private _queryAndUseFeatures(
+    layerNames: Array<string>,
+    queryParams: any,
+    pointParams: { useGeometry: boolean, point?: Point }
+  ) {
+    // Generate promises to query each layer
+    let layerPromises: Array<Promise<any>> = [];
+    layerNames.map((layerName) => { return this._getLayer(layerName) })
+    .forEach((layer) => {
+      let query = layer.createQuery();
+      // Set query params
+      Object.keys(queryParams).forEach((key) => {
+        query[key] = queryParams[key];
+      });
+      /*
+        Esri is using their own promise type `IPromise`, which is why we
+        are wrapping it in a `Promise`.
+      */
+      layerPromises.push(new Promise((resolve, reject) => {
+        resolve(layer.queryFeatures(query));
+      }));
+    });
+    /*
+      Tell the request set to use the wrapper promise (all of the
+      layer promises) then resolve that promise. By using a `RequestSet` we
+      ensure that an older query does not override a newer query just because
+      it resolved later than the newer query resolved.
+    */
+    this.featureRequestSet.setPromise(Promise.all(layerPromises))
+    .then((featuresByLayer: Array<any>) => {
+      // Reset popup variables
       this.reset();
-      if (results.features.length > 0) {
-        // Add more features to the popup
-        this.features = this.features.concat(results.features);
-        this.visible = true;
-        // Grab point from geometry
-        if ((results.features[0].geometry as any).centroid) {
-          this.point = (results.features[0].geometry as Polygon).centroid;
-        } else {
-          this.point = results.features[0].geometry as Point;
+      this.point = pointParams.point;
+      featuresByLayer.forEach((results) => {
+        if (results.features.length > 0) {
+          // Add features from this layer
+          this.features = this.features.concat(results.features);
+          // Set point from geometry
+          if (pointParams.useGeometry) {
+            if ((results.features[0].geometry as any).centroid) {
+              this.point = (results.features[0].geometry as Polygon).centroid;
+            } else {
+              this.point = results.features[0].geometry as Point;
+            }
+          }
         }
+      });
+      // Set visible only if any of the layer queries returned features
+      if (this.features.length > 0) {
+        this.visible = true;
         this._setDirection();
       }
-    }).catch((error) => {
+    }, (error: string) => {
       console.error(error);
     });
   }
@@ -327,33 +354,6 @@ class CustomPopup extends declared(Widget) {
     } else {
       this.featureForUrl = null;
     }
-  }
-
-  /*
-    Generate a 'circle' in latitude/longitude given a point on the screen in
-    pixels.
-  */
-  private _circleAt(screenPoint: ScreenPoint): Polygon {
-    const delta = 16;
-    const screenVertices: Array<ScreenPoint> = [
-      {x: screenPoint.x - delta, y: screenPoint.y - delta},
-      {x: screenPoint.x + delta, y: screenPoint.y - delta},
-      {x: screenPoint.x + delta, y: screenPoint.y + delta},
-      {x: screenPoint.x - delta, y: screenPoint.y + delta}
-    ]
-
-    const mapVertices = screenVertices.map((screenPoint) => {
-      const mapPoint = this.view.toMap(screenPoint);
-      /*
-        Explicitly grab lat/lon or else the polygon will try to convert back
-        to the MA spatial reference.
-      */
-      return [mapPoint.longitude, mapPoint.latitude];
-    });
-    let circle = new Polygon();
-    // Polygon ring requires the final point to be the same as the first
-    circle.addRing(mapVertices.concat([mapVertices[0]]));
-    return circle;
   }
 
   // Return a feature layer by title
