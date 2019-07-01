@@ -29,13 +29,13 @@
      inkscape:window-height="756"
      id="namedview4693"
      showgrid="false"
-     inkscape:zoom="12.140809"
-     inkscape:cx="0.78932122"
-     inkscape:cy="9.1772429"
+     inkscape:zoom="11.313709"
+     inkscape:cx="-6.2157616"
+     inkscape:cy="17.006228"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
-     inkscape:current-layer="layer4" />
+     inkscape:current-layer="layer7" />
   <metadata
      id="metadata4686">
     <rdf:RDF>
@@ -44,55 +44,50 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:groupmode="layer"
-     id="layer1"
-     inkscape:label="meter-circle"
-     style="display:inline">
-    <circle
-       style="fill:#ffffff;fill-opacity:1;stroke:#888888;stroke-width:1.97322273;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path4697"
-       cx="11.79905"
-       cy="9.0212946"
-       r="7.9608426" />
+     id="layer7"
+     inkscape:label="meter-outline"
+     style="display:inline"
+     sodipodi:insensitive="true">
     <path
-       style="fill:#888888;fill-opacity:1;fill-rule:evenodd;stroke:#888888;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 3.8712412,9.0603519 16.0203498,0 -1.68852,4.7772761 -4.530176,1.853254 -3.7888748,0 -4.0359749,-1.44142 z"
-       id="path4704"
+       id="path4173"
+       d="M 11.798828,1.0605469 A 7.9608426,7.9608426 0 0 0 3.8378906,9.0214844 7.9608426,7.9608426 0 0 0 7.3710938,15.632812 l 0,7.085938 8.9375002,0 0,-7.146484 A 7.9608426,7.9608426 0 0 0 19.759766,9.0214844 7.9608426,7.9608426 0 0 0 11.798828,1.0605469 Z"
+       style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.97300005;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:connector-curvature="0" />
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer2"
-     inkscape:label="meter-box"
+     id="layer6"
+     inkscape:label="meter-all"
      style="display:inline">
-    <rect
-       style="fill:#888888;fill-opacity:1;stroke:#888888;stroke-width:2.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4702"
-       width="8.9368019"
-       height="12.64331"
-       x="7.3718314"
-       y="10.075439" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer4"
-     inkscape:label="meter-stub">
+    <path
+       style="display:inline;fill:#ffffff;fill-opacity:1;stroke:#888888;stroke-width:0.87300003;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 11.798828,1.0605469 A 7.9608426,7.9608426 0 0 0 3.8378906,9.0214844 7.9608426,7.9608426 0 0 0 7.3710938,15.632812 l 0,7.085938 8.9375002,0 0,-7.146484 A 7.9608426,7.9608426 0 0 0 19.759766,9.0214844 7.9608426,7.9608426 0 0 0 11.798828,1.0605469 Z"
+       id="circle4150"
+       inkscape:connector-curvature="0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4152"
+       d="m 4.171,9.0603519 15.221,0 -1.477213,4.4478091 -1.970536,1.667236 0.158466,7.187199 -8.5249681,0.08237 -0.060377,-7.128645 -1.6693261,-1.437506 z"
+       style="display:inline;fill:#888888;fill-opacity:1;fill-rule:evenodd;stroke:#888888;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       sodipodi:nodetypes="ccccccccc" />
     <circle
-       style="fill:#888888;fill-opacity:1;stroke:none;stroke-width:2.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path4712"
-       r="1.3395694"
+       cx="11.735793"
        cy="8.7675486"
-       cx="11.735793" />
+       r="1.3395694"
+       id="circle4156"
+       style="display:inline;fill:#888888;fill-opacity:1;stroke:none;stroke-width:2.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer3"
-     inkscape:label="meter-text">
+     inkscape:label="meter-text"
+     style="display:inline">
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
