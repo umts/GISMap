@@ -101,10 +101,10 @@ class CustomWindow extends declared(Widget) {
           );
         }
         widgetLabel = (
-          <p role='heading' class="widget-label">
+          <h1>
             {widgetIcon}
             {widgetWithLabel.label}
-          </p>
+          </h1>
         );
       }
       if (!this.useTabs || i === this.widgetIndex) {

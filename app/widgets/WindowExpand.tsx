@@ -21,6 +21,7 @@ class WindowExpand extends declared(Widget) {
 
   // The window that this expand will actually open
   @property()
+  @renderable()
   window: CustomWindow;
 
   // Any other windows that need to be closed before this window can be opened
@@ -41,11 +42,16 @@ class WindowExpand extends declared(Widget) {
   render() {
     const iconName = this.loadingIcon ? 'loading-indicator' : this.iconName;
     const name = `Open ${this.name} window`;
+    let classes = [];
+    if (this.window.visible) {
+      classes.push('active');
+    }
     return iconButton({
       object: this,
       onclick: this._expand,
       name: name,
-      iconName: iconName
+      iconName: iconName,
+      classes: classes
     });
   }
 

@@ -23,6 +23,12 @@ import {
 } from 'app/rendering';
 import { FeatureForUrl } from 'app/url';
 
+// Direction the popup window should open towards
+enum Direction {
+  Up = 0,
+  Down = 1
+}
+
 @subclass('esri.widgets.CustomPopup')
 class CustomPopup extends declared(Widget) {
   // The main map view
@@ -63,6 +69,11 @@ class CustomPopup extends declared(Widget) {
   // Representation of current feature in the popup for use in the URL
   @property()
   featureForUrl: FeatureForUrl;
+
+  // Direction the popup window should open towards
+  @property()
+  @renderable()
+  direction: Direction;
 
   // Pass in any properties
   constructor(properties?: any) {
@@ -121,10 +132,16 @@ class CustomPopup extends declared(Widget) {
       classes: ['custom-window-close']
     });
 
-    let screenPoint = this.view.toScreen(this.point);
+    const screenPoint = this.view.toScreen(this.point);
+
+    let containerClasses = ['custom-popup-container'];
+    if (this.direction === Direction.Up) {
+      containerClasses.push('direction-up');
+    }
+
     return (
       <div
-        class='custom-popup-container'
+        class={containerClasses.join(' ')}
         style={`
           display: ${this.visible ? 'block' : 'none'};
           left: ${screenPoint.x}px;
@@ -253,6 +270,7 @@ class CustomPopup extends declared(Widget) {
       // Set visible only if any of the layer queries returned features
       if (this.features.length > 0) {
         this.visible = true;
+        this._setDirection();
       }
     }, (error: string) => {
       console.error(error);
@@ -279,6 +297,16 @@ class CustomPopup extends declared(Widget) {
     this.page = this.page % this.features.length;
     if (this.page < 0) {
       this.page += this.features.length;
+    }
+  }
+
+  // Set the direction based on where the point currently is on the screen
+  private _setDirection() {
+    const screenPoint = this.view.toScreen(this.point);
+    if (screenPoint.y > this.view.height / 2) {
+      this.direction = Direction.Up;
+    } else {
+      this.direction = Direction.Down;
     }
   }
 
@@ -354,13 +382,13 @@ class CustomPopup extends declared(Widget) {
   private _renderSection(feature: Graphic): JSX.Element {
     let title;
     if (feature.attributes.SectionColor) {
-      title = <p class='widget-label' role='heading'>
+      title = <h1>
         {feature.attributes.SectionName} ({feature.attributes.SectionColor})
-      </p>;
+      </h1>;
     } else {
-      title = <p class='widget-label' role='heading'>
+      title = <h1>
         {feature.attributes.SectionName}
-      </p>;
+      </h1>;
     }
 
     const parkmobileLink = (
@@ -467,7 +495,7 @@ class CustomPopup extends declared(Widget) {
   private _renderBuilding(feature: Graphic): JSX.Element {
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID}>
-        <p class='widget-label' role='heading'>{feature.attributes.Building_Name}</p>
+        <h1>{feature.attributes.Building_Name}</h1>
         <p><b>{feature.attributes.Address}</b></p>
         {
           expandable(
@@ -514,9 +542,9 @@ class CustomPopup extends declared(Widget) {
     }
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
-        <p class='widget-label' role='heading'>
+        <h1>
           {categoryInfo.description}{icon}
-        </p>
+        </h1>
         {reserved}{payment}{duration}
       </div>
     );
