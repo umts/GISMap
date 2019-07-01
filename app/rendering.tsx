@@ -249,10 +249,16 @@ function updateLabeling(map: WebMap) {
 }
 
 // Return two elements formatted as row with a label and content
-function attributeRow(label: string, content: string): JSX.Element {
+function attributeRow(label: string, content: string, link?: string): JSX.Element {
+  // Label content is either text or a link
+  let labelContent: JSX.Element | string = label;
+  if (link) {
+    labelContent = <a target='_blank' href={link}>{label}</a>;
+  }
+  const labelElement = <b class='attribute-row-label'>{labelContent}</b>;
   return (
     <div class='space-between attribute-row'>
-      <b class='attribute-row-label'>{label}</b>
+      <b class='attribute-row-label'>{labelContent}</b>
       <p class='attribute-row-content'>{content}</p>
     </div>
   );

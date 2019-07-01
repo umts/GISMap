@@ -391,25 +391,14 @@ class CustomPopup extends declared(Widget) {
       </p>;
     }
 
-    const parkmobileLink = (
-      <b class='attribute-row-label'>
-        <a
-          target='_blank'
-          href='https://www.umass.edu/transportation/pay-cell-parkmobile'>
-          ParkMobile
-        </a>
-      </b>
-    );
-    let parkmobileDescription;
+    let parkmobile;
     if (feature.attributes.ParkmobileZoneID) {
-      parkmobileDescription = `Zone #${feature.attributes.ParkmobileZoneID}`;
-    } else {
-      parkmobileDescription = 'Not available';
+      parkmobile = attributeRow(
+        'ParkMobile',
+        `Zone #${feature.attributes.ParkmobileZoneID}`,
+        'https://www.umass.edu/transportation/pay-cell-parkmobile'
+      );
     }
-    const parkmobile = <div class='space-between attribute-row'>
-      {parkmobileLink}
-      <p class='attribute-row-content'>{parkmobileDescription}</p>
-    </div>;
 
     let payment;
     let sectionHoursDescription;
@@ -432,7 +421,10 @@ class CustomPopup extends declared(Widget) {
     } else if (feature.attributes.SectionHours === '24Hour') {
       sectionHoursDescription = `${parkingType} required at all times`;
     }
-    const sectionHours = attributeRow('Hours', sectionHoursDescription);
+    let sectionHours;
+    if (sectionHoursDescription) {
+      sectionHours = attributeRow('Hours', sectionHoursDescription);
+    }
 
     // Who can park here or buy a permit here
     let permitInfoDescription;
@@ -449,12 +441,20 @@ class CustomPopup extends declared(Widget) {
     } else if (feature.attributes.SectionColor === 'Pink') {
       permitInfoDescription = 'No permit required';
     }
-    const permitInfo = attributeRow('Permit eligibility', permitInfoDescription);
+    let permitInfo;
+    if (permitInfoDescription) {
+      permitInfo = attributeRow(
+        'Permit eligibility',
+        permitInfoDescription,
+        'https://www.umass.edu/transportation/permits'
+      );
+    }
 
     // Render space counts
     let spaceCountElements: Array<JSX.Element> = [];
     if (feature.attributes.SpaceCounts) {
       const spaceCounts = JSON.parse(feature.attributes.SpaceCounts);
+      // Add special space counts
       Object.keys(spaceCounts).forEach((category) => {
         if (spaceRendererInfo.hasOwnProperty(category)) {
           spaceCountElements.push(
@@ -464,6 +464,7 @@ class CustomPopup extends declared(Widget) {
           );
         }
       });
+      // Add total space counts
       if (spaceCounts.hasOwnProperty('Total')) {
         spaceCountElements.push(
           <li><b>Total Spaces: {spaceCounts['Total']}</b></li>
