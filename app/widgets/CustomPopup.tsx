@@ -464,6 +464,11 @@ class CustomPopup extends declared(Widget) {
           );
         }
       });
+      if (spaceCounts.hasOwnProperty('Total')) {
+        spaceCountElements.push(
+          <li><b>Total Spaces: {spaceCounts['Total']}</b></li>
+        );
+      }
     }
 
     let spaceCountExpand;
