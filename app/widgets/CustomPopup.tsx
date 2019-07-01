@@ -382,13 +382,13 @@ class CustomPopup extends declared(Widget) {
   private _renderSection(feature: Graphic): JSX.Element {
     let title;
     if (feature.attributes.SectionColor) {
-      title = <p class='widget-label' role='heading'>
+      title = <h1>
         {feature.attributes.SectionName} ({feature.attributes.SectionColor})
-      </p>;
+      </h1>;
     } else {
-      title = <p class='widget-label' role='heading'>
+      title = <h1>
         {feature.attributes.SectionName}
-      </p>;
+      </h1>;
     }
 
     const parkmobileLink = (
@@ -495,7 +495,7 @@ class CustomPopup extends declared(Widget) {
   private _renderBuilding(feature: Graphic): JSX.Element {
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID}>
-        <p class='widget-label' role='heading'>{feature.attributes.Building_Name}</p>
+        <h1>{feature.attributes.Building_Name}</h1>
         <p><b>{feature.attributes.Address}</b></p>
         {
           expandable(
@@ -542,9 +542,9 @@ class CustomPopup extends declared(Widget) {
     }
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
-        <p class='widget-label' role='heading'>
+        <h1>
           {categoryInfo.description}{icon}
-        </p>
+        </h1>
         {reserved}{payment}{duration}
       </div>
     );

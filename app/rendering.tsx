@@ -248,6 +248,25 @@ function updateLabeling(map: WebMap) {
   buildingsLayer.labelingInfo = [buildingLabel];
 }
 
+/*
+  Given a distance in feet return the imperial distance as a human
+  readable string.
+*/
+function imperialDistance(distanceInFeet: number): string {
+  if (distanceInFeet === 0) {
+    return null;
+  }
+  let distance = distanceInFeet;
+  let unit = 'feet';
+  let places = 0;
+  if (distance > 1000) {
+    distance = distance / 5280;
+    unit = 'miles';
+    places = 1;
+  }
+  return `${distance.toFixed(places)} ${unit}`
+}
+
 // Return two elements formatted as row with a label and content
 function attributeRow(label: string, content: string): JSX.Element {
   return (
@@ -356,6 +375,7 @@ export {
   spaceRendererInfo,
   sectionRendererInfo,
   filterInfo,
+  imperialDistance,
   attributeRow,
   expandable,
   iconButton

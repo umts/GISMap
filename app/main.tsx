@@ -16,6 +16,7 @@ import CustomDirections = require("app/widgets/CustomDirections");
 import CustomFilter = require('app/widgets/CustomFilter');
 import CustomLayerList = require("app/widgets/CustomLayerList");
 import CustomSearch = require("app/widgets/CustomSearch");
+import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
 import Feedback = require('app/widgets/Feedback');
@@ -59,7 +60,15 @@ view.when(() => {
   // Set the default basemap
   map.basemap = Basemap.fromId('topo');
 
-  // Special layer for popup feature selection
+  // Layer for directions
+  map.add(new GraphicsLayer({
+    title: 'Directions'
+  }));
+  // Layer for direction selection
+  map.add(new GraphicsLayer({
+    title: 'Directions Selection'
+  }));
+  // Layer for popup feature selection
   map.add(new GraphicsLayer({
     title: 'Selection'
   }));
@@ -115,18 +124,21 @@ view.when(() => {
     })
   });
 
-  const customPedestrianDirections = new Directions({
+  const customPedestrianDirections = new CustomPedestrianDirections({
     view: view,
-    routeServiceUrl: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route'
+    startSearch: new CustomSearch({
+      view: view,
+      name: 'pedestrian-directions-origin',
+      placeholder: 'Origin',
+      required: true
+    }),
+    endSearch: new CustomSearch({
+      view: view,
+      name: 'pedestrian-directions-destination',
+      placeholder: 'Destination',
+      required: true
+    })
   });
-  /*
-    These parameters must be set outside the constructor. If we try to set
-    them on the view model within the constructor the widget will break.
-  */
-  // Pedestrian route service doesn't support hierarchy
-  customPedestrianDirections.viewModel.routeParameters.useHierarchy = false;
-  // Directions widget seems to want lat and lon
-  customPedestrianDirections.viewModel.routeParameters.outSpatialReference = new SpatialReference({wkid: 4326});
 
   /*
     Create a directions window that will be hidden until opened by a

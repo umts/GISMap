@@ -70,9 +70,14 @@ body,
   float: right;
 }
 
-.widget-label {
+h1 {
   margin: 0.5rem 0 0.8rem 0;
   font-size: 1.2rem;
+  font-weight: bold;
+}
+h2 {
+  margin: 0.5rem 0 0.8rem 0;
+  font-size: 1rem;
   font-weight: bold;
 }
 
@@ -103,7 +108,10 @@ body,
 }
 .form-row-input {
   display: flex;
-  justify-content: space-between;
+}
+.spaced-row {
+  display: flex;
+  justify-content: space-around;
 }
 
 .button-right {
@@ -183,6 +191,7 @@ body,
 .umass-theme-button:focus,
 .widget-tab:focus,
 .expandable-header:focus,
+.direction:focus,
 input:focus {
   outline: 2px solid #99ccff;
 }
@@ -240,6 +249,33 @@ input:focus {
   color: white;
 }
 
+.directions-list {
+  clear: both;
+}
+.directions-header {
+  cursor: pointer;
+}
+.direction {
+  background-color: #eee;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  cursor: pointer;
+}
+.direction:hover {
+  background-color: #ccc;
+}
+.direction:active {
+  background-color: #aaa;
+}
+.direction.active {
+  background-color: #ccc;
+}
+.direction-distance {
+  flex-shrink: 0;
+}
+
 .layer-checkbox {
   display: block;
   cursor: pointer;
@@ -273,6 +309,13 @@ input:focus {
   border-radius: 0 0 0.5rem 0.5rem;
   color: black;
   padding: 0.3rem 0.5rem 0.3rem 0.5rem;
+}
+.error {
+  background-color: #fc9c9c;
+  border-radius: 0.5rem;
+  color: black;
+  padding: 0.3rem 0.5rem;
+  margin: 0.5rem 0;
 }
 .hide {
   display: none;
