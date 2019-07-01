@@ -438,8 +438,6 @@ class CustomPopup extends declared(Widget) {
       permitInfoDescription = 'Any university community member';
     } else if (feature.attributes.SectionColor === 'Purple') {
       permitInfoDescription = 'Residential students only';
-    } else if (feature.attributes.SectionColor === 'Pink') {
-      permitInfoDescription = 'No permit required';
     }
     let permitInfo;
     if (permitInfoDescription) {
