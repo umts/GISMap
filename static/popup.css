@@ -64,7 +64,7 @@
   border-radius: 50%;
   border-bottom-left-radius: 0;
   transform: translate(-50%, -120%) rotate(-45deg);
-  pointer-events: none;
+  pointer-events: none !important;
 }
 .independent-popup-pointer-circle {
   margin: 0.5rem;
