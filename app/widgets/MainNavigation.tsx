@@ -90,15 +90,10 @@ class MainNavigation extends declared(Widget) {
   */
   constructor(properties?: any) {
     super();
-    this.popup = new CustomPopup({view: properties.view});
   }
 
   // Run after this widget is ready
   postInitialize() {
-    // Update the url when the feature for URL changes
-    this.popup.watch('featureForUrl', (featureForUrl) => {
-      resetUrlTimer(this);
-    });
     this._setLoading(true);
     this.view.watch('updating', (updating) => { this._setLoading(updating) });
   }
@@ -116,27 +111,29 @@ class MainNavigation extends declared(Widget) {
 
     return (
       <div id="main-navigation" role='presentation'>
-        <div
-          aria-label='Main navigation window'
-          id="main-navigation-window"
-          class="navigation-window shadow">
-          {this.search.render()}
+        <div class="column-left">
+          <div
+            aria-label='Main navigation window'
+            id="main-navigation-window"
+            class="navigation-window shadow">
+            {this.search.render()}
 
-          <div id="widgets-list" role='presentation'>
-            <ul aria-label='Main menu' role='menubar'>
-              <li class="widget-list-item" role='menuitem'>{this.zoomIn.render()}</li>
-              <li class="widget-list-item" role='menuitem'>{this.zoomOut.render()}</li>
-              <li class="widget-list-item" role='menuitem'>{this.compass.render()}</li>
-              <li class="widget-list-item" role='menuitem'>{this.home.render()}</li>
-              <li class="widget-list-item" role='menuitem'>{this.locate.render()}</li>
-              <li class="widget-list-item" role='menuitem'>{this.layersExpand.render()}</li>
-              <li class="widget-list-item" role='menuitem'>{this.directionsExpand.render()}</li>
-              <li class="widget-list-item" role='menuitem'>{this.shareExpand.render()}</li>
-            </ul>
+            <div class="widget-list" role='presentation'>
+              <ul aria-label='Main menu' role='menubar'>
+                <li class="widget-list-item" role='menuitem'>{this.zoomIn.render()}</li>
+                <li class="widget-list-item" role='menuitem'>{this.zoomOut.render()}</li>
+                <li class="widget-list-item" role='menuitem'>{this.compass.render()}</li>
+                <li class="widget-list-item" role='menuitem'>{this.home.render()}</li>
+                <li class="widget-list-item" role='menuitem'>{this.locate.render()}</li>
+                <li class="widget-list-item" role='menuitem'>{this.layersExpand.render()}</li>
+                <li class="widget-list-item" role='menuitem'>{this.directionsExpand.render()}</li>
+                <li class="widget-list-item" role='menuitem'>{this.shareExpand.render()}</li>
+              </ul>
+            </div>
           </div>
+          {this.customFilter.render()}
+          {renderedWindows}
         </div>
-        {this.customFilter.render()}
-        {renderedWindows}
         {this.popup.render()}
       </div>
     );
