@@ -43,9 +43,6 @@
 .custom-popup-container.docked .popup-pointer-container {
   display: none;
 }
-.custom-popup-container.docked .independent-popup-pointer {
-  display: block;
-}
 
 .popup-pointer {
   background-color: #881c1c;
@@ -67,6 +64,7 @@
   border-radius: 50%;
   border-bottom-left-radius: 0;
   transform: translate(-50%, -120%) rotate(-45deg);
+  pointer-events: none;
 }
 .independent-popup-pointer-circle {
   margin: 0.5rem;
@@ -92,7 +90,6 @@
     margin-top: 0;
     margin-left: 0;
     margin-right: 0;
-    left: 0;
     max-height: 20vh;
   }
 }

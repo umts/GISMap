@@ -84,7 +84,7 @@ class CustomPopup extends declared(Widget) {
   constructor(properties?: any) {
     super();
     this.visible = false;
-    this.docked = false;
+    this.docked = true;
     this.point = new Point();
     this.features = [];
     this.featureRequestSet = new RequestSet();
@@ -318,6 +318,7 @@ class CustomPopup extends declared(Widget) {
   // Toggle whether or not the popup is docked
   private _dock() {
     if (this.docked) {
+      this._setDirection();
       this.docked = false;
     } else {
       this.docked = true;

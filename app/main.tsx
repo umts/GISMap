@@ -252,10 +252,10 @@ view.when(() => {
     popup: popup
   });
 
-  // Popup pointer
   const popupPointer = new PopupPointer({view: view, popup: popup});
-  view.ui.add(popupPointer, 'manual');
 
+  // Add popup pointer behind everything
+  view.ui.add(popupPointer, 'manual');
   // Add the feedback widget to the bottom right
   view.ui.add(new Feedback(), 'bottom-right');
   // Add the main navigation widget to the map

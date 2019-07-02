@@ -13,6 +13,11 @@ class PopupPointer extends declared(Widget) {
   @renderable()
   view: MapView;
 
+  /*
+    The custom popup to base all of our properties on. The popup pointer
+    widget is separate from the custom popup widget so that they can be
+    rendered independently.
+  */
   @property()
   @renderable(['point', 'docked', 'visible'])
   popup: CustomPopup;
