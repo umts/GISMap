@@ -15,11 +15,13 @@ import MainNavigation = require("app/widgets/MainNavigation");
 import CustomDirections = require("app/widgets/CustomDirections");
 import CustomFilter = require('app/widgets/CustomFilter');
 import CustomLayerList = require("app/widgets/CustomLayerList");
+import CustomPopup = require('app/widgets/CustomPopup');
 import CustomSearch = require("app/widgets/CustomSearch");
 import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
 import Feedback = require('app/widgets/Feedback');
+import PopupPointer = require('app/widgets/PopupPointer');
 import ShareEmail = require("app/widgets/ShareEmail");
 import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
@@ -193,6 +195,8 @@ view.when(() => {
   */
   const customWindows = [layersWindow, directionsWindow, shareWindow];
 
+  const popup = new CustomPopup({view: view});
+
   /*
     Create the main navigation widget.
     The main navigation widget is the box that contains most of the
@@ -244,13 +248,23 @@ view.when(() => {
       window: shareWindow,
       windows: customWindows
     }),
-    customWindows: customWindows
+    customWindows: customWindows,
+    popup: popup
   });
 
+  const popupPointer = new PopupPointer({view: view, popup: popup});
+
+  // Add popup pointer behind everything
+  view.ui.add(popupPointer, 'manual');
   // Add the feedback widget to the bottom right
   view.ui.add(new Feedback(), 'bottom-right');
   // Add the main navigation widget to the map
   view.ui.add(mainNavigation, "manual");
+
+  // Update the url when the feature for URL changes
+  popup.watch('featureForUrl', (featureForUrl) => {
+    resetUrlTimer(mainNavigation);
+  });
 
   // Set the initial app params from the url
   updateAppFromUrl(mainNavigation);
