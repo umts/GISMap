@@ -35,16 +35,16 @@ class CustomPopup extends declared(Widget) {
   @property()
   // Re-render any time the view changes so we can re-render our popup
   @renderable(['view.center', 'view.zoom', 'view.rotation'])
-  view: MapView;
+  private view: MapView;
 
   // Whether or not the popup is visible
   @property()
   @renderable()
-  visible: boolean;
+  private visible: boolean;
 
   // The map point this popup points to
   @property()
-  point: Point
+  private point: Point
 
   /*
     An array of features in the popup's selection. These are Graphics since
@@ -52,11 +52,11 @@ class CustomPopup extends declared(Widget) {
   */
   @property()
   @renderable()
-  features: Array<Graphic>;
+  private features: Array<Graphic>;
 
   // Keep feature request promises in chronological order
   @property()
-  featureRequestSet: RequestSet;
+  private featureRequestSet: RequestSet;
 
   /*
     The current index to a feature in features. Represents what feature
@@ -64,19 +64,20 @@ class CustomPopup extends declared(Widget) {
   */
   @property()
   @renderable()
-  page: number;
-
-  // Representation of current feature in the popup for use in the URL
-  @property()
-  featureForUrl: FeatureForUrl;
+  private page: number;
 
   // Direction the popup window should open towards
   @property()
   @renderable()
-  direction: Direction;
+  private direction: Direction;
+
+  // Representation of current feature in the popup for use in the URL
+  @property()
+  public featureForUrl: FeatureForUrl;
 
   // Pass in any properties
-  constructor(properties?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public constructor(properties?: any) {
     super();
     this.visible = false;
     this.point = new Point();
@@ -85,7 +86,7 @@ class CustomPopup extends declared(Widget) {
     this.page = 0;
   }
 
-  postInitialize() {
+  public postInitialize(): void {
     // Open popup by click event listener
     this.view.on('click', (event) => { this.openFromMouseClick(event) });
     // Update the feature for the URL when the current page or features change
@@ -93,7 +94,7 @@ class CustomPopup extends declared(Widget) {
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  render() {
+  public render(): JSX.Element {
     let featureInfo;
     if (this.page >= 0 && this.page < this.features.length) {
       const feature = this.features[this.page];
@@ -134,7 +135,7 @@ class CustomPopup extends declared(Widget) {
 
     const screenPoint = this.view.toScreen(this.point);
 
-    let containerClasses = ['custom-popup-container'];
+    const containerClasses = ['custom-popup-container'];
     if (this.direction === Direction.Up) {
       containerClasses.push('direction-up');
     }
@@ -163,7 +164,7 @@ class CustomPopup extends declared(Widget) {
   }
 
   // Reset variables, hide selection
-  reset() {
+  public reset(): void {
     this.visible = false;
     this.features = [];
     this.page = 0;
@@ -171,7 +172,7 @@ class CustomPopup extends declared(Widget) {
   }
 
   // Update the popup widget based on a mouse click event
-  openFromMouseClick(event: any) {
+  public openFromMouseClick(event: any): void {
     this._queryAndUseFeatures(
       ['Sections', 'Campus Buildings', 'Spaces'],
       {
@@ -187,7 +188,7 @@ class CustomPopup extends declared(Widget) {
   }
 
   // Open a popup to a feature from the url
-  openFromUrl(featureForUrl: FeatureForUrl) {
+  public openFromUrl(featureForUrl: FeatureForUrl): void {
     // Do not try to load the feature if not all the params exist
     if (!featureForUrl.id || !featureForUrl.layer) {
       return;
@@ -207,7 +208,7 @@ class CustomPopup extends declared(Widget) {
       [featureForUrl.layer],
       {
         where: `${idColumn} = '${featureForUrl.id}'`,
-        outSpatialReference: new SpatialReference({"wkid":4326}),
+        outSpatialReference: new SpatialReference({'wkid': 4326}),
         // Ensure the query returns all fields, in particular the OBJECTID field
         outFields: ['*']
       }, {
@@ -224,24 +225,24 @@ class CustomPopup extends declared(Widget) {
     layerNames: Array<string>,
     queryParams: any,
     pointParams: { useGeometry: boolean, point?: Point }
-  ) {
+  ): void {
     // Generate promises to query each layer
-    let layerPromises: Array<Promise<any>> = [];
+    const layerPromises: Array<Promise<any>> = [];
     layerNames.map((layerName) => { return this._getLayer(layerName) })
-    .forEach((layer) => {
-      let query = layer.createQuery();
-      // Set query params
-      Object.keys(queryParams).forEach((key) => {
-        query[key] = queryParams[key];
+      .forEach((layer) => {
+        const query = layer.createQuery();
+        // Set query params
+        Object.keys(queryParams).forEach((key) => {
+          query[key] = queryParams[key];
+        });
+        /*
+          Esri is using their own promise type `IPromise`, which is why we
+          are wrapping it in a `Promise`.
+        */
+        layerPromises.push(new Promise((resolve) => {
+          resolve(layer.queryFeatures(query));
+        }));
       });
-      /*
-        Esri is using their own promise type `IPromise`, which is why we
-        are wrapping it in a `Promise`.
-      */
-      layerPromises.push(new Promise((resolve, reject) => {
-        resolve(layer.queryFeatures(query));
-      }));
-    });
     /*
       Tell the request set to use the wrapper promise (all of the
       layer promises) then resolve that promise. By using a `RequestSet` we
@@ -249,41 +250,42 @@ class CustomPopup extends declared(Widget) {
       it resolved later than the newer query resolved.
     */
     this.featureRequestSet.setPromise(Promise.all(layerPromises))
-    .then((featuresByLayer: Array<any>) => {
-      // Reset popup variables
-      this.reset();
-      this.point = pointParams.point;
-      featuresByLayer.forEach((results) => {
-        if (results.features.length > 0) {
-          // Add features from this layer
-          this.features = this.features.concat(results.features);
-          // Set point from geometry
-          if (pointParams.useGeometry) {
-            if ((results.features[0].geometry as any).centroid) {
-              this.point = (results.features[0].geometry as Polygon).centroid;
-            } else {
-              this.point = results.features[0].geometry as Point;
+      .then((featuresByLayer: Array<any>) => {
+        // Reset popup variables
+        this.reset();
+        this.point = pointParams.point;
+        featuresByLayer.forEach((results) => {
+          if (results.features.length > 0) {
+            // Add features from this layer
+            this.features = this.features.concat(results.features);
+            // Set point from geometry
+            if (pointParams.useGeometry) {
+              if ((results.features[0].geometry as any).centroid) {
+                this.point = (results.features[0].geometry as Polygon).centroid;
+              } else {
+                this.point = results.features[0].geometry as Point;
+              }
             }
           }
+        });
+        // Set visible only if any of the layer queries returned features
+        if (this.features.length > 0) {
+          this.visible = true;
+          this._setDirection();
         }
+        return;
+      }).catch((error: string) => {
+        console.error(error);
       });
-      // Set visible only if any of the layer queries returned features
-      if (this.features.length > 0) {
-        this.visible = true;
-        this._setDirection();
-      }
-    }, (error: string) => {
-      console.error(error);
-    });
   }
 
   // Go to the next page or feature
-  private _nextPage() {
+  private _nextPage(): void {
     this._changePage(1);
   }
 
   // Go to the previous page or feature
-  private _previousPage() {
+  private _previousPage(): void {
     this._changePage(-1);
   }
 
@@ -291,7 +293,7 @@ class CustomPopup extends declared(Widget) {
     Go forward by the given amount of pages, making sure to stay within
     the bounds of our features.
   */
-  private _changePage(amount: number) {
+  private _changePage(amount: number): void {
     if (this.features.length <= 0) return;
     this.page += amount;
     this.page = this.page % this.features.length;
@@ -301,7 +303,7 @@ class CustomPopup extends declared(Widget) {
   }
 
   // Set the direction based on where the point currently is on the screen
-  private _setDirection() {
+  private _setDirection(): void {
     const screenPoint = this.view.toScreen(this.point);
     if (screenPoint.y > this.view.height / 2) {
       this.direction = Direction.Up;
@@ -314,7 +316,7 @@ class CustomPopup extends declared(Widget) {
     Clear the selection graphics layer then add a new graphic if an element
     in this popup is still selected.
   */
-  private _updateSelectionGraphic() {
+  private _updateSelectionGraphic(): void {
     const selectionLayer = this.view.map.layers.find((layer) => {
       return layer.title === 'Selection';
     }) as GraphicsLayer;
@@ -334,7 +336,7 @@ class CustomPopup extends declared(Widget) {
   }
 
   // Update the popup feature for the url
-  private _updateFeatureForUrl() {
+  private _updateFeatureForUrl(): void {
     if (this.page >= 0 && this.page < this.features.length) {
       const feature = this.features[this.page];
       let id;
@@ -452,11 +454,11 @@ class CustomPopup extends declared(Widget) {
     const permitInfo = attributeRow('Permit eligibility', permitInfoDescription);
 
     // Render space counts
-    let spaceCountElements: Array<JSX.Element> = [];
+    const spaceCountElements: Array<JSX.Element> = [];
     if (feature.attributes.SpaceCounts) {
       const spaceCounts = JSON.parse(feature.attributes.SpaceCounts);
       Object.keys(spaceCounts).forEach((category) => {
-        if (spaceRendererInfo.hasOwnProperty(category)) {
+        if (Object.prototype.hasOwnProperty.call(spaceRendererInfo, category)) {
           spaceCountElements.push(
             <li>
               {spaceRendererInfo[category].label}: {spaceCounts[category]}

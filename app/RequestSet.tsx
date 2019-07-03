@@ -21,20 +21,18 @@ class RequestSet {
     current promise was started after the last promise that called
     handleResponse was started.
   */
-  public then(handleResponse: Function, handleError: Function): any {
+  public then(handleResponse: Function): Promise<any> {
     const requestStartDate = new Date();
-    this.promise.then((response) => {
+    return this.promise.then((response) => {
       /*
         We only handle the response if this request started after the last
         handled request was started.
       */
       if (requestStartDate >= this.lastStartDate) {
         this.lastStartDate = requestStartDate;
-        return handleResponse(response);
+        handleResponse(response);
       }
       return;
-    }).catch((error) => {
-      return handleError(error);
     });
   }
 }
