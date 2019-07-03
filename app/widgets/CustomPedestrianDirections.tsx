@@ -104,7 +104,7 @@ class CustomPedestrianDirections extends declared(Widget) {
           <div class='form-row'>
             <button
               bind={this}
-              class='button-right umass-theme-button'
+              class='right umass-theme-button'
               onclick={this._submit}
               type='submit'>
               Go

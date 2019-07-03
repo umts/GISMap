@@ -118,7 +118,7 @@ class CustomWindow extends declared(Widget) {
       onclick: this._close,
       name: `Close ${this.name} window`,
       iconName: 'close',
-      classes: ['custom-window-close']
+      classes: ['right']
     });
 
     return (

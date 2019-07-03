@@ -46,7 +46,7 @@ class FilteredLayerList extends declared(Widget) {
       if (iconUrl) {
         icon = <img
           alt={altText}
-          class='image-right'
+          class='right'
           width='24px'
           height='24px'
           src={iconUrl} />;

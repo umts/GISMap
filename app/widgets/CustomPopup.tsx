@@ -75,11 +75,17 @@ class CustomPopup extends declared(Widget) {
   @property()
   public featureForUrl: FeatureForUrl;
 
+  // Whether or not the popup is docked to part of the screen
+  @property()
+  @renderable()
+  docked: boolean;
+
   // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public constructor(properties?: any) {
     super();
     this.visible = false;
+    this.docked = true;
     this.point = new Point();
     this.features = [];
     this.featureRequestSet = new RequestSet();
@@ -125,12 +131,18 @@ class CustomPopup extends declared(Widget) {
       </div>
     );
 
+    const dockButton = iconButton({
+      object: this,
+      onclick: this._dock,
+      name: `${this.docked ? 'Un-dock' : 'Dock'} feature information`,
+      iconName: 'dock-bottom'
+    });
+
     const closeButton = iconButton({
       object: this,
       onclick: this.reset,
       name: 'Close feature information',
-      iconName: 'close',
-      classes: ['custom-window-close']
+      iconName: 'close'
     });
 
     const screenPoint = this.view.toScreen(this.point);
@@ -139,15 +151,26 @@ class CustomPopup extends declared(Widget) {
     if (this.direction === Direction.Up) {
       containerClasses.push('direction-up');
     }
+    if (this.docked) {
+      containerClasses.push('docked');
+    } else {
+      containerClasses.push('undocked');
+    }
+    let styles = [];
+    // Styles when docked
+    if (this.docked) {
+      styles.push(`display: ${this.visible ? 'flex' : 'none'}`);
+    // Styles when not docked
+    } else {
+      styles.push(`display: ${this.visible ? 'block' : 'none'}`);
+      styles.push(`left: ${screenPoint.x}px`);
+      styles.push(`top: ${screenPoint.y}px`);
+    }
 
     return (
       <div
         class={containerClasses.join(' ')}
-        style={`
-          display: ${this.visible ? 'block' : 'none'};
-          left: ${screenPoint.x}px;
-          top: ${screenPoint.y}px;
-        `}>
+        style={styles.join(';')}>
         <div class='popup-pointer-container'>
           <div class='popup-pointer'></div>
         </div>
@@ -155,7 +178,12 @@ class CustomPopup extends declared(Widget) {
           aria-label='Feature information'
           class='navigation-window custom-popup shadow'
           role='dialog'>
-          {closeButton}
+          <div class='widget-list right' role='presentation'>
+            <ul>
+              <li class='widget-list-item'>{dockButton}</li>
+              <li class='widget-list-item'>{closeButton}</li>
+            </ul>
+          </div>
           {pageCounter}
           {featureInfo}
         </div>
@@ -287,6 +315,16 @@ class CustomPopup extends declared(Widget) {
   // Go to the previous page or feature
   private _previousPage(): void {
     this._changePage(-1);
+  }
+
+  // Toggle whether or not the popup is docked
+  private _dock() {
+    if (this.docked) {
+      this._setDirection();
+      this.docked = false;
+    } else {
+      this.docked = true;
+    }
   }
 
   /*
