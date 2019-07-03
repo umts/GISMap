@@ -259,7 +259,7 @@ view.when(() => {
   view.ui.add(mainNavigation, 'manual');
 
   // Update the url when the feature for URL changes
-  popup.watch('featureForUrl', (featureForUrl) => {
+  popup.watch('featureForUrl', () => {
     resetUrlTimer(mainNavigation);
   });
 

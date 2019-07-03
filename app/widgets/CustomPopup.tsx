@@ -37,15 +37,6 @@ class CustomPopup extends declared(Widget) {
   @renderable(['view.center', 'view.zoom', 'view.rotation'])
   private view: MapView;
 
-  // Whether or not the popup is visible
-  @property()
-  @renderable()
-  private visible: boolean;
-
-  // The map point this popup points to
-  @property()
-  private point: Point
-
   /*
     An array of features in the popup's selection. These are Graphics since
     that is what is returned from a feature layer query.
@@ -75,10 +66,19 @@ class CustomPopup extends declared(Widget) {
   @property()
   public featureForUrl: FeatureForUrl;
 
+  // Whether or not the popup is visible
+  @property()
+  @renderable()
+  public visible: boolean;
+
+  // The map point this popup points to
+  @property()
+  public point: Point
+
   // Whether or not the popup is docked to part of the screen
   @property()
   @renderable()
-  docked: boolean;
+  public docked: boolean;
 
   // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -156,7 +156,7 @@ class CustomPopup extends declared(Widget) {
     } else {
       containerClasses.push('undocked');
     }
-    let styles = [];
+    const styles = [];
     // Styles when docked
     if (this.docked) {
       styles.push(`display: ${this.visible ? 'flex' : 'none'}`);
@@ -318,7 +318,7 @@ class CustomPopup extends declared(Widget) {
   }
 
   // Toggle whether or not the popup is docked
-  private _dock() {
+  private _dock(): void {
     if (this.docked) {
       this._setDirection();
       this.docked = false;

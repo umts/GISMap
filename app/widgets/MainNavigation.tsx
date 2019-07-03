@@ -14,8 +14,6 @@ import CustomWindow = require('app/widgets/CustomWindow');
 import { CustomZoom } from 'app/widgets/CustomZoom';
 import WindowExpand = require('app/widgets/WindowExpand');
 
-import { resetUrlTimer } from 'app/url';
-
 @subclass('esri.widgets.MainNavigation')
 class MainNavigation extends declared(Widget) {
   // Compass widget
@@ -87,6 +85,7 @@ class MainNavigation extends declared(Widget) {
     Pass in properties like widgets as `any` type which will then be cast to
     their correct types.
   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public constructor(properties?: any) {
     super();
   }
