@@ -1,32 +1,29 @@
 import Basemap = require('esri/Basemap');
-import WebMap = require("esri/WebMap");
-import SpatialReference = require('esri/geometry/SpatialReference');
+import WebMap = require('esri/WebMap');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
-import MapView = require("esri/views/MapView");
-import Compass = require("esri/widgets/Compass");
-import Directions = require('esri/widgets/Directions');
-import Home = require("esri/widgets/Home");
-import LayerList = require("esri/widgets/LayerList");
-import Locate = require("esri/widgets/Locate");
-import Print = require("esri/widgets/Print");
+import MapView = require('esri/views/MapView');
+import Compass = require('esri/widgets/Compass');
+import Home = require('esri/widgets/Home');
+import Locate = require('esri/widgets/Locate');
+import Print = require('esri/widgets/Print');
 
-import MainNavigation = require("app/widgets/MainNavigation");
-import CustomDirections = require("app/widgets/CustomDirections");
+import MainNavigation = require('app/widgets/MainNavigation');
+import CustomDirections = require('app/widgets/CustomDirections');
 import CustomFilter = require('app/widgets/CustomFilter');
-import CustomLayerList = require("app/widgets/CustomLayerList");
-import CustomSearch = require("app/widgets/CustomSearch");
+import CustomLayerList = require('app/widgets/CustomLayerList');
+import CustomSearch = require('app/widgets/CustomSearch');
 import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
-import CustomWindow = require("app/widgets/CustomWindow");
-import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
+import CustomWindow = require('app/widgets/CustomWindow');
+import { CustomZoom, ZoomDirection } from 'app/widgets/CustomZoom';
 import Feedback = require('app/widgets/Feedback');
-import ShareEmail = require("app/widgets/ShareEmail");
-import ShareLink = require("app/widgets/ShareLink");
-import WindowExpand = require("app/widgets/WindowExpand");
+import ShareEmail = require('app/widgets/ShareEmail');
+import ShareLink = require('app/widgets/ShareLink');
+import WindowExpand = require('app/widgets/WindowExpand');
 import { setupUmassMenu } from 'app/events';
-import { homeGoToOverride, umassLongLat } from "app/latLong";
+import { homeGoToOverride, umassLongLat } from 'app/latLong';
 import { updateRenderers, updateLabeling } from 'app/rendering';
-import { resetUrlTimer, updateAppFromUrl } from "app/url";
+import { resetUrlTimer, updateAppFromUrl } from 'app/url';
 
 // Set up the UMass link menu
 setupUmassMenu();
@@ -34,12 +31,12 @@ setupUmassMenu();
 // Set the map to load data from our ArcGIS Online web map
 const map = new WebMap({
   portalItem: {
-    id: "15298012bff94b1482cf3fee6277fad8"
+    id: '15298012bff94b1482cf3fee6277fad8'
   }
 });
 
 const view = new MapView({
-  container: "viewDiv",
+  container: 'viewDiv',
   // Start the map centered on UMass
   center: umassLongLat,
   constraints: {
@@ -49,7 +46,7 @@ const view = new MapView({
   map: map,
   // Tell the view to only load the attribution widget by default
   ui: {
-    components: ["attribution"]
+    components: ['attribution']
   },
   // Don't use the default popups
   popup: null
@@ -167,16 +164,16 @@ view.when(() => {
     useTabs: false,
     widgets: [
       {
-        label: "Share link",
+        label: 'Share link',
         widget: new ShareLink()
       }, {
-        label: "Email",
+        label: 'Email',
         widget: new ShareEmail()
       }, {
-        label: "Print",
+        label: 'Print',
         widget: new Print({
           view: view,
-          printServiceUrl: "https://maps.umass.edu/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+          printServiceUrl: 'https://maps.umass.edu/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task'
         })
       }
     ]
@@ -250,15 +247,15 @@ view.when(() => {
   // Add the feedback widget to the bottom right
   view.ui.add(new Feedback(), 'bottom-right');
   // Add the main navigation widget to the map
-  view.ui.add(mainNavigation, "manual");
+  view.ui.add(mainNavigation, 'manual');
 
   // Set the initial app params from the url
   updateAppFromUrl(mainNavigation);
   // Set the url hash based on the initial view
   resetUrlTimer(mainNavigation);
   // Update the position of the view when the url hash changes
-  window.addEventListener("hashchange", () => { updateAppFromUrl(mainNavigation) });
+  window.addEventListener('hashchange', () => { updateAppFromUrl(mainNavigation) });
   // Update the url hash when the position of the view changes
-  view.watch(["center", "zoom", "rotation"], () => { resetUrlTimer(mainNavigation) });
+  view.watch(['center', 'zoom', 'rotation'], () => { resetUrlTimer(mainNavigation) });
 })
-.otherwise((error) => console.warn(error));
+  .otherwise((error) => console.warn(error));
