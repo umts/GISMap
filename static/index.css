@@ -1,10 +1,16 @@
 html,
-body,
+body {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
 #viewDiv {
   padding: 0;
   margin: 0;
-  height: calc(100vh - 61px);
   width: 100%;
+  height: calc(100% - 61px);
 }
 
 #main-navigation {
@@ -51,6 +57,7 @@ body,
 }
 
 #filter-window {
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -217,6 +224,10 @@ input:focus {
   color: white !important;
 }
 
+.esri-attribution {
+  flex-shrink: 0;
+}
+
 .esri-icon,
 .esri-icon-search,
 .esri-icon-close,
@@ -356,7 +367,7 @@ input:focus {
 
 .feedback {
   display: flex;
-  align-items: end;
+  align-items: flex-end;
 }
 .feedback-button {
   background-color: white;
