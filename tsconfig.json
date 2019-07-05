@@ -13,7 +13,8 @@
     "experimentalDecorators": true,
     "preserveConstEnums": true,
     "suppressImplicitAnyIndexErrors": true,
-    "removeComments": true
+    "removeComments": true,
+    "outDir": "./out/app"
   },
   "include": [
     "./app/*"

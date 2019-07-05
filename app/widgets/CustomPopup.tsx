@@ -13,13 +13,20 @@ import Widget = require('esri/widgets/Widget');
 import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
-import { spaceRendererInfo, expandable } from 'app/rendering';
+import RequestSet = require('app/RequestSet');
+import { circleAt } from 'app/latLong';
+import {
+  spaceRendererInfo,
+  attributeRow,
+  expandable,
+  iconButton
+} from 'app/rendering';
 import { FeatureForUrl } from 'app/url';
 
-// Represents a point on the screen in pixels
-interface ScreenPoint {
-  x: number;
-  y: number;
+// Direction the popup window should open towards
+enum Direction {
+  Up = 0,
+  Down = 1
 }
 
 @subclass('esri.widgets.CustomPopup')
@@ -47,6 +54,10 @@ class CustomPopup extends declared(Widget) {
   @renderable()
   features: Array<Graphic>;
 
+  // Keep feature request promises in chronological order
+  @property()
+  featureRequestSet: RequestSet;
+
   /*
     The current index to a feature in features. Represents what feature
     is being displayed at the moment.
@@ -59,12 +70,24 @@ class CustomPopup extends declared(Widget) {
   @property()
   featureForUrl: FeatureForUrl;
 
+  // Direction the popup window should open towards
+  @property()
+  @renderable()
+  direction: Direction;
+
+  // Whether or not the popup is docked to part of the screen
+  @property()
+  @renderable()
+  docked: boolean;
+
   // Pass in any properties
   constructor(properties?: any) {
     super();
     this.visible = false;
+    this.docked = true;
     this.point = new Point();
     this.features = [];
+    this.featureRequestSet = new RequestSet();
     this.page = 0;
   }
 
@@ -107,32 +130,59 @@ class CustomPopup extends declared(Widget) {
       </div>
     );
 
-    const closeButton = (
-      <div
-        bind={this}
-        class="esri-widget esri-widget--button custom-window-close"
-        onclick={this.reset}
-        tabindex='0'
-        title={`Close popup`}>
-        <span class={`esri-icon esri-icon-close`}></span>
-      </div>
-    );
+    const dockButton = iconButton({
+      object: this,
+      onclick: this._dock,
+      name: `${this.docked ? 'Un-dock' : 'Dock'} feature information`,
+      iconName: 'dock-bottom'
+    });
 
-    let screenPoint = this.view.toScreen(this.point);
+    const closeButton = iconButton({
+      object: this,
+      onclick: this.reset,
+      name: 'Close feature information',
+      iconName: 'close'
+    });
+
+    const screenPoint = this.view.toScreen(this.point);
+
+    let containerClasses = ['custom-popup-container'];
+    if (this.direction === Direction.Up) {
+      containerClasses.push('direction-up');
+    }
+    if (this.docked) {
+      containerClasses.push('docked');
+    } else {
+      containerClasses.push('undocked');
+    }
+    let styles = [];
+    // Styles when docked
+    if (this.docked) {
+      styles.push(`display: ${this.visible ? 'flex' : 'none'}`);
+    // Styles when not docked
+    } else {
+      styles.push(`display: ${this.visible ? 'block' : 'none'}`);
+      styles.push(`left: ${screenPoint.x}px`);
+      styles.push(`top: ${screenPoint.y}px`);
+    }
+
     return (
       <div
-        class='custom-popup-container'
-        style={`
-          display: ${this.visible ? 'block' : 'none'};
-          left: ${screenPoint.x}px;
-          top: ${screenPoint.y}px;
-        `}>
+        class={containerClasses.join(' ')}
+        style={styles.join(';')}>
         <div class='popup-pointer-container'>
           <div class='popup-pointer'></div>
         </div>
         <div
-          class='navigation-window custom-popup'>
-          {closeButton}
+          aria-label='Feature information'
+          class='navigation-window custom-popup shadow'
+          role='dialog'>
+          <div class='widget-list right' role='presentation'>
+            <ul>
+              <li class='widget-list-item'>{dockButton}</li>
+              <li class='widget-list-item'>{closeButton}</li>
+            </ul>
+          </div>
           {pageCounter}
           {featureInfo}
         </div>
@@ -150,39 +200,18 @@ class CustomPopup extends declared(Widget) {
 
   // Update the popup widget based on a mouse click event
   openFromMouseClick(event: any) {
-    // Reset popup variables
-    this.reset();
-    this.point = event.mapPoint;
-
-    const queryGeometry = this._circleAt(event.screenPoint);
-
-    [
-      this._getLayer('Sections'),
-      this._getLayer('Campus Buildings'),
-      this._getLayer('Spaces')
-    ].forEach((layer) => {
-      let query = layer.createQuery();
-      /*
-        Query features that intersect the circle around the point from
-        the click event.
-      */
-      query.geometry = queryGeometry;
-      query.spatialRelationship = 'intersects';
-      // Ensure the query returns all fields, in particular the OBJECTID field
-      query.outFields = ['*'];
-
-      // Query features
-      layer.queryFeatures(query)
-      .then((results) => {
-        if (results.features.length > 0) {
-          // Add more features to the popup
-          this.features = this.features.concat(results.features);
-          this.visible = true;
-        }
-      }).catch((error) => {
-        console.error(error);
-      });
-    });
+    this._queryAndUseFeatures(
+      ['Sections', 'Campus Buildings', 'Spaces'],
+      {
+        geometry: circleAt(event.screenPoint, this.view),
+        spatialRelationship: 'intersects',
+        // Ensure the query returns all fields, in particular the OBJECTID field
+        outFields: ['*'],
+      }, {
+        useGeometry: false,
+        point: event.mapPoint
+      }
+    );
   }
 
   // Open a popup to a feature from the url
@@ -196,33 +225,82 @@ class CustomPopup extends declared(Widget) {
       not reset to have no popup parameter.
     */
     this.featureForUrl = featureForUrl;
-    const layer = this._getLayer(featureForUrl.layer);
-    let query = layer.createQuery();
+
     let idColumn = 'OBJECTID_1';
     if (featureForUrl.layer === 'Campus Buildings') {
       idColumn = 'OBJECTID';
     }
-    query.where = `${idColumn} = '${featureForUrl.id}'`;
-    query.outSpatialReference = new SpatialReference({"wkid":4326});
-    // Ensure the query returns all fields, in particular the OBJECTID field
-    query.outFields = ['*'];
 
-    // Query feature
-    layer.queryFeatures(query)
-    .then((results) => {
-      this.reset();
-      if (results.features.length > 0) {
-        // Add more features to the popup
-        this.features = this.features.concat(results.features);
-        this.visible = true;
-        // Grab point from geometry
-        if ((results.features[0].geometry as any).centroid) {
-          this.point = (results.features[0].geometry as Polygon).centroid;
-        } else {
-          this.point = results.features[0].geometry as Point;
-        }
+    this._queryAndUseFeatures(
+      [featureForUrl.layer],
+      {
+        where: `${idColumn} = '${featureForUrl.id}'`,
+        outSpatialReference: new SpatialReference({"wkid":4326}),
+        // Ensure the query returns all fields, in particular the OBJECTID field
+        outFields: ['*']
+      }, {
+        useGeometry: true
       }
-    }).catch((error) => {
+    );
+  }
+
+  /*
+    Use the same query to query features on multiple layers and use them as
+    features for this popup.
+  */
+  private _queryAndUseFeatures(
+    layerNames: Array<string>,
+    queryParams: any,
+    pointParams: { useGeometry: boolean, point?: Point }
+  ) {
+    // Generate promises to query each layer
+    let layerPromises: Array<Promise<any>> = [];
+    layerNames.map((layerName) => { return this._getLayer(layerName) })
+    .forEach((layer) => {
+      let query = layer.createQuery();
+      // Set query params
+      Object.keys(queryParams).forEach((key) => {
+        query[key] = queryParams[key];
+      });
+      /*
+        Esri is using their own promise type `IPromise`, which is why we
+        are wrapping it in a `Promise`.
+      */
+      layerPromises.push(new Promise((resolve, reject) => {
+        resolve(layer.queryFeatures(query));
+      }));
+    });
+    /*
+      Tell the request set to use the wrapper promise (all of the
+      layer promises) then resolve that promise. By using a `RequestSet` we
+      ensure that an older query does not override a newer query just because
+      it resolved later than the newer query resolved.
+    */
+    this.featureRequestSet.setPromise(Promise.all(layerPromises))
+    .then((featuresByLayer: Array<any>) => {
+      // Reset popup variables
+      this.reset();
+      this.point = pointParams.point;
+      featuresByLayer.forEach((results) => {
+        if (results.features.length > 0) {
+          // Add features from this layer
+          this.features = this.features.concat(results.features);
+          // Set point from geometry
+          if (pointParams.useGeometry) {
+            if ((results.features[0].geometry as any).centroid) {
+              this.point = (results.features[0].geometry as Polygon).centroid;
+            } else {
+              this.point = results.features[0].geometry as Point;
+            }
+          }
+        }
+      });
+      // Set visible only if any of the layer queries returned features
+      if (this.features.length > 0) {
+        this.visible = true;
+        this._setDirection();
+      }
+    }, (error: string) => {
       console.error(error);
     });
   }
@@ -237,6 +315,16 @@ class CustomPopup extends declared(Widget) {
     this._changePage(-1);
   }
 
+  // Toggle whether or not the popup is docked
+  private _dock() {
+    if (this.docked) {
+      this._setDirection();
+      this.docked = false;
+    } else {
+      this.docked = true;
+    }
+  }
+
   /*
     Go forward by the given amount of pages, making sure to stay within
     the bounds of our features.
@@ -247,6 +335,16 @@ class CustomPopup extends declared(Widget) {
     this.page = this.page % this.features.length;
     if (this.page < 0) {
       this.page += this.features.length;
+    }
+  }
+
+  // Set the direction based on where the point currently is on the screen
+  private _setDirection() {
+    const screenPoint = this.view.toScreen(this.point);
+    if (screenPoint.y > this.view.height / 2) {
+      this.direction = Direction.Up;
+    } else {
+      this.direction = Direction.Down;
     }
   }
 
@@ -296,33 +394,6 @@ class CustomPopup extends declared(Widget) {
     }
   }
 
-  /*
-    Generate a 'circle' in latitude/longitude given a point on the screen in
-    pixels.
-  */
-  private _circleAt(screenPoint: ScreenPoint): Polygon {
-    const delta = 16;
-    const screenVertices: Array<ScreenPoint> = [
-      {x: screenPoint.x - delta, y: screenPoint.y - delta},
-      {x: screenPoint.x + delta, y: screenPoint.y - delta},
-      {x: screenPoint.x + delta, y: screenPoint.y + delta},
-      {x: screenPoint.x - delta, y: screenPoint.y + delta}
-    ]
-
-    const mapVertices = screenVertices.map((screenPoint) => {
-      const mapPoint = this.view.toMap(screenPoint);
-      /*
-        Explicitly grab lat/lon or else the polygon will try to convert back
-        to the MA spatial reference.
-      */
-      return [mapPoint.longitude, mapPoint.latitude];
-    });
-    let circle = new Polygon();
-    // Polygon ring requires the final point to be the same as the first
-    circle.addRing(mapVertices.concat([mapVertices[0]]));
-    return circle;
-  }
-
   // Return a feature layer by title
   private _getLayer(name: string): FeatureLayer {
     return (this.view.map as WebMap).layers.find((layer) => {
@@ -349,29 +420,37 @@ class CustomPopup extends declared(Widget) {
   private _renderSection(feature: Graphic): JSX.Element {
     let title;
     if (feature.attributes.SectionColor) {
-      title = <p class='widget-label'>
+      title = <h1>
         {feature.attributes.SectionName} ({feature.attributes.SectionColor})
-      </p>;
+      </h1>;
     } else {
-      title = <p class='widget-label'>
+      title = <h1>
         {feature.attributes.SectionName}
-      </p>;
+      </h1>;
     }
 
     const parkmobileLink = (
-      <a target='_blank' href='https://www.umass.edu/transportation/pay-cell-parkmobile'>
-        ParkMobile
-      </a>
+      <b class='attribute-row-label'>
+        <a
+          target='_blank'
+          href='https://www.umass.edu/transportation/pay-cell-parkmobile'>
+          ParkMobile
+        </a>
+      </b>
     );
-    let parkmobile;
+    let parkmobileDescription;
     if (feature.attributes.ParkmobileZoneID) {
-      parkmobile = <p>{parkmobileLink} Zone: {feature.attributes.ParkmobileZoneID}</p>
+      parkmobileDescription = `Zone #${feature.attributes.ParkmobileZoneID}`;
     } else {
-      parkmobile = <p>No {parkmobileLink} available.</p>
+      parkmobileDescription = 'Not available';
     }
+    const parkmobile = <div class='space-between attribute-row'>
+      {parkmobileLink}
+      <p class='attribute-row-content'>{parkmobileDescription}</p>
+    </div>;
 
-    let sectionHours;
-    let paymentInfo;
+    let payment;
+    let sectionHoursDescription;
     let parkingType = 'Permit';
     /*
       Enforcement end time for lots that are restricted during business hours
@@ -382,40 +461,35 @@ class CustomPopup extends declared(Widget) {
     if (feature.attributes.SectionColor === 'Pink') {
       parkingType = 'Payment';
       endTime = '7:00 PM';
-      paymentInfo = ' Payment is $1.50 per hour.';
+      payment = attributeRow('Payment', '$1.50 per hour');
     }
     if (feature.attributes.SectionHours === 'BusinessHours') {
-      sectionHours = <p>{parkingType} required 7:00 AM to {endTime} Monday through Friday.{paymentInfo}</p>;
+      sectionHoursDescription = `${parkingType} required 7:00 AM to ${endTime} Monday through Friday`;
     } else if (feature.attributes.SectionHours === 'Weekdays') {
-      sectionHours = <p>{parkingType} required any time Monday through Friday.{paymentInfo}</p>;
+      sectionHoursDescription = `${parkingType} required any time Monday through Friday`;
     } else if (feature.attributes.SectionHours === '24Hour') {
-      sectionHours = <p>{parkingType} required at all times.{paymentInfo}</p>;
+      sectionHoursDescription = `${parkingType} required at all times`;
     }
+    const sectionHours = attributeRow('Hours', sectionHoursDescription);
 
-    const permitLink = (
-      <a target='_blank' href='https://umass.t2hosted.com/cmn/auth_ext.aspx'>
-        Permits
-      </a>
-    );
     // Who can park here or buy a permit here
-    let permitInfo;
+    let permitInfoDescription;
     if (feature.attributes.SectionColor === 'Red') {
-      permitInfo = <p>{permitLink} for this lot sold to faculty and staff only.</p>;
+      permitInfoDescription = 'Faculty and staff only';
     } else if (feature.attributes.SectionColor === 'Blue') {
-      permitInfo = <p>{permitLink} for this lot sold to faculty,
-        staff and graduate students only.</p>;
+      permitInfoDescription = 'Faculty, staff and graduate students only';
     } else if (feature.attributes.SectionColor === 'Green') {
-      permitInfo = <p>{permitLink} for this lot sold to faculty,
-        staff, graduate students and non-residential students only.</p>;
+      permitInfoDescription = 'Faculty, staff, graduate students and non-residential students only';
     } else if (feature.attributes.SectionColor === 'Yellow') {
-      permitInfo = <p>{permitLink} for this lot sold to any
-        university community member.</p>;
+      permitInfoDescription = 'Any university community member';
     } else if (feature.attributes.SectionColor === 'Purple') {
-      permitInfo = <p>{permitLink} for this lot sold to residential students only.</p>;
+      permitInfoDescription = 'Residential students only';
     } else if (feature.attributes.SectionColor === 'Pink') {
-      permitInfo = <p>Visitor and non-permit parking.</p>;
+      permitInfoDescription = 'No permit required';
     }
+    const permitInfo = attributeRow('Permit eligibility', permitInfoDescription);
 
+    // Render space counts
     let spaceCountElements: Array<JSX.Element> = [];
     if (feature.attributes.SpaceCounts) {
       const spaceCounts = JSON.parse(feature.attributes.SpaceCounts);
@@ -448,7 +522,7 @@ class CustomPopup extends declared(Widget) {
           'Description',
           true,
           'expandable-header',
-          <div>{sectionHours}{permitInfo}{parkmobile}</div>
+          <div>{sectionHours}{payment}{permitInfo}{parkmobile}</div>
         )}
         {spaceCountExpand}
       </div>
@@ -459,14 +533,17 @@ class CustomPopup extends declared(Widget) {
   private _renderBuilding(feature: Graphic): JSX.Element {
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID}>
-        <p class='widget-label'>{feature.attributes.Building_Name}</p>
+        <h1>{feature.attributes.Building_Name}</h1>
         <p><b>{feature.attributes.Address}</b></p>
         {
           expandable(
             'Image',
             false,
             'expandable-header',
-            <img height='160px' src={feature.attributes.PhotoURL} />
+            <img
+              height='160px'
+              src={feature.attributes.PhotoURL}
+              alt={feature.attributes.Building_Name} />
           )
         }
       </div>
@@ -479,23 +556,34 @@ class CustomPopup extends declared(Widget) {
     let icon;
     const iconUrl = categoryInfo.iconUrl;
     if (iconUrl) {
-      icon = <img class='image-in-text' width='24px' height='24px' src={iconUrl} />;
+      icon = (
+        <img
+          class='image-in-text'
+          width='24px'
+          height='24px'
+          src={iconUrl}
+          alt={categoryInfo.altText} />
+      );
     }
-    let description = '';
+    let duration;
+    let payment;
+    let reserved;
     if (feature.attributes.ParkingSpaceSubCategory === 'R-15Min') {
-      description += '15 minute loading zone.';
+      duration = attributeRow('Max duration', '15 minutes');
     } else if (['Meter-Paystation', 'Meter-Coin'].indexOf(feature.attributes.ParkingSpaceSubCategory) !== -1) {
-      description += '$1.50 per hour.';
+      payment = attributeRow('Payment', '$1.50 per hour');
     }
     if (feature.attributes.ParkingSpaceClientPublic) {
-      description += `Reserved for: ${feature.attributes.ParkingSpaceClientPublic}`;
+      reserved = attributeRow(
+        'Reserved for', feature.attributes.ParkingSpaceClientPublic
+      );
     }
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
-        <p class='widget-label'>
+        <h1>
           {categoryInfo.description}{icon}
-        </p>
-        <p>{description}</p>
+        </h1>
+        {reserved}{payment}{duration}
       </div>
     );
   }

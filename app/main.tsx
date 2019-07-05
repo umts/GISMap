@@ -15,15 +15,23 @@ import MainNavigation = require("app/widgets/MainNavigation");
 import CustomDirections = require("app/widgets/CustomDirections");
 import CustomFilter = require('app/widgets/CustomFilter');
 import CustomLayerList = require("app/widgets/CustomLayerList");
+import CustomPopup = require('app/widgets/CustomPopup');
 import CustomSearch = require("app/widgets/CustomSearch");
+import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
 import CustomWindow = require("app/widgets/CustomWindow");
 import { CustomZoom, ZoomDirection } from "app/widgets/CustomZoom";
+import Feedback = require('app/widgets/Feedback');
+import PopupPointer = require('app/widgets/PopupPointer');
 import ShareEmail = require("app/widgets/ShareEmail");
 import ShareLink = require("app/widgets/ShareLink");
 import WindowExpand = require("app/widgets/WindowExpand");
+import { setupUmassMenu } from 'app/events';
 import { homeGoToOverride, umassLongLat } from "app/latLong";
 import { updateRenderers, updateLabeling } from 'app/rendering';
 import { resetUrlTimer, updateAppFromUrl } from "app/url";
+
+// Set up the UMass link menu
+setupUmassMenu();
 
 // Set the map to load data from our ArcGIS Online web map
 const map = new WebMap({
@@ -54,7 +62,15 @@ view.when(() => {
   // Set the default basemap
   map.basemap = Basemap.fromId('topo');
 
-  // Special layer for popup feature selection
+  // Layer for directions
+  map.add(new GraphicsLayer({
+    title: 'Directions'
+  }));
+  // Layer for direction selection
+  map.add(new GraphicsLayer({
+    title: 'Directions Selection'
+  }));
+  // Layer for popup feature selection
   map.add(new GraphicsLayer({
     title: 'Selection'
   }));
@@ -110,18 +126,21 @@ view.when(() => {
     })
   });
 
-  const customPedestrianDirections = new Directions({
+  const customPedestrianDirections = new CustomPedestrianDirections({
     view: view,
-    routeServiceUrl: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route'
+    startSearch: new CustomSearch({
+      view: view,
+      name: 'pedestrian-directions-origin',
+      placeholder: 'Origin',
+      required: true
+    }),
+    endSearch: new CustomSearch({
+      view: view,
+      name: 'pedestrian-directions-destination',
+      placeholder: 'Destination',
+      required: true
+    })
   });
-  /*
-    These parameters must be set outside the constructor. If we try to set
-    them on the view model within the constructor the widget will break.
-  */
-  // Pedestrian route service doesn't support hierarchy
-  customPedestrianDirections.viewModel.routeParameters.useHierarchy = false;
-  // Directions widget seems to want lat and lon
-  customPedestrianDirections.viewModel.routeParameters.outSpatialReference = new SpatialReference({wkid: 4326});
 
   /*
     Create a directions window that will be hidden until opened by a
@@ -176,6 +195,8 @@ view.when(() => {
   */
   const customWindows = [layersWindow, directionsWindow, shareWindow];
 
+  const popup = new CustomPopup({view: view});
+
   /*
     Create the main navigation widget.
     The main navigation widget is the box that contains most of the
@@ -216,7 +237,7 @@ view.when(() => {
     search: new CustomSearch({
       view: view,
       name: 'main',
-      placeholder: 'Search',
+      placeholder: 'Search the map',
       customFilter: customFilter,
       mainSearch: true
     }),
@@ -227,11 +248,23 @@ view.when(() => {
       window: shareWindow,
       windows: customWindows
     }),
-    customWindows: customWindows
+    customWindows: customWindows,
+    popup: popup
   });
 
+  const popupPointer = new PopupPointer({view: view, popup: popup});
+
+  // Add popup pointer behind everything
+  view.ui.add(popupPointer, 'manual');
+  // Add the feedback widget to the bottom right
+  view.ui.add(new Feedback(), 'bottom-right');
   // Add the main navigation widget to the map
   view.ui.add(mainNavigation, "manual");
+
+  // Update the url when the feature for URL changes
+  popup.watch('featureForUrl', (featureForUrl) => {
+    resetUrlTimer(mainNavigation);
+  });
 
   // Set the initial app params from the url
   updateAppFromUrl(mainNavigation);
