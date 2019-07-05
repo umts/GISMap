@@ -39,6 +39,7 @@ body {
 }
 
 #main-navigation-window {
+  flex-shrink: 0;
   margin-bottom: 0;
 }
 
