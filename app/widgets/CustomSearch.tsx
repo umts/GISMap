@@ -316,8 +316,8 @@ class CustomSearch extends declared(Widget) {
         this._showSuggestions();
         this.loadingSuggestions = false;
         return;
-      }).catch((error: string) => {
-        console.log(error);
+      }).catch((error) => {
+        console.error(error);
         this.loadingSuggestions = false;
       });
   }
