@@ -225,10 +225,6 @@ input:focus {
   color: white !important;
 }
 
-.esri-attribution {
-  flex-shrink: 0;
-}
-
 .esri-icon,
 .esri-icon-search,
 .esri-icon-close,
