@@ -375,7 +375,7 @@ input:focus {
   margin: 0;
 }
 
-.progress-cursor {
+.loading {
   cursor: progress;
 }
 .esri-icon.esri-icon-loading-indicator {

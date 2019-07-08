@@ -11,7 +11,7 @@ Capybara.server_port = 8080
 # assuming that the layer window button displays an animation in place
 # of its regular icon until the view is ready.
 def wait_for_map
-  find '.esri-icon-layers', wait: 30
+  find 'body.not-loading', wait: 30
 end
 
 def visit_relative(relative_path)
@@ -70,6 +70,7 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
   config.before :each do
+    Capybara.page.current_window.resize_to(1024, 768)
     # Start somewhere where there is not much data to load
     visit_relative '#?latitude=42.39200&longitude=-72.54000&zoom=20.0'
   end

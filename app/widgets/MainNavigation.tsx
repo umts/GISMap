@@ -148,12 +148,13 @@ class MainNavigation extends declared(Widget) {
     resources. Also set the loading icon for the layers expand.
   */
   private _setLoading(loading: boolean) {
-    const waitingClass = 'progress-cursor';
     if (loading) {
-      document.body.classList.add(waitingClass);
+      document.body.classList.add('loading');
+      document.body.classList.remove('not-loading');
       this.layersExpand.loadingIcon = true;
     } else {
-      document.body.classList.remove(waitingClass);
+      document.body.classList.remove('loading');
+      document.body.classList.add('not-loading');
       this.layersExpand.loadingIcon = false;
     }
   }
