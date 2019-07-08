@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe 'popup', type: :feature do
   describe 'for lot 25' do
     before :each do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe 'filter', type: :feature do
   describe 'with no description' do
     before :each do
@@ -22,6 +24,7 @@ describe 'filter', type: :feature do
       visitor_description = 'Pay at a meter or a paystation'
 
       fill_in 'main', with: 'Metered visitor parking'
+
       first('.custom-search-suggestion').click
       expect(page).to have_no_content(visitor_description)
       first('.expandable-filter').click
