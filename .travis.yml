@@ -1,5 +1,7 @@
 language: node_js
 node_js: node
+addons:
+  chrome: stable
 before_install:
   - rvm install 2.5.0
 install:
