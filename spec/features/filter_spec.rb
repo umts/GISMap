@@ -5,6 +5,7 @@ describe 'filter', type: :feature do
     before :each do
       expect(page).to have_no_selector('#filter-window')
       fill_in 'main', with: 'Red lot'
+      sleep 3
       first('.custom-search-suggestion').click
       expect(page).to have_selector('#filter-window')
     end
@@ -24,6 +25,7 @@ describe 'filter', type: :feature do
       visitor_description = 'Pay at a meter or a paystation'
 
       fill_in 'main', with: 'Metered visitor parking'
+      sleep 3
 
       first('.custom-search-suggestion').click
       expect(page).to have_no_content(visitor_description)
