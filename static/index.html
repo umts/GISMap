@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="brand.css">
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="popup.css">
+    <link rel="shortcut icon" href="favicon.ico" />
     <script>
       // Current path minus everything after the last forward slash
       var locationPath = location.pathname.replace(/\/[^\/]*$/, "");
@@ -24,11 +25,6 @@
       if (/MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
         // Browserify dependencies for promise compatibility
         document.write('<script src="bundle.js"><\/script>');
-        /*
-          `max-height: 100%` with `display: flex` doesn't work on IE, so instead
-          limit the height of custom windows to 30%.
-        */
-        document.write('<style>.custom-window { flex-basis: 30vh }<\/style>');
       }
     </script>
     <script src="https://js.arcgis.com/4.10"></script>

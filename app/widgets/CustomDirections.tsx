@@ -40,7 +40,7 @@ class CustomDirections extends declared(Widget) {
             </select>
             <button
               bind={this}
-              class='button-right umass-theme-button'
+              class='right umass-theme-button'
               onclick={this._submit}
               type='submit'>
               Go

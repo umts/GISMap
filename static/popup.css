@@ -79,10 +79,14 @@
     max-height: 40vh;
   }
   .custom-popup-container.docked {
+    flex-shrink: 0;
+    overflow: auto;
     width: 100vw;
+    height: 35%;
     margin-top: auto;
   }
   .custom-popup-container.docked .custom-popup {
+    height: 100%;
     border-right: 0;
     border-bottom: 0;
     border-left: 0;
@@ -90,6 +94,5 @@
     margin-top: 0;
     margin-left: 0;
     margin-right: 0;
-    max-height: 20vh;
   }
 }
