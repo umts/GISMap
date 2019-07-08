@@ -11,8 +11,10 @@ install:
   - bundle install
 before_script:
   - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
 script:
-  - xvfb-run --server-args="-screen 0 1024x768x24" bundle exec rspec spec/
+  - bundle exec rspec spec/
   - yarn run compress
 deploy:
   provider: releases
