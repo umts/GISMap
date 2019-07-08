@@ -12,7 +12,7 @@ install:
 before_script:
   - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
 script:
-  - rspec spec/
+  - xvfb-run --server-args="-screen 0 1024x768x24" bundle exec rspec spec/
   - yarn run compress
 deploy:
   provider: releases
