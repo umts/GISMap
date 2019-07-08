@@ -62,6 +62,11 @@ class CustomPopup extends declared(Widget) {
   @renderable()
   private direction: Direction;
 
+  // Whether or not an error has occurred while loading features
+  @property()
+  @renderable()
+  private error: boolean;
+
   // Representation of current feature in the popup for use in the URL
   @property()
   public featureForUrl: FeatureForUrl;
@@ -102,10 +107,17 @@ class CustomPopup extends declared(Widget) {
   // Render this widget by returning JSX which is converted to HTML
   public render(): JSX.Element {
     let featureInfo;
+    // Render the feature information
     if (this.page >= 0 && this.page < this.features.length) {
       const feature = this.features[this.page];
       this._updateSelectionGraphic();
       featureInfo = this._renderFeature(feature);
+    }
+    // If there is an error override feature information with an error message
+    if (this.error) {
+      featureInfo = <p>
+        Error loading feature information. Please try again later.
+      </p>;
     }
 
     const pageCounter = (
@@ -193,6 +205,7 @@ class CustomPopup extends declared(Widget) {
 
   // Reset variables, hide selection
   public reset(): void {
+    this.error = false;
     this.visible = false;
     this.features = [];
     this.page = 0;
@@ -304,6 +317,11 @@ class CustomPopup extends declared(Widget) {
         return;
       }).catch((error: string) => {
         console.error(error);
+        // Set variables to show the error popup
+        this.point = pointParams.point;
+        this.error = true;
+        this.visible = true;
+        this._setDirection();
       });
   }
 

@@ -66,7 +66,7 @@ class CustomSearch extends declared(Widget) {
   // Whether or not an error has occurred while loading suggestions
   @property()
   @renderable()
-  private suggestionError: boolean;
+  private error: boolean;
 
   // The warning to show related to the search input
   @property()
@@ -151,7 +151,7 @@ class CustomSearch extends declared(Widget) {
         );
       }
       // Push error text
-      if (this.suggestionError) {
+      if (this.error) {
         suggestionElements.push(
           <div
             class='custom-search-header suggestion-item'
@@ -324,7 +324,7 @@ class CustomSearch extends declared(Widget) {
     if (searchTerm === '') {
       return;
     }
-    this.suggestionError = false;
+    this.error = false;
     this.loadingSuggestions = true;
     // Safely find new suggestions
     this.suggestionRequestSet.setPromise(this.sources.suggest(searchTerm))
@@ -335,7 +335,7 @@ class CustomSearch extends declared(Widget) {
         return;
       }).catch((error) => {
         console.error(error);
-        this.suggestionError = true;
+        this.error = true;
       }).finally(() => {
         this.loadingSuggestions = false;
       });
@@ -362,7 +362,7 @@ class CustomSearch extends declared(Widget) {
     }).catch((error) => {
       console.error(error);
       this._clearSearch();
-      this.suggestionError = true;
+      this.error = true;
     });
   }
 
