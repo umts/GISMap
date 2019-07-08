@@ -2,8 +2,8 @@
 
 require 'capybara/rspec'
 
-Capybara.default_driver = :selenium_chrome
-Capybara.default_host = 'http:localhost'
+Capybara.default_driver = :selenium_chrome_headless
+Capybara.default_host = 'http://localhost'
 Capybara.default_max_wait_time = 15
 Capybara.server_port = 8080
 
@@ -11,7 +11,7 @@ Capybara.server_port = 8080
 # assuming that the layer window button displays an animation in place
 # of its regular icon until the view is ready.
 def wait_for_map
-  find '.esri-icon-layers'
+  find '.esri-icon-layers', wait: 30
 end
 
 def visit_relative(relative_path)
