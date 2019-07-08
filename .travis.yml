@@ -9,6 +9,8 @@ before_install:
   - rvm install 2.5.0
 install:
   - bundle install
+before_script:
+  - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
 script:
   - rspec spec/
   - yarn run compress
