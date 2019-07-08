@@ -309,20 +309,24 @@ class CustomPopup extends declared(Widget) {
             }
           }
         });
-        // Set visible only if any of the layer queries returned features
+        // Open popup only if any of the layer queries returned features
         if (this.features.length > 0) {
-          this.visible = true;
-          this._setDirection();
+          this._open();
         }
         return;
       }).catch((error: string) => {
         console.error(error);
-        // Set variables to show the error popup
+        // Show the error popup
         this.point = pointParams.point;
         this.error = true;
-        this.visible = true;
-        this._setDirection();
+        this._open();
       });
+  }
+
+  // Open the popup
+  private _open(): void {
+    this.visible = true;
+    this._setDirection();
   }
 
   // Go to the next page or feature
