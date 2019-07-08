@@ -1,6 +1,12 @@
 language: node_js
 node_js: node
-script: yarn run compress
+before_install:
+  - rvm install 2.5.0
+install:
+  - bundle install
+script:
+  - rspec spec/
+  - yarn run compress
 deploy:
   provider: releases
   api_key:
