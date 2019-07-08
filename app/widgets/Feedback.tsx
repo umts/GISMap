@@ -12,7 +12,7 @@ class Feedback extends declared(Widget) {
   // Pass in any properties
   constructor(properties?: any) {
     super();
-    this.open = false;
+    this.open = true;
   }
 
   // Render this widget by returning JSX which is converted to HTML
@@ -28,7 +28,8 @@ class Feedback extends declared(Widget) {
         </a>
       );
       feedbackWindow = <div class='feedback-window navigation-window shadow'>
-        Give us feedback on {githubLink} or by {emailLink}.
+        This map is in beta. Please give us feedback on {githubLink} or
+        by {emailLink}.
       </div>;
     }
     return (
