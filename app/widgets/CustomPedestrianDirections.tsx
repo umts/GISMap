@@ -21,38 +21,39 @@ import CustomSearch = require('app/widgets/CustomSearch');
 class CustomPedestrianDirections extends declared(Widget) {
   @property()
   @renderable()
-  view: MapView;
+  private view: MapView;
 
   // Custom search widget for the starting location
   @property()
   @renderable()
-  startSearch: CustomSearch;
+  private startSearch: CustomSearch;
 
   // Custom search widget for the ending location
   @property()
   @renderable()
-  endSearch: CustomSearch;
+  private endSearch: CustomSearch;
 
   // The route task to use to query for routes
   @property()
-  routeTask: RouteTask;
+  private routeTask: RouteTask;
 
   // The result of querying using a route task. Contains directions.
   @property()
   @renderable()
-  routeResult: RouteResult;
+  private routeResult: RouteResult;
 
   // Which direction is currently selected both in the menu and on the map
   @property()
-  directionIndex: number;
+  private directionIndex: number;
 
   // Generic error message to display
   @property()
   @renderable()
-  error: string;
+  private error: string;
 
   // Pass in any properties
-  constructor(properties?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public constructor(properties?: any) {
     super();
     this.routeTask = new RouteTask({
       url: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route'
@@ -60,7 +61,7 @@ class CustomPedestrianDirections extends declared(Widget) {
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  render() {
+  public render(): JSX.Element {
     let directionsElement;
     if (this.routeResult && this.routeResult.directions) {
       const directions: Array<JSX.Element> = [];
@@ -151,7 +152,7 @@ class CustomPedestrianDirections extends declared(Widget) {
   }
 
   // Called when a direction is clicked. Move the view to the direction.
-  private _clickDirection(event: any) {
+  private _clickDirection(event: any): void {
     this.directionIndex = parseInt(event.target.dataset.index);
 
     const graphic = this.routeResult.directions.features[this.directionIndex].clone();
@@ -166,7 +167,7 @@ class CustomPedestrianDirections extends declared(Widget) {
   }
 
   // See the whole route when the directions list header is clicked
-  private _clickHeader() {
+  private _clickHeader(): void {
     if (this.routeResult) {
       this.view.goTo(this.routeResult.route);
     }
@@ -215,6 +216,7 @@ class CustomPedestrianDirections extends declared(Widget) {
         this._reset();
         this.routeResult = response.routeResults[0];
         this._applyCurrentRoute();
+        return;
       }).catch((error) => {
         this.error = 'Failed to find route. Please try again later.';
         console.error(error);
@@ -233,7 +235,7 @@ class CustomPedestrianDirections extends declared(Widget) {
   }
 
   // Draw the current route result and move the view to it
-  private _applyCurrentRoute() {
+  private _applyCurrentRoute(): void {
     const graphic = this.routeResult.route;
     graphic.symbol = new SimpleLineSymbol({
       color: '#99ccff',
@@ -244,7 +246,7 @@ class CustomPedestrianDirections extends declared(Widget) {
   }
 
   // Reset the widget back to its initial state
-  private _reset() {
+  private _reset(): void {
     this._getLayer('Directions Selection').removeAll();
     this._getLayer('Directions').removeAll();
     this.routeResult = null;

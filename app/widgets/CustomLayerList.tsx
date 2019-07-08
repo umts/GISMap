@@ -1,30 +1,29 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
-import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
 import FilteredLayerList = require('app/widgets/FilteredLayerList');
 import { spaceRendererInfo, sectionRendererInfo } from 'app/rendering';
-import { SearchFilter, SearchFilterClause } from 'app/search';
+import { SearchFilter } from 'app/search';
 
 @subclass('esri.widgets.CustomLayerList')
 class CustomLayerList extends declared(Widget) {
   // The map view
   @property()
   @renderable()
-  view: MapView
+  private view: MapView
 
   // List of sections filtered by color into layers
   @property()
   @renderable()
-  sectionLayers: FilteredLayerList;
+  private sectionLayers: FilteredLayerList;
 
   // List of spaces filtered by category into layers
   @property()
   @renderable()
-  spaceLayers: FilteredLayerList;
+  private spaceLayers: FilteredLayerList;
 
   /*
     The filter representing how the map layers should be filtered by the
@@ -32,10 +31,11 @@ class CustomLayerList extends declared(Widget) {
   */
   @property()
   @renderable()
-  filter: SearchFilter
+  public filter: SearchFilter
 
   // Pass in any properties
-  constructor(properties?: { view: MapView }) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public constructor(properties?: { view: MapView }) {
     super();
     this.sectionLayers = new FilteredLayerList({
       filterColumnName: 'SectionColor',
@@ -48,15 +48,15 @@ class CustomLayerList extends declared(Widget) {
   }
 
   // Run after this widget is ready 
-  postInitialize() {
+  public postInitialize(): void {
     /*
       Check the filtered layer lists for clause changes, and update our filter
       when that happens.
     */
-    this.sectionLayers.watch('clause', (_clause) => {
+    this.sectionLayers.watch('clause', () => {
       this._updateFilter();
     });
-    this.spaceLayers.watch('clause', (_clause) => {
+    this.spaceLayers.watch('clause', () => {
       this._updateFilter();
     });
     // Set our initial filter
@@ -64,7 +64,7 @@ class CustomLayerList extends declared(Widget) {
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  render() {
+  public render(): JSX.Element {
     return (
       <div>
         {this._renderCustomCheckbox('lots', 'Lots')}
@@ -106,7 +106,7 @@ class CustomLayerList extends declared(Widget) {
   }
 
   // Given an event on a checkbox perform the corresponding event
-  private _checkboxEvent(event: any) {
+  private _checkboxEvent(event: any): void {
     if (event.target.id === 'lots-checkbox') {
       /*
         Toggle all checkboxes in a filtered layer list based on which checkbox
@@ -121,7 +121,7 @@ class CustomLayerList extends declared(Widget) {
     Update our filter based on the state of our own checkboxes and the
     filtered layer list checkboxes.
   */
-  private _updateFilter() {
+  private _updateFilter(): void {
     let lotLabelsVisible = true;
     let buildingLabelsVisible = true;
 

@@ -11,7 +11,7 @@ class PopupPointer extends declared(Widget) {
   // The main map view
   @property()
   @renderable()
-  view: MapView;
+  private view: MapView;
 
   /*
     The custom popup to base all of our properties on. The popup pointer
@@ -20,13 +20,15 @@ class PopupPointer extends declared(Widget) {
   */
   @property()
   @renderable(['point', 'docked', 'visible'])
-  popup: CustomPopup;
+  private popup: CustomPopup;
 
-  constructor(properties?: any) {
+  // Pass in any properties
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public constructor(properties?: any) {
     super();
   }
 
-  render() {
+  public render(): JSX.Element {
     const screenPoint = this.view.toScreen(this.popup.point);
     const visible = this.popup.visible && this.popup.docked;
     const styles = [

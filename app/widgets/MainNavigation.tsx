@@ -1,106 +1,104 @@
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
-import { renderable, tsx } from "esri/widgets/support/widget";
+import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { renderable, tsx } from 'esri/widgets/support/widget';
 
-import MapView = require("esri/views/MapView");
-import Compass = require("esri/widgets/Compass");
-import Home = require("esri/widgets/Home");
-import LayerList = require("esri/widgets/LayerList");
-import Locate = require("esri/widgets/Locate");
-import Widget = require("esri/widgets/Widget");
+import MapView = require('esri/views/MapView');
+import Compass = require('esri/widgets/Compass');
+import Home = require('esri/widgets/Home');
+import Locate = require('esri/widgets/Locate');
+import Widget = require('esri/widgets/Widget');
 
 import CustomFilter = require('app/widgets/CustomFilter');
 import CustomSearch = require('app/widgets/CustomSearch');
 import CustomPopup = require('app/widgets/CustomPopup');
-import CustomWindow = require("app/widgets/CustomWindow");
-import { CustomZoom } from "app/widgets/CustomZoom";
-import WindowExpand = require("app/widgets/WindowExpand");
+import CustomWindow = require('app/widgets/CustomWindow');
+import { CustomZoom } from 'app/widgets/CustomZoom';
+import WindowExpand = require('app/widgets/WindowExpand');
 
-import { resetUrlTimer } from 'app/url';
-
-@subclass("esri.widgets.MainNavigation")
+@subclass('esri.widgets.MainNavigation')
 class MainNavigation extends declared(Widget) {
-  // The main map view
-  @property()
-  @renderable()
-  view: MapView;
-
   // Compass widget
   @property()
   @renderable()
-  compass: Compass;
-
-  // Single popup for the whole app
-  @property()
-  @renderable()
-  popup: CustomPopup;
+  private compass: Compass;
 
   // Directions expand widget
   @property()
   @renderable()
-  directionsExpand: WindowExpand;
+  private directionsExpand: WindowExpand;
 
   // Home widget
   @property()
   @renderable()
-  home: Home;
+  private home: Home;
 
   // Layers expand widget
   @property()
   @renderable()
-  layersExpand: WindowExpand;
+  private layersExpand: WindowExpand;
 
   // Locate widget
   @property()
   @renderable()
-  locate: Locate;
+  private locate: Locate;
 
   // Zoom in widget
   @property()
   @renderable()
-  zoomIn: CustomZoom;
+  private zoomIn: CustomZoom;
 
   // Zoom out widget
   @property()
   @renderable()
-  zoomOut: CustomZoom;
+  private zoomOut: CustomZoom;
 
   // Search widget
   @property()
   @renderable()
-  search: CustomSearch;
+  private search: CustomSearch;
 
   // Filter widget
   @property()
   @renderable()
-  customFilter: CustomFilter;
+  private customFilter: CustomFilter;
 
   // Share expand widget
   @property()
   @renderable()
-  shareExpand: WindowExpand;
+  private shareExpand: WindowExpand;
 
   // Custom windows that start hidden and can be opened by window expands
   @property()
   @renderable()
-  customWindows: Array<CustomWindow>;
+  private customWindows: Array<CustomWindow>;
+
+  // The main map view
+  @property()
+  @renderable()
+  public view: MapView;
+
+  // Single popup for the whole app
+  @property()
+  @renderable()
+  public popup: CustomPopup;
 
   /*
     Pass in properties like widgets as `any` type which will then be cast to
     their correct types.
   */
-  constructor(properties?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public constructor(properties?: any) {
     super();
   }
 
   // Run after this widget is ready
-  postInitialize() {
+  public postInitialize(): void {
     this._setLoading(true);
     this.view.watch('updating', (updating) => { this._setLoading(updating) });
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  render() {
-    let renderedWindows: Array<JSX.Element> = [];
+  public render(): JSX.Element {
+    const renderedWindows: Array<JSX.Element> = [];
     /*
       Render each custom window into an array.
       Only one window will be visible at a time.
@@ -147,7 +145,7 @@ class MainNavigation extends declared(Widget) {
     Set body to waiting class to display that the view is loading external
     resources. Also set the loading icon for the layers expand.
   */
-  private _setLoading(loading: boolean) {
+  private _setLoading(loading: boolean): void {
     const waitingClass = 'progress-cursor';
     if (loading) {
       document.body.classList.add(waitingClass);

@@ -7,16 +7,17 @@ import Widget = require('esri/widgets/Widget');
 class Feedback extends declared(Widget) {
   @property()
   @renderable()
-  open: boolean;
+  private open: boolean;
 
   // Pass in any properties
-  constructor(properties?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public constructor(properties?: any) {
     super();
     this.open = true;
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  render() {
+  public render(): JSX.Element {
     let feedbackWindow;
     if (this.open) {
       const githubLink = <a target='_blank' href='https://github.com/umts/GISMap'>
@@ -48,7 +49,7 @@ class Feedback extends declared(Widget) {
   }
 
   // Toggle the feedback window
-  private _toggle() {
+  private _toggle(): void {
     if (this.open) {
       this.open = false;
     } else {

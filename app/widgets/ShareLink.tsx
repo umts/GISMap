@@ -1,20 +1,16 @@
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
-import { renderable, tsx } from "esri/widgets/support/widget";
+import { subclass, declared } from 'esri/core/accessorSupport/decorators';
+import { tsx } from 'esri/widgets/support/widget';
 
-import Widget = require("esri/widgets/Widget");
+import Widget = require('esri/widgets/Widget');
 
-@subclass("esri.widgets.ShareLink")
+@subclass('esri.widgets.ShareLink')
 class ShareLink extends declared(Widget) {
-  /*
-    Pass in properties as `any` type which will then be cast to
-    their correct types.
-  */
-  constructor(properties?: any) {
+  public constructor() {
     super();
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  render() {
+  public render(): JSX.Element {
     return (
       <div class="esri-widget">
         <p>Copy the link below to share this view</p>

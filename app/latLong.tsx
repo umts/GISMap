@@ -1,6 +1,6 @@
-import Point = require("esri/geometry/Point");
+import Point = require('esri/geometry/Point');
 import Polygon = require('esri/geometry/Polygon');
-import MapView = require("esri/views/MapView");
+import MapView = require('esri/views/MapView');
 
 const umassLongLat = [-72.5293, 42.3903];
 
@@ -11,7 +11,7 @@ interface ScreenPoint {
 }
 
 // Always go to center of UMass
-function homeGoToOverride(view: MapView, goToParams: any) {
+function homeGoToOverride(view: MapView, goToParams: any): IPromise<any> {
   return view.goTo({
     target: new Point({
       latitude: umassLongLat[1],
@@ -43,7 +43,7 @@ function circleAt(screenPoint: ScreenPoint, view: MapView): Polygon {
     */
     return [mapPoint.longitude, mapPoint.latitude];
   });
-  let circle = new Polygon();
+  const circle = new Polygon();
   // Polygon ring requires the final point to be the same as the first
   circle.addRing(mapVertices.concat([mapVertices[0]]));
   return circle;

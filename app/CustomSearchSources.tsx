@@ -22,28 +22,27 @@ interface LocationSearchSourceProperties {
 class CustomSearchSources extends declared(Accessor) {
   // The source properties for location searches
   @property()
-  locationSearchSourceProperties: Array<LocationSearchSourceProperties>;
+  private locationSearchSourceProperties: Array<LocationSearchSourceProperties>;
 
   // Only use location sources
   @property()
-  locationsOnly: boolean;
+  private locationsOnly: boolean;
 
   // Pass in any properties
-  constructor(properties?: any) {
+  public constructor(properties?: any) {
     super();
     this.locationSearchSourceProperties = [{
-        url: 'https://maps.umass.edu/arcgis/rest/services/Locators/CampusAddressLocatorWithSuggestions/GeocodeServer',
-        title: 'On-campus locations'
-      }, {
-        url: 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer',
-        title: 'Off-campus locations'
-      }
-    ];
+      url: 'https://maps.umass.edu/arcgis/rest/services/Locators/CampusAddressLocatorWithSuggestions/GeocodeServer',
+      title: 'On-campus locations'
+    }, {
+      url: 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer',
+      title: 'Off-campus locations'
+    }];
     this.locationsOnly = properties.locationsOnly || false;
   }
 
   // Return header text to describe a list of suggestions of the same type
-  suggestionHeader(suggestion: Suggestion): string {
+  public suggestionHeader(suggestion: Suggestion): string {
     if (suggestion.sourceType === SearchSourceType.Location) {
       return this.locationSearchSourceProperties[suggestion.locationSourceIndex].title;
     } else if (suggestion.sourceType === SearchSourceType.Filter) {
@@ -54,7 +53,7 @@ class CustomSearchSources extends declared(Accessor) {
   }
 
   // Return a promise with search suggestions based on the search term
-  suggest(searchTerm: string): Promise<Array<Suggestion>> {
+  public suggest(searchTerm: string): Promise<Array<Suggestion>> {
     return new Promise((resolve, reject) => {
       let suggestPromises;
       // Prepare suggestion promises from multiple sources
@@ -72,8 +71,10 @@ class CustomSearchSources extends declared(Accessor) {
         allSuggestions.forEach((suggestions) => {
           finalSuggestions = finalSuggestions.concat(suggestions);
         });
-        resolve(finalSuggestions);
-      })
+        return resolve(finalSuggestions);
+      }).catch((error) => {
+        return reject(error);
+      });
     });
   }
 
@@ -83,7 +84,7 @@ class CustomSearchSources extends declared(Accessor) {
     contain the full information about the location, so there has to be a
     call to the API to ask for the full info.
   */
-  search(suggestion: Suggestion): Promise<SearchResult> {
+  public search(suggestion: Suggestion): Promise<SearchResult> {
     return new Promise((resolve, reject) => {
       let searchResult: SearchResult;
       if (suggestion.sourceType === SearchSourceType.Location) {
@@ -112,10 +113,12 @@ class CustomSearchSources extends declared(Accessor) {
               latitude: topResult.location.y,
               longitude: topResult.location.x
             };
-            resolve(searchResult);
+            return resolve(searchResult);
           } else {
-            reject(`Could not find search result for suggestion with magicKey ${suggestion.key}`);
+            return reject(`Could not find search result for suggestion with magicKey ${suggestion.key}`);
           }
+        }).catch((error) => {
+          return reject(error);
         });
       } else if (suggestion.sourceType === SearchSourceType.Filter) {
         searchResult = {
@@ -123,9 +126,9 @@ class CustomSearchSources extends declared(Accessor) {
           sourceType: suggestion.sourceType,
           filter: suggestion.filter
         }
-        resolve(searchResult);
+        return resolve(searchResult);
       } else {
-        reject(`Cannot search for suggestion from source type ${suggestion.sourceType}`);
+        return reject(`Cannot search for suggestion from source type ${suggestion.sourceType}`);
       }
     });
   }
@@ -133,7 +136,7 @@ class CustomSearchSources extends declared(Accessor) {
   // Return a promise for location suggestions
   private _suggestLocations(searchTerm: string): Promise<Array<Suggestion>> {
     return new Promise((resolve, reject) => {
-      let suggestPromises = [];
+      const suggestPromises = [];
       // Create a promise for every locator service
       for (let i = 0; i < this.locationSearchSourceProperties.length; i += 1) {
         suggestPromises.push(esriRequest(
@@ -151,7 +154,7 @@ class CustomSearchSources extends declared(Accessor) {
       }
       // Resolve all promises with their results as an array in order
       Promise.all(suggestPromises).then((responses) => {
-        let suggestions: Array<Suggestion> = [];
+        const suggestions: Array<Suggestion> = [];
         // Iterate over each set of suggestions obtained from a suggest promise
         responses.forEach((response, sourceIndex) => {
           // Iterate over each suggestion from that source
@@ -165,18 +168,18 @@ class CustomSearchSources extends declared(Accessor) {
             suggestions.push(suggestion);
           });
         });
-        resolve(suggestions);
+        return resolve(suggestions);
       }).catch((error) => {
-        reject(error);
+        return reject(error);
       });
     });
   }
 
   // Return a promise for filter suggestions
   private _suggestFilters(searchTerm: string): Promise<Array<Suggestion>> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const maxResults = 5;
-      let suggestions: Array<Suggestion> = [];
+      const suggestions: Array<Suggestion> = [];
       filterInfo.forEach((filter: SearchFilter) => {
         if (suggestions.length >= maxResults) {
           return;
@@ -201,7 +204,7 @@ class CustomSearchSources extends declared(Accessor) {
           });
         }
       });
-      resolve(suggestions);
+      return resolve(suggestions);
     });
   }
 }

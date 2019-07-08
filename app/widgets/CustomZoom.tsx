@@ -1,8 +1,8 @@
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
-import { renderable, tsx } from "esri/widgets/support/widget";
+import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { renderable, tsx } from 'esri/widgets/support/widget';
 
-import MapView = require("esri/views/MapView");
-import Widget = require("esri/widgets/Widget");
+import MapView = require('esri/views/MapView');
+import Widget = require('esri/widgets/Widget');
 
 import { iconButton } from 'app/rendering';
 
@@ -15,7 +15,7 @@ enum ZoomDirection {
   Out = 1
 }
 
-@subclass("esri.widgets.CustomZoom")
+@subclass('esri.widgets.CustomZoom')
 class CustomZoom extends declared(Widget) {
   /*
     The map view.
@@ -23,28 +23,29 @@ class CustomZoom extends declared(Widget) {
   */
   @property()
   @renderable()
-  view: MapView;
+  private view: MapView;
 
   // Which direction the zoom widget should zoom, either in or out
   @property()
-  direction: ZoomDirection;
+  private direction: ZoomDirection;
 
   /*
     Pass in properties like widgets as `any` type which will then be cast to
     their correct types.
   */
-  constructor(properties?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public constructor(properties?: any) {
     super();
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  render() {
+  public render(): JSX.Element {
     /*
       Set which icon we should use depending on if this widget zooms in or out.
       Use a plus sign for zooming in and a minus sign for zooming out.
     */
     const iconName = (this.direction === ZoomDirection.In) ? 'plus' : 'minus';
-    const name = `Zoom ${(this.direction === ZoomDirection.In) ? "in" : "out"}`;
+    const name = `Zoom ${(this.direction === ZoomDirection.In) ? 'in' : 'out'}`;
     return iconButton({
       object: this,
       onclick: this._zoom,
@@ -54,9 +55,9 @@ class CustomZoom extends declared(Widget) {
   }
 
   // Called when widget is clicked
-  private _zoom() {
+  private _zoom(): void {
     // Determine what the new zoom should be
-    let newZoom = this.view.zoom +
+    const newZoom = this.view.zoom +
       (this.direction === ZoomDirection.In ? 1 : -1);
     // Tell the view we want to animate when we to go to this new zoom level
     this.view.goTo({ zoom: newZoom });
