@@ -63,6 +63,11 @@ class CustomSearch extends declared(Widget) {
   @renderable()
   private loadingSuggestions: boolean;
 
+  // Whether or not an error has occurred while loading suggestions
+  @property()
+  @renderable()
+  private suggestionError: boolean;
+
   // The warning to show related to the search input
   @property()
   @renderable()
@@ -142,6 +147,17 @@ class CustomSearch extends declared(Widget) {
             key='loading-header'
             role='heading'>
             Loading...
+          </div>
+        );
+      }
+      // Push error text
+      if (this.suggestionError) {
+        suggestionElements.push(
+          <div
+            class='custom-search-header suggestion-item'
+            key='error-header'
+            role='heading'>
+            Error loading suggestions. Please try again later.
           </div>
         );
       }
@@ -308,6 +324,7 @@ class CustomSearch extends declared(Widget) {
     if (searchTerm === '') {
       return;
     }
+    this.suggestionError = false;
     this.loadingSuggestions = true;
     // Safely find new suggestions
     this.suggestionRequestSet.setPromise(this.sources.suggest(searchTerm))
@@ -318,6 +335,8 @@ class CustomSearch extends declared(Widget) {
         return;
       }).catch((error) => {
         console.error(error);
+        this.suggestionError = true;
+      }).finally(() => {
         this.loadingSuggestions = false;
       });
   }
@@ -342,6 +361,8 @@ class CustomSearch extends declared(Widget) {
       return;
     }).catch((error) => {
       console.error(error);
+      this._clearSearch();
+      this.suggestionError = true;
     });
   }
 
