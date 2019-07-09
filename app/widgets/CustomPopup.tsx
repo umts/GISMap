@@ -521,7 +521,7 @@ class CustomPopup extends declared(Widget) {
         }
       });
       // Add total space counts
-      if (spaceCounts.hasOwnProperty('Total')) {
+      if (Object.prototype.hasOwnProperty.call(spaceCounts, 'Total')) {
         spaceCountElements.push(
           <li><b>Total Spaces: {spaceCounts['Total']}</b></li>
         );

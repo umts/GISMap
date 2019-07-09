@@ -274,7 +274,6 @@ function attributeRow(label: string, content: string, link?: string): JSX.Elemen
   if (link) {
     labelContent = <a target='_blank' href={link}>{label}</a>;
   }
-  const labelElement = <b class='attribute-row-label'>{labelContent}</b>;
   return (
     <div class='space-between attribute-row'>
       <b class='attribute-row-label'>{labelContent}</b>
