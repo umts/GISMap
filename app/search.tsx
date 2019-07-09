@@ -1,7 +1,8 @@
 // The different types of sources used for searching
 enum SearchSourceType {
   Location = 0,
-  Filter = 1
+  Filter = 1,
+  Space = 2
 }
 
 interface SearchFilterClause {
@@ -55,6 +56,11 @@ function searchTermMatchesTags(searchTerm: string, tags: Array<string>): boolean
   })
 }
 
+// Escape single quotes, mainly for querying
+function escapeQueryParam(text: string): string {
+  return text.replace(/'/g, '\'\'');
+}
+
 /*
   Export helper types related to search so they can be
   imported and used in other files.
@@ -65,5 +71,6 @@ export {
   SearchFilterClause,
   Suggestion,
   SearchResult,
-  searchTermMatchesTags
+  searchTermMatchesTags,
+  escapeQueryParam
 };
