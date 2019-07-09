@@ -1,29 +1,30 @@
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
-import { renderable, tsx } from "esri/widgets/support/widget";
+import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { renderable, tsx } from 'esri/widgets/support/widget';
 
-import Widget = require("esri/widgets/Widget");
+import Widget = require('esri/widgets/Widget');
 
-import CustomSearch = require("app/widgets/CustomSearch");
+import CustomSearch = require('app/widgets/CustomSearch');
 
-@subclass("esri.widgets.CustomDirections")
+@subclass('esri.widgets.CustomDirections')
 class CustomDirections extends declared(Widget) {
   // Custom search widget for the starting location
   @property()
   @renderable()
-  startSearch: CustomSearch;
+  private startSearch: CustomSearch;
 
   // Custom search widget for the ending location
   @property()
   @renderable()
-  endSearch: CustomSearch;
+  private endSearch: CustomSearch;
 
   // Pass in any properties
-  constructor(properties?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public constructor(properties?: any) {
     super();
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  render() {
+  public render(): JSX.Element {
     return (
       <div class='esri-widget'>
         <form>
@@ -40,7 +41,7 @@ class CustomDirections extends declared(Widget) {
             </select>
             <button
               bind={this}
-              class='button-right umass-theme-button'
+              class='right umass-theme-button'
               onclick={this._submit}
               type='submit'>
               Go
@@ -71,7 +72,7 @@ class CustomDirections extends declared(Widget) {
       window.open(url, '_blank');
     } else {
       // Show warnings for blank custom searches
-      const warning = "Please enter a search term and select a suggestion.";
+      const warning = 'Please enter a search term and select a suggestion.';
       if (!origin) {
         this.startSearch.showWarning(warning);
       }

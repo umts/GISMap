@@ -1,5 +1,5 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
-import { renderable, tsx } from 'esri/widgets/support/widget';
+import { tsx } from 'esri/widgets/support/widget';
 
 import Widget = require('esri/widgets/Widget');
 
@@ -7,22 +7,22 @@ import Widget = require('esri/widgets/Widget');
 class FilteredLayerList extends declared(Widget) {
   // The column name to filter by
   @property()
-  filterColumnName: string;
+  private filterColumnName: string;
 
   // Potential column values to filter by
   @property()
-  filterOptions: Array<string>;
+  private filterOptions: Array<string>;
 
   // More detailed information about each column value
   @property()
-  filterOptionInfos: any;
+  private filterOptionInfos: any;
 
   // The where clause that other widgets will look at for filtering
   @property()
-  clause: string;
+  public clause: string;
 
   // Pass in any properties
-  constructor(properties?: any) {
+  public constructor(properties?: any) {
     super();
     // Set filter options based on the keys to the more detailed info
     this.filterOptions = Object.keys(properties.filterOptionInfos);
@@ -36,8 +36,8 @@ class FilteredLayerList extends declared(Widget) {
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  render() {
-    let checkboxes: Array<JSX.Element> = [];
+  public render(): JSX.Element {
+    const checkboxes: Array<JSX.Element> = [];
     this.filterOptions.forEach((filterOption) => {
       let icon;
       const iconUrl = this.filterOptionInfos[filterOption].iconUrl;
@@ -46,7 +46,7 @@ class FilteredLayerList extends declared(Widget) {
       if (iconUrl) {
         icon = <img
           alt={altText}
-          class='image-right'
+          class='right'
           width='24px'
           height='24px'
           src={iconUrl} />;
@@ -82,8 +82,8 @@ class FilteredLayerList extends declared(Widget) {
     Go through each checkbox to update what filters are selected, then apply
     those filters.
   */
-  setSelectedFilters() {
-    let selectedFilterOptions: Array<string> = [];
+  public setSelectedFilters(): void {
+    const selectedFilterOptions: Array<string> = [];
     this.filterOptions.forEach((filterOption) => {
       const checkbox = this._checkbox(filterOption);
       if (checkbox.checked) {
@@ -94,7 +94,7 @@ class FilteredLayerList extends declared(Widget) {
   }
 
   // Set all of the checkboxes to true or false
-  toggleFilters(checked: boolean) {
+  public toggleFilters(checked: boolean): void {
     this.filterOptions.forEach((filterOption) => {
       this._checkbox(filterOption).checked = checked;
     });
@@ -112,7 +112,7 @@ class FilteredLayerList extends declared(Widget) {
   }
 
   // Toggle a checkbox
-  private _toggleCheckbox(checkbox: HTMLInputElement) {
+  private _toggleCheckbox(checkbox: HTMLInputElement): void {
     if (checkbox.checked) {
       checkbox.checked = false;
     } else {
@@ -123,13 +123,13 @@ class FilteredLayerList extends declared(Widget) {
   // Return the where clause to filter a layer by
   private _clause(columnName: string, options: Array<string>): string {
     if (options.length > 0) {
-      let clause = `${columnName} in (${options.map((option: any) => {return "'" + option + "'"} ).join()})`;
+      let clause = `${columnName} in (${options.map((option: any) => {return '\'' + option + '\''} ).join()})`;
       if (options.indexOf('Null') > -1) {
         clause += `or ${columnName} is null`;
       }
       return clause;
     } else {
-      return `0 = 1`;
+      return '0 = 1';
     }
   }
 }

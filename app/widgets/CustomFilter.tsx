@@ -14,25 +14,26 @@ class CustomFilter extends declared(Widget) {
   // The map view
   @property()
   @renderable()
-  view: MapView;
+  private view: MapView;
 
   // Layer list to apply layer filters when this filter is closed
   @property()
   @renderable()
-  layerList: CustomLayerList;
+  private layerList: CustomLayerList;
 
   // Filter to search by
   @property()
   @renderable()
-  filter: SearchFilter;
+  public filter: SearchFilter;
 
   // Pass in any properties
-  constructor(properties?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public constructor(properties?: any) {
     super();
   }
 
   // Run after this widget is ready
-  postInitialize() {
+  public postInitialize(): void {
     // Watch our own filter property so we can update the view with the filter
     this.watch('filter', (newFilter: SearchFilter) => {
       newFilter.clauses.forEach((clause) => {
@@ -59,7 +60,7 @@ class CustomFilter extends declared(Widget) {
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  render() {
+  public render(): JSX.Element {
     let filterWindow;
     if (this.filter && this.filter.visible) {
       const title = `Filtering by: ${this.filter.name}`;
@@ -92,7 +93,7 @@ class CustomFilter extends declared(Widget) {
   }
 
   // Manually set this filter to the layer list filter
-  resetFilter() {
+  public resetFilter(): void {
     this.filter = this.layerList.filter;
   }
 }

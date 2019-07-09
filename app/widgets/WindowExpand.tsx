@@ -1,48 +1,49 @@
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
-import { renderable, tsx } from "esri/widgets/support/widget";
+import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { renderable, tsx } from 'esri/widgets/support/widget';
 
-import Widget = require("esri/widgets/Widget");
+import Widget = require('esri/widgets/Widget');
 
 import CustomWindow = require('app/widgets/CustomWindow');
 
 import { iconButton } from 'app/rendering';
 
-@subclass("esri.widgets.WindowExpand")
+@subclass('esri.widgets.WindowExpand')
 class WindowExpand extends declared(Widget) {
   // A descriptive name for the window this expand will open
   @property()
   @renderable()
-  name: string;
+  private name: string;
 
   // The name of the esri icon class to use
   @property()
   @renderable()
-  iconName: string;
+  private iconName: string;
 
   // The window that this expand will actually open
   @property()
   @renderable()
-  window: CustomWindow;
+  private window: CustomWindow;
 
   // Any other windows that need to be closed before this window can be opened
   @property()
-  windows: Array<CustomWindow>;
+  private windows: Array<CustomWindow>;
 
   // Whether or not to display the loading icon instead of our icon
   @property()
   @renderable()
-  loadingIcon: boolean;
+  public loadingIcon: boolean;
 
   // Pass in any properties
-  constructor(properties?: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public constructor(properties?: any) {
     super();
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  render() {
+  public render(): JSX.Element {
     const iconName = this.loadingIcon ? 'loading-indicator' : this.iconName;
     const name = `Open ${this.name} window`;
-    let classes = [];
+    const classes = [];
     if (this.window.visible) {
       classes.push('active');
     }
@@ -59,7 +60,7 @@ class WindowExpand extends declared(Widget) {
     Referencing the custom window by the same name, open the window if it
     is closed, and close the window if it is open.
   */
-  private _expand() {
+  private _expand(): void {
     if (this.window.visible) {
       // Close this window
       this.window.visible = false;

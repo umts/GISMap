@@ -1,7 +1,7 @@
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
-import { renderable, tsx } from "esri/widgets/support/widget";
+import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { renderable, tsx } from 'esri/widgets/support/widget';
 
-import Widget = require("esri/widgets/Widget");
+import Widget = require('esri/widgets/Widget');
 
 import { clickOnSpaceOrEnter } from 'app/events';
 import { iconButton } from 'app/rendering';
@@ -17,7 +17,7 @@ interface WidgetWithLabel {
   widget: RenderableWidget;
 }
 
-@subclass("esri.widgets.CustomWindow")
+@subclass('esri.widgets.CustomWindow')
 class CustomWindow extends declared(Widget) {
   /*
     Used for id and title, and is referenced by a window expand with the
@@ -25,41 +25,41 @@ class CustomWindow extends declared(Widget) {
   */
   @property()
   @renderable()
-  name: string;
+  private name: string;
 
   // The name of the esri icon class to use
   @property()
   @renderable()
-  iconName: string;
+  private iconName: string;
 
   // Whether or not to use tabs to separate the widgets
   @property()
-  useTabs: boolean;
+  private useTabs: boolean;
 
   // Which widget is currently being shown when using tabs
   @property()
-  widgetIndex: number;
+  private widgetIndex: number;
 
   // The widgets to render in this window
   @property()
   @renderable()
-  widgets: Array<WidgetWithLabel>;
+  private widgets: Array<WidgetWithLabel>;
 
   // Whether or not this window is visible
   @property()
   @renderable()
-  visible: boolean;
+  public visible: boolean;
 
   // Pass in a name and an explicit array of widgets
-  constructor(properties?: any) {
+  public constructor(properties?: any) {
     super();
     this.widgetIndex = 0;
     this.visible = properties.visible || false;
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  render() {
-    let renderedElements: Array<JSX.Element> = [];
+  public render(): JSX.Element {
+    const renderedElements: Array<JSX.Element> = [];
     // Render tabs for each widget if we are using tabs
     if (this.useTabs) {
       for (let i = 0; i < this.widgets.length; i += 1) {
@@ -101,10 +101,10 @@ class CustomWindow extends declared(Widget) {
           );
         }
         widgetLabel = (
-          <p role='heading' class="widget-label">
+          <h1>
             {widgetIcon}
             {widgetWithLabel.label}
-          </p>
+          </h1>
         );
       }
       if (!this.useTabs || i === this.widgetIndex) {
@@ -118,7 +118,7 @@ class CustomWindow extends declared(Widget) {
       onclick: this._close,
       name: `Close ${this.name} window`,
       iconName: 'close',
-      classes: ['custom-window-close']
+      classes: ['right']
     });
 
     return (
@@ -134,12 +134,12 @@ class CustomWindow extends declared(Widget) {
   }
 
   // Close this window
-  private _close() {
+  private _close(): void {
     this.visible = false;
   }
 
   // Set the active tab to be the index of the tab that was clicked
-  private _clickTab(event: any) {
+  private _clickTab(event: any): void {
     this.widgetIndex = parseInt(event.target.dataset.index);
   }
 }

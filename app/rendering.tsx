@@ -120,29 +120,29 @@ const sectionRendererInfo = {
   }
 }
 
-let _filterInfo: Array<SearchFilter> = [
+const _filterInfo: Array<SearchFilter> = [
   {
     name: 'Metered/Visitor Parking',
     description: 'Locations to park without a permit. Pay at a meter or a paystation.',
     tags: ['meter', 'paystation', 'pink', 'visitor'],
     visible: true,
     clauses: [
-      {layerName: 'Sections', clause: "SectionColor = 'Pink'"},
-      {layerName: 'Spaces', clause: "ParkingSpaceSubCategory in ('Meter-Coin','Meter-Paystation')"}
+      {layerName: 'Sections', clause: 'SectionColor = \'Pink\''},
+      {layerName: 'Spaces', clause: 'ParkingSpaceSubCategory in (\'Meter-Coin\',\'Meter-Paystation\')'}
     ]
   }, {
     name: 'ParkMobile Lots',
     description: 'Payment in these lots available using the ParkMobile app.',
     tags: ['parkmobile'],
     visible: true,
-    clauses: [{layerName: 'Sections', clause: "ParkmobileZoneID is not null"}]
+    clauses: [{layerName: 'Sections', clause: 'ParkmobileZoneID is not null'}]
   }, {
     name: 'Free Parking (On Weekends)',
     description: 'These lots are only free to park in on the weekend, with the exception of special events.',
     tags: ['free', 'weekend'],
     visible: true,
     clauses: [
-      {layerName: 'Sections', clause: "SectionHours in ('Weekdays','BusinessHours')"},
+      {layerName: 'Sections', clause: 'SectionHours in (\'Weekdays\',\'BusinessHours\')'},
       {layerName: 'Spaces', clause: '0 = 1'}
     ]
   }, {
@@ -151,7 +151,7 @@ let _filterInfo: Array<SearchFilter> = [
     tags: ['free', 'business'],
     visible: true,
     clauses: [
-      {layerName: 'Sections', clause: "SectionHours in ('BusinessHours')"},
+      {layerName: 'Sections', clause: 'SectionHours in (\'BusinessHours\')'},
       {layerName: 'Spaces', clause: '0 = 1'}
     ]
   }
@@ -169,7 +169,7 @@ let _filterInfo: Array<SearchFilter> = [
 const filterInfo = _filterInfo;
 
 // Update the renderers of layers to add our own icons
-function updateRenderers(map: WebMap) {
+function updateRenderers(map: WebMap): void {
   const spaceRenderer = new UniqueValueRenderer({
     field: 'ParkingSpaceSubCategory',
     defaultSymbol: new SimpleMarkerSymbol({
@@ -204,7 +204,7 @@ function updateRenderers(map: WebMap) {
 }
 
 // Update the labeling of layers
-function updateLabeling(map: WebMap) {
+function updateLabeling(map: WebMap): void {
   const sectionLabel = new LabelClass({
     labelExpressionInfo: {
       expression: '$feature.SectionCode'
@@ -248,6 +248,25 @@ function updateLabeling(map: WebMap) {
   buildingsLayer.labelingInfo = [buildingLabel];
 }
 
+/*
+  Given a distance in feet return the imperial distance as a human
+  readable string.
+*/
+function imperialDistance(distanceInFeet: number): string {
+  if (distanceInFeet === 0) {
+    return null;
+  }
+  let distance = distanceInFeet;
+  let unit = 'feet';
+  let places = 0;
+  if (distance > 1000) {
+    distance = distance / 5280;
+    unit = 'miles';
+    places = 1;
+  }
+  return `${distance.toFixed(places)} ${unit}`
+}
+
 // Return two elements formatted as row with a label and content
 function attributeRow(label: string, content: string, link?: string): JSX.Element {
   // Label content is either text or a link
@@ -262,6 +281,26 @@ function attributeRow(label: string, content: string, link?: string): JSX.Elemen
       <p class='attribute-row-content'>{content}</p>
     </div>
   );
+}
+
+// Expand an expandable element by a unique title
+function _expandExpandable(event: any): void {
+  const header = document.getElementById(`expandable-header-${event.target.dataset.title}`);
+  const icon = document.getElementById(`expandable-icon-${event.target.dataset.title}`);
+  const content = document.getElementById(`expandable-content-${event.target.dataset.title}`);
+  if (content.style.display === 'block') {
+    header.setAttribute('aria-expanded', 'false');
+    header.setAttribute('aria-label', `Expand ${header.dataset.title}`);
+    content.style.display = 'none';
+    icon.classList.remove('esri-icon-down-arrow');
+    icon.classList.add('esri-icon-right-triangle-arrow');
+  } else {
+    header.setAttribute('aria-expanded', 'true');
+    header.setAttribute('aria-label', `Collapse ${header.dataset.title}`);
+    content.style.display = 'block';
+    icon.classList.remove('esri-icon-right-triangle-arrow');
+    icon.classList.add('esri-icon-down-arrow');
+  }
 }
 
 // Return an expandable element containing mainElement. Title should be unique.
@@ -300,26 +339,6 @@ function expandable(
   );
 }
 
-// Expand an expandable element by a unique title
-function _expandExpandable(event: any) {
-  const header = document.getElementById(`expandable-header-${event.target.dataset.title}`);
-  const icon = document.getElementById(`expandable-icon-${event.target.dataset.title}`);
-  const content = document.getElementById(`expandable-content-${event.target.dataset.title}`);
-  if (content.style.display === 'block') {
-    header.setAttribute('aria-expanded', 'false');
-    header.setAttribute('aria-label', `Expand ${header.dataset.title}`);
-    content.style.display = 'none';
-    icon.classList.remove('esri-icon-down-arrow');
-    icon.classList.add('esri-icon-right-triangle-arrow');
-  } else {
-    header.setAttribute('aria-expanded', 'true');
-    header.setAttribute('aria-label', `Collapse ${header.dataset.title}`);
-    content.style.display = 'block';
-    icon.classList.remove('esri-icon-right-triangle-arrow');
-    icon.classList.add('esri-icon-down-arrow');
-  }
-}
-
 /*
   Return an icon button that handles keyboard events for clicks and calls a
   function when clicked.
@@ -331,7 +350,7 @@ function iconButton(properties: {
   iconName: string,
   classes?: Array<string>
 }): JSX.Element {
-  let allClasses = ['esri-widget', 'esri-widget--button'];
+  const allClasses = ['esri-widget', 'esri-widget--button'];
   if (properties.classes) {
     properties.classes.forEach((someClass) => { allClasses.push(someClass) });
   }
@@ -362,6 +381,7 @@ export {
   spaceRendererInfo,
   sectionRendererInfo,
   filterInfo,
+  imperialDistance,
   attributeRow,
   expandable,
   iconButton

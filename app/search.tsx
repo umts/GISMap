@@ -44,7 +44,7 @@ interface SearchResult {
 
 // Return true if the search term matches one of the tags
 function searchTermMatchesTags(searchTerm: string, tags: Array<string>): boolean {
-  let searchWords = searchTerm.split(' ');
+  const searchWords = searchTerm.split(' ');
   return searchWords.some((word) => {
     return tags.some((tag) => {
       if (tag.toUpperCase().indexOf(word.toUpperCase()) !== -1) {

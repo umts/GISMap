@@ -2,13 +2,13 @@ import { subclass, declared, property } from 'esri/core/accessorSupport/decorato
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import MapView = require('esri/views/MapView');
-import Search = require('esri/widgets/Search');
 import Widget = require('esri/widgets/Widget');
 
 import { clickOnSpaceOrEnter } from 'app/events';
 import { iconButton } from 'app/rendering';
 import { SearchSourceType, SearchResult, Suggestion } from 'app/search';
 import CustomSearchSources = require('app/CustomSearchSources');
+import RequestSet = require('app/RequestSet');
 import CustomFilter = require('app/widgets/CustomFilter');
 
 @subclass('esri.widgets.CustomSearch')
@@ -16,62 +16,72 @@ class CustomSearch extends declared(Widget) {
   // The main map view
   @property()
   @renderable()
-  view: MapView;
+  private view: MapView;
 
   // Name used to uniquely identify elements
   @property()
   @renderable()
-  name: string;
+  private name: string;
 
   // Placeholder text for the input
   @property()
   @renderable()
-  placeholder: string;
+  private placeholder: string;
 
   // Array of suggesions based on text already typed in
   @property()
   @renderable()
-  suggestions: Array<Suggestion>;
+  private suggestions: Array<Suggestion>;
+
+  // Keep suggestion request promises in chronological order
+  @property()
+  private suggestionRequestSet: RequestSet;
 
   // Whether or not to show the suggestions
   @property()
   @renderable()
-  showSuggestions: boolean;
-
-  // The single search result returned from the geolocator services
-  @property()
-  searchResult: SearchResult;
+  private showSuggestions: boolean;
 
   // Many sources operating under one set of functions
   @property()
-  sources: CustomSearchSources;
+  private sources: CustomSearchSources;
 
   // The main filter widget we can apply filters to
   @property()
-  customFilter: CustomFilter;
+  private customFilter: CustomFilter;
 
   // Whether or not this input should be required in a form
   @property()
-  required: boolean;
+  private required: boolean;
 
   // Whether or not this is the main search bar for the entire app
   @property()
-  mainSearch: boolean;
+  private mainSearch: boolean;
 
   // Whether or not we are waiting for the suggestions to load
   @property()
   @renderable()
-  loadingSuggestions: boolean;
+  private loadingSuggestions: boolean;
+
+  // Whether or not an error has occurred while loading suggestions
+  @property()
+  @renderable()
+  private error: boolean;
 
   // The warning to show related to the search input
   @property()
   @renderable()
-  warning: string;
+  private warning: string;
+
+  // The single search result returned from the geolocator services
+  @property()
+  public searchResult: SearchResult;
 
   // Pass in any properties
-  constructor(properties?: any) {
+  public constructor(properties?: any) {
     super();
     this.suggestions = [];
+    this.suggestionRequestSet = new RequestSet();
     this.showSuggestions = false;
     this.required = properties.required || false;
     this.mainSearch = properties.mainSearch || false;
@@ -92,13 +102,13 @@ class CustomSearch extends declared(Widget) {
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  render() {
+  public render(): JSX.Element {
     /*
       Render suggestions assuming suggestions from the same source are
       consecutive.
     */
-    let suggestionElements: Array<JSX.Element> = [];
-    let visitedSources: Array<string> = [];
+    const suggestionElements: Array<JSX.Element> = [];
+    const visitedSources: Array<string> = [];
     if (this.showSuggestions) {
       this.suggestions.forEach((suggestion, i) => {
         const header = this.sources.suggestionHeader(suggestion);
@@ -137,6 +147,17 @@ class CustomSearch extends declared(Widget) {
             key='loading-header'
             role='heading'>
             Loading...
+          </div>
+        );
+      }
+      // Push error text
+      if (this.error) {
+        suggestionElements.push(
+          <div
+            class='custom-search-header suggestion-item'
+            key='error-header'
+            role='heading'>
+            Error loading suggestions. Please try again later.
           </div>
         );
       }
@@ -246,7 +267,7 @@ class CustomSearch extends declared(Widget) {
   }
 
   // Return the latitude and longitude as a comma seaparated string
-  latitudeLongitude(): string {
+  public latitudeLongitude(): string {
     if (!(this.searchResult)) {
       return null;
     }
@@ -254,12 +275,12 @@ class CustomSearch extends declared(Widget) {
   }
 
   // Show the validation warning with the given message
-  showWarning(message: string) {
+  public showWarning(message: string): void {
     this.warning = message;
   }
 
   // Hide the validation warning
-  private _hideWarning() {
+  private _hideWarning(): void {
     this.warning = '';
   }
 
@@ -292,7 +313,7 @@ class CustomSearch extends declared(Widget) {
   }
 
   // Update suggestions based on the most recent input
-  private _setSuggestions() {
+  private _setSuggestions(): void {
     const searchTerm = this._inputElement().value.trim();
     // Reset the last search result if the user is typing something different
     if (this.searchResult && searchTerm !== this.searchResult.name) {
@@ -303,16 +324,21 @@ class CustomSearch extends declared(Widget) {
     if (searchTerm === '') {
       return;
     }
+    this.error = false;
     this.loadingSuggestions = true;
-    // Find new suggestions
-    this.sources.suggest(searchTerm).then((suggestions) => {
-      this.suggestions = suggestions;
-      this._showSuggestions();
-      this.loadingSuggestions = false;
-    }).catch((error) => {
-      console.log(error);
-      this.loadingSuggestions = false;
-    });
+    // Safely find new suggestions
+    this.suggestionRequestSet.setPromise(this.sources.suggest(searchTerm))
+      .then((suggestions: Array<Suggestion>) => {
+        this.suggestions = suggestions;
+        this._showSuggestions();
+        this.loadingSuggestions = false;
+        return;
+      }).catch((error) => {
+        console.error(error);
+        this.error = true;
+      }).finally(() => {
+        this.loadingSuggestions = false;
+      });
   }
 
   /*
@@ -320,7 +346,7 @@ class CustomSearch extends declared(Widget) {
     For location suggestions it will search the geolocator services for the
     exact suggestion.
   */
-  private _setSearch(suggestion: Suggestion) {
+  private _setSearch(suggestion: Suggestion): void {
     this.sources.search(suggestion).then((searchResult) => {
       this.searchResult = searchResult;
       // Set the search input text to the name of the search result
@@ -332,13 +358,16 @@ class CustomSearch extends declared(Widget) {
       if (this.mainSearch) {
         this._submitSearch();
       }
+      return;
     }).catch((error) => {
       console.error(error);
+      this._clearSearch();
+      this.error = true;
     });
   }
 
   // Completely clear the search bar
-  private _clearSearch() {
+  private _clearSearch(): void {
     this.searchResult = null;
     this.suggestions = [];
     this._inputElement().value = '';
@@ -346,7 +375,7 @@ class CustomSearch extends declared(Widget) {
   }
 
   // Called when a suggestion is clicked
-  private _suggestionClicked(event: any) {
+  private _suggestionClicked(event: any): void {
     this._setSearch(this.suggestions[event.target.dataset.index]);
   }
 
