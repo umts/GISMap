@@ -1,3 +1,5 @@
+import Graphic = require('esri/Graphic');
+
 // The different types of sources used for searching
 enum SearchSourceType {
   Location = 0,
@@ -22,6 +24,8 @@ interface SearchFilter {
   description?: string;
   // Strings to identify this filter in a search
   tags?: Array<string>;
+  // Target to goto on initial filter
+  target?: Array<Graphic>;
   subFilters?: Array<SearchFilter>;
 }
 

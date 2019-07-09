@@ -129,16 +129,11 @@ class CustomSearchSources extends declared(Accessor) {
       }).catch((error) => {
         throw error;
       }));
-    // Search for filter
-    } else if (suggestion.sourceType === SearchSourceType.Filter) {
-      searchResult = {
-        name: suggestion.text,
-        sourceType: suggestion.sourceType,
-        filter: suggestion.filter
-      }
-      return Promise.resolve(searchResult);
-    // Search for spaces
-    } else if (suggestion.sourceType === SearchSourceType.Space) {
+    // Search for filter or spaces
+    } else if (
+      suggestion.sourceType === SearchSourceType.Filter ||
+      suggestion.sourceType === SearchSourceType.Space
+    ) {
       searchResult = {
         name: suggestion.text,
         sourceType: suggestion.sourceType,
@@ -252,19 +247,21 @@ class CustomSearchSources extends declared(Accessor) {
           foundClients.push(client);
           // Create a filter for spaces with this client
           const filter = {
-            name: `${client} spaces`,
+            name: `${client} Spaces`,
             visible: true,
             clauses: [
-              {layerName: 'Sections', clause: '0 = 1'},
               {
                 layerName: 'Spaces',
                 clause: `ParkingSpaceClientPublic = '${escapeQueryParam(client)}'`
               }
-            ]
+            ],
+            target: response.features.filter((graphic: Graphic) => {
+              return graphic.attributes.ParkingSpaceClientPublic === client;
+            })
           };
           // Add the suggestion
           suggestions.push({
-            text: `${client} spaces`,
+            text: `${client} Spaces`,
             key: feature.attributes.OBJECTID_1,
             sourceType: SearchSourceType.Space,
             filter: filter

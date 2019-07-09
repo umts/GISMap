@@ -6,7 +6,7 @@ import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
 import { SearchFilter } from 'app/search';
-import { expandable, iconButton } from 'app/rendering';
+import { goToSmart, expandable, iconButton } from 'app/rendering';
 import CustomLayerList = require('app/widgets/CustomLayerList');
 
 @subclass('esri.widgets.CustomFilter')
@@ -36,6 +36,7 @@ class CustomFilter extends declared(Widget) {
   public postInitialize(): void {
     // Watch our own filter property so we can update the view with the filter
     this.watch('filter', (newFilter: SearchFilter) => {
+      // Apply clauses for each layer
       newFilter.clauses.forEach((clause) => {
         // Set layer filters
         const layer = (this.view.map.layers.find((layer) => {
@@ -47,6 +48,10 @@ class CustomFilter extends declared(Widget) {
           layer.labelsVisible = clause.labelsVisible;
         }
       });
+      // Go to filter target
+      if (newFilter.target) {
+        goToSmart(this.view, newFilter.target);
+      }
     });
     /*
       Watch the layer list filter, which should override any other filter if
