@@ -8,7 +8,8 @@
     "target": "es5",
     "lib": [
       "es2015",
-      "dom"
+      "dom",
+      "es2018.promise"
     ],
     "experimentalDecorators": true,
     "preserveConstEnums": true,

@@ -15,6 +15,7 @@ import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
 import RequestSet = require('app/RequestSet');
 import { circleAt } from 'app/latLong';
+import { toNativePromise } from 'app/promises';
 import {
   spaceRendererInfo,
   attributeRow,
@@ -62,6 +63,11 @@ class CustomPopup extends declared(Widget) {
   @renderable()
   private direction: Direction;
 
+  // Whether or not an error has occurred while loading features
+  @property()
+  @renderable()
+  private error: boolean;
+
   // Representation of current feature in the popup for use in the URL
   @property()
   public featureForUrl: FeatureForUrl;
@@ -102,10 +108,17 @@ class CustomPopup extends declared(Widget) {
   // Render this widget by returning JSX which is converted to HTML
   public render(): JSX.Element {
     let featureInfo;
+    // Render the feature information
     if (this.page >= 0 && this.page < this.features.length) {
       const feature = this.features[this.page];
       this._updateSelectionGraphic();
       featureInfo = this._renderFeature(feature);
+    }
+    // If there is an error override feature information with an error message
+    if (this.error) {
+      featureInfo = <p>
+        Error loading feature information. Please try again later.
+      </p>;
     }
 
     const pageCounter = (
@@ -193,6 +206,7 @@ class CustomPopup extends declared(Widget) {
 
   // Reset variables, hide selection
   public reset(): void {
+    this.error = false;
     this.visible = false;
     this.features = [];
     this.page = 0;
@@ -263,13 +277,8 @@ class CustomPopup extends declared(Widget) {
         Object.keys(queryParams).forEach((key) => {
           query[key] = queryParams[key];
         });
-        /*
-          Esri is using their own promise type `IPromise`, which is why we
-          are wrapping it in a `Promise`.
-        */
-        layerPromises.push(new Promise((resolve) => {
-          resolve(layer.queryFeatures(query));
-        }));
+        // Add query promise array of layer promises
+        layerPromises.push(toNativePromise(layer.queryFeatures(query)));
       });
     /*
       Tell the request set to use the wrapper promise (all of the
@@ -296,15 +305,24 @@ class CustomPopup extends declared(Widget) {
             }
           }
         });
-        // Set visible only if any of the layer queries returned features
+        // Open popup only if any of the layer queries returned features
         if (this.features.length > 0) {
-          this.visible = true;
-          this._setDirection();
+          this._open();
         }
         return;
       }).catch((error: string) => {
         console.error(error);
+        // Show the error popup
+        this.point = pointParams.point;
+        this.error = true;
+        this._open();
       });
+  }
+
+  // Open the popup
+  private _open(): void {
+    this.visible = true;
+    this._setDirection();
   }
 
   // Go to the next page or feature
