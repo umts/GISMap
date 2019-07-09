@@ -246,8 +246,12 @@ class CustomSearchSources extends declared(Accessor) {
           }
           foundClients.push(client);
           // Create a filter for spaces with this client
+          const target = response.features.filter((graphic: Graphic) => {
+            return graphic.attributes.ParkingSpaceClientPublic === client;
+          });
           const filter = {
             name: `${client} Spaces`,
+            description: `${target.length} space${target.length === 1 ? '' : 's'} reserved for ${client}.`,
             visible: true,
             clauses: [
               {
@@ -255,9 +259,7 @@ class CustomSearchSources extends declared(Accessor) {
                 clause: `ParkingSpaceClientPublic = '${escapeQueryParam(client)}'`
               }
             ],
-            target: response.features.filter((graphic: Graphic) => {
-              return graphic.attributes.ParkingSpaceClientPublic === client;
-            })
+            target: target
           };
           // Add the suggestion
           suggestions.push({
