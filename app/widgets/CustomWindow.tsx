@@ -133,6 +133,7 @@ class CustomWindow extends declared(Widget) {
     );
   }
 
+  // Return a widget by label
   public findWidget(label: string): RenderableWidget {
     return this.widgets.find((widgetWithLabel) => {
       return widgetWithLabel.label === label;

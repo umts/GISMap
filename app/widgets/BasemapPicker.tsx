@@ -16,6 +16,7 @@ class BasemapPicker extends declared(Widget) {
   @property()
   private view: MapView;
 
+  // Basemaps to choose from
   @property()
   private basemapOptions: Array<BasemapOption>;
 
@@ -36,6 +37,7 @@ class BasemapPicker extends declared(Widget) {
     ];
   }
 
+  // Run after initialization
   public postInitialize(): void {
     this._setBasemap(this.basemapId);
     this.watch('basemapId', (newBasemapId) => {
