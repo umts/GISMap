@@ -1,5 +1,6 @@
 import Point = require('esri/geometry/Point');
 
+import BasemapPicker = require('app/widgets/BasemapPicker');
 import MainNavigation = require('app/widgets/MainNavigation');
 
 // The bare minimum required to identify a feature for the URL
@@ -53,7 +54,9 @@ function updateUrlFromApp(mainNavigation: MainNavigation): void {
     latitude: mainNavigation.view.center.latitude.toFixed(5),
     longitude: mainNavigation.view.center.longitude.toFixed(5),
     zoom: mainNavigation.view.zoom.toFixed(1),
-    rotation: Math.round(mainNavigation.view.rotation)
+    rotation: Math.round(mainNavigation.view.rotation),
+    basemap: (mainNavigation
+      .findWindow('layers').findWidget('Basemap') as BasemapPicker).basemapId
   }
   if (mainNavigation.popup.featureForUrl) {
     // Encode with base 64 and remove the padding at the end
@@ -103,6 +106,10 @@ function updateAppFromUrl(mainNavigation: MainNavigation): void {
     if (paramExistsAsNumber(urlParams, 'rotation')) {
       rotation = Number(urlParams.rotation);
     }
+    let basemap = 'topo';
+    if (urlParams.basemap) {
+      basemap = urlParams.basemap;
+    }
     let featureForUrl;
     if (urlParams.popup) {
       try {
@@ -119,6 +126,10 @@ function updateAppFromUrl(mainNavigation: MainNavigation): void {
       if (featureForUrl) {
         mainNavigation.popup.openFromUrl(featureForUrl);
       }
+      // Set the basemap id
+      const basemapPicker = mainNavigation
+        .findWindow('layers').findWidget('Basemap') as BasemapPicker
+      basemapPicker.basemapId = basemap;
     // View is not ready, so set the initial parameters
     } else {
       mainNavigation.view.center = center;

@@ -1,4 +1,3 @@
-import Basemap = require('esri/Basemap');
 import WebMap = require('esri/WebMap');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
@@ -9,6 +8,7 @@ import Locate = require('esri/widgets/Locate');
 import Print = require('esri/widgets/Print');
 
 import MainNavigation = require('app/widgets/MainNavigation');
+import BasemapPicker = require('app/widgets/BasemapPicker');
 import CustomDirections = require('app/widgets/CustomDirections');
 import CustomFilter = require('app/widgets/CustomFilter');
 import CustomLayerList = require('app/widgets/CustomLayerList');
@@ -56,9 +56,6 @@ const view = new MapView({
 
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
-  // Set the default basemap
-  map.basemap = Basemap.fromId('topo');
-
   // Layer for directions
   map.add(new GraphicsLayer({
     title: 'Directions'
@@ -95,6 +92,10 @@ view.when(() => {
     view: view
   });
 
+  const basemapPicker = new BasemapPicker({
+    view: view
+  })
+
   // Create a layer window that will be hidden until opened by a window expand
   const layersWindow = new CustomWindow({
     name: 'layers',
@@ -103,7 +104,11 @@ view.when(() => {
     widgets: [
       {
         label: 'Layers',
-        widget: layerList,
+        widget: layerList
+      },
+      {
+        label: 'Basemap',
+        widget: basemapPicker
       }
     ]
   });
@@ -262,6 +267,8 @@ view.when(() => {
   popup.watch('featureForUrl', () => {
     resetUrlTimer(mainNavigation);
   });
+  // Update the url when the basemap changes
+  basemapPicker.watch('basemapId', () => { resetUrlTimer(mainNavigation) });
 
   // Set the initial app params from the url
   updateAppFromUrl(mainNavigation);
