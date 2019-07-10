@@ -137,6 +137,12 @@ class MainNavigation extends declared(Widget) {
     );
   }
 
+  public findWindow(windowName: string): CustomWindow {
+    return this.customWindows.find((window) => {
+      return window.name === windowName;
+    });
+  }
+
   private _element(): HTMLElement {
     return document.getElementById('main-navigation');
   }

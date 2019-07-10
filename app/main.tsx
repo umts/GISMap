@@ -267,6 +267,8 @@ view.when(() => {
   popup.watch('featureForUrl', () => {
     resetUrlTimer(mainNavigation);
   });
+  // Update the url when the basemap changes
+  basemapPicker.watch('basemapId', () => { resetUrlTimer(mainNavigation) });
 
   // Set the initial app params from the url
   updateAppFromUrl(mainNavigation);

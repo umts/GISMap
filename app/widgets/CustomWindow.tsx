@@ -19,14 +19,6 @@ interface WidgetWithLabel {
 
 @subclass('esri.widgets.CustomWindow')
 class CustomWindow extends declared(Widget) {
-  /*
-    Used for id and title, and is referenced by a window expand with the
-    same name.
-  */
-  @property()
-  @renderable()
-  private name: string;
-
   // The name of the esri icon class to use
   @property()
   @renderable()
@@ -44,6 +36,14 @@ class CustomWindow extends declared(Widget) {
   @property()
   @renderable()
   private widgets: Array<WidgetWithLabel>;
+
+  /*
+    Used for id and title, and is referenced by a window expand with the
+    same name.
+  */
+  @property()
+  @renderable()
+  public name: string;
 
   // Whether or not this window is visible
   @property()
@@ -131,6 +131,12 @@ class CustomWindow extends declared(Widget) {
         {renderedElements}
       </div>
     );
+  }
+
+  public findWidget(label: string): RenderableWidget {
+    return this.widgets.find((widgetWithLabel) => {
+      return widgetWithLabel.label === label;
+    }).widget;
   }
 
   // Close this window

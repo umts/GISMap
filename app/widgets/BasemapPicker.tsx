@@ -14,7 +14,7 @@ class BasemapPicker extends declared(Widget) {
   // The id of the current basemap
   @property()
   @renderable()
-  private basemapId: string;
+  public basemapId: string;
 
   // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,6 +25,9 @@ class BasemapPicker extends declared(Widget) {
 
   public postInitialize(): void {
     this._setBasemap(this.basemapId);
+    this.watch('basemapId', (newBasemapId) => {
+      this._setBasemap(newBasemapId);
+    });
   }
 
   // Render this widget by returning JSX which is converted to HTML
@@ -59,12 +62,11 @@ class BasemapPicker extends declared(Widget) {
 
   // Called when the basemap select is changed
   private _select(event: Event): void {
-    this._setBasemap((event.target as HTMLInputElement).value);
+    this.basemapId = (event.target as HTMLInputElement).value;
   }
 
   // Set the basemap by preset id
   private _setBasemap(id: string): void {
-    this.basemapId = id;
     this.view.map.basemap = Basemap.fromId(id);
   }
 }
