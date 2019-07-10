@@ -108,37 +108,6 @@ view.when(() => {
     ]
   });
 
-  const customDirections = new CustomDirections({
-    startSearch: new CustomSearch({
-      view: view,
-      name: 'directions-origin',
-      placeholder: 'Origin',
-      required: true
-    }),
-    endSearch: new CustomSearch({
-      view: view,
-      name: 'directions-destination',
-      placeholder: 'Destination',
-      required: true
-    })
-  });
-
-  const customPedestrianDirections = new CustomPedestrianDirections({
-    view: view,
-    startSearch: new CustomSearch({
-      view: view,
-      name: 'pedestrian-directions-origin',
-      placeholder: 'Origin',
-      required: true
-    }),
-    endSearch: new CustomSearch({
-      view: view,
-      name: 'pedestrian-directions-destination',
-      placeholder: 'Destination',
-      required: true
-    })
-  });
-
   /*
     Create a directions window that will be hidden until opened by a
     window expand.
@@ -150,11 +119,11 @@ view.when(() => {
     widgets: [
       {
         label: 'Driving directions',
-        widget: customDirections
+        widget: new CustomDirections({ view: view })
       },
       {
         label: 'Walking directions',
-        widget: customPedestrianDirections
+        widget: new CustomPedestrianDirections({ view: view })
       }
     ]
   });
@@ -192,7 +161,7 @@ view.when(() => {
   */
   const customWindows = [layersWindow, directionsWindow, shareWindow];
 
-  const popup = new CustomPopup({view: view});
+  const popup = new CustomPopup({ view: view });
 
   /*
     Create the main navigation widget.

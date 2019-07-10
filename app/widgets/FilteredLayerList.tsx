@@ -7,22 +7,25 @@ import Widget = require('esri/widgets/Widget');
 class FilteredLayerList extends declared(Widget) {
   // The column name to filter by
   @property()
-  private filterColumnName: string;
+  private readonly filterColumnName: string;
 
   // Potential column values to filter by
   @property()
-  private filterOptions: Array<string>;
+  private readonly filterOptions: Array<string>;
 
   // More detailed information about each column value
   @property()
-  private filterOptionInfos: any;
+  private readonly filterOptionInfos: any;
 
   // The where clause that other widgets will look at for filtering
   @property()
   public clause: string;
 
   // Pass in any properties
-  public constructor(properties?: any) {
+  public constructor(properties?: {
+    filterColumnName: string,
+    filterOptionInfos: any
+  }) {
     super();
     // Set filter options based on the keys to the more detailed info
     this.filterOptions = Object.keys(properties.filterOptionInfos);

@@ -24,26 +24,23 @@ class CustomWindow extends declared(Widget) {
     same name.
   */
   @property()
-  @renderable()
-  private name: string;
+  private readonly name: string;
 
   // The name of the esri icon class to use
   @property()
-  @renderable()
-  private iconName: string;
+  private readonly iconName: string;
 
   // Whether or not to use tabs to separate the widgets
   @property()
-  private useTabs: boolean;
+  private readonly useTabs: boolean;
+
+  // The widgets to render in this window
+  @property()
+  private readonly widgets: Array<WidgetWithLabel>;
 
   // Which widget is currently being shown when using tabs
   @property()
   private widgetIndex: number;
-
-  // The widgets to render in this window
-  @property()
-  @renderable()
-  private widgets: Array<WidgetWithLabel>;
 
   // Whether or not this window is visible
   @property()

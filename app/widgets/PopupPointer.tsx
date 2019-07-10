@@ -10,8 +10,7 @@ import CustomPopup = require('app/widgets/CustomPopup');
 class PopupPointer extends declared(Widget) {
   // The main map view
   @property()
-  @renderable()
-  private view: MapView;
+  private readonly view: MapView;
 
   /*
     The custom popup to base all of our properties on. The popup pointer
@@ -20,14 +19,15 @@ class PopupPointer extends declared(Widget) {
   */
   @property()
   @renderable(['point', 'docked', 'visible'])
-  private popup: CustomPopup;
+  private readonly popup: CustomPopup;
 
   // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: any) {
+  public constructor(properties?: { view: MapView, popup: CustomPopup }) {
     super();
   }
 
+  // Render this widget by returning JSX which is converted to HTML
   public render(): JSX.Element {
     const screenPoint = this.view.toScreen(this.popup.point);
     const visible = this.popup.visible && this.popup.docked;

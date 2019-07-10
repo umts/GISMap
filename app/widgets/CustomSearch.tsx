@@ -15,48 +15,45 @@ import CustomFilter = require('app/widgets/CustomFilter');
 class CustomSearch extends declared(Widget) {
   // The main map view
   @property()
-  @renderable()
-  private view: MapView;
+  private readonly view: MapView;
 
   // Name used to uniquely identify elements
   @property()
-  @renderable()
-  private name: string;
+  private readonly name: string;
 
   // Placeholder text for the input
   @property()
-  @renderable()
-  private placeholder: string;
+  private readonly placeholder: string;
+
+  // Keep suggestion request promises in chronological order
+  @property()
+  private readonly suggestionRequestSet: RequestSet;
+
+  // Many sources operating under one set of functions
+  @property()
+  private readonly sources: CustomSearchSources;
+
+  // The main filter widget we can apply filters to
+  @property()
+  private readonly customFilter: CustomFilter;
+
+  // Whether or not this input should be required in a form
+  @property()
+  private readonly required: boolean;
+
+  // Whether or not this is the main search bar for the entire app
+  @property()
+  private readonly mainSearch: boolean;
 
   // Array of suggesions based on text already typed in
   @property()
   @renderable()
   private suggestions: Array<Suggestion>;
 
-  // Keep suggestion request promises in chronological order
-  @property()
-  private suggestionRequestSet: RequestSet;
-
   // Whether or not to show the suggestions
   @property()
   @renderable()
   private showSuggestions: boolean;
-
-  // Many sources operating under one set of functions
-  @property()
-  private sources: CustomSearchSources;
-
-  // The main filter widget we can apply filters to
-  @property()
-  private customFilter: CustomFilter;
-
-  // Whether or not this input should be required in a form
-  @property()
-  private required: boolean;
-
-  // Whether or not this is the main search bar for the entire app
-  @property()
-  private mainSearch: boolean;
 
   // Whether or not we are waiting for the suggestions to load
   @property()

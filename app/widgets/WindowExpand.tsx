@@ -11,22 +11,19 @@ import { iconButton } from 'app/rendering';
 class WindowExpand extends declared(Widget) {
   // A descriptive name for the window this expand will open
   @property()
-  @renderable()
-  private name: string;
+  private readonly name: string;
 
   // The name of the esri icon class to use
   @property()
-  @renderable()
-  private iconName: string;
+  private readonly iconName: string;
 
   // The window that this expand will actually open
   @property()
-  @renderable()
-  private window: CustomWindow;
+  private readonly window: CustomWindow;
 
   // Any other windows that need to be closed before this window can be opened
   @property()
-  private windows: Array<CustomWindow>;
+  private readonly windows: Array<CustomWindow>;
 
   // Whether or not to display the loading icon instead of our icon
   @property()
@@ -35,7 +32,12 @@ class WindowExpand extends declared(Widget) {
 
   // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: any) {
+  public constructor(properties?: {
+    name: string,
+    iconName: string,
+    window: CustomWindow,
+    windows: Array<CustomWindow>
+  }) {
     super();
   }
 

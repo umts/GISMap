@@ -22,30 +22,28 @@ interface LocationSearchSourceProperties {
 @subclass('esri.CustomSearchSources')
 class CustomSearchSources extends declared(Accessor) {
   // The source properties for location searches
-  @property()
-  private locationSearchSourceProperties: Array<LocationSearchSourceProperties>;
+  private static locationSearchSourceProperties: Array<LocationSearchSourceProperties> = [{
+    url: 'https://maps.umass.edu/arcgis/rest/services/Locators/CampusAddressLocatorWithSuggestions/GeocodeServer',
+    title: 'On-campus locations'
+  }, {
+    url: 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer',
+    title: 'Off-campus locations'
+  }]
 
   // Only use location sources
   @property()
-  private locationsOnly: boolean;
+  private readonly locationsOnly: boolean;
 
   // Pass in any properties
-  public constructor(properties?: any) {
+  public constructor(properties?: { locationsOnly: boolean }) {
     super();
-    this.locationSearchSourceProperties = [{
-      url: 'https://maps.umass.edu/arcgis/rest/services/Locators/CampusAddressLocatorWithSuggestions/GeocodeServer',
-      title: 'On-campus locations'
-    }, {
-      url: 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer',
-      title: 'Off-campus locations'
-    }];
     this.locationsOnly = properties.locationsOnly || false;
   }
 
   // Return header text to describe a list of suggestions of the same type
   public suggestionHeader(suggestion: Suggestion): string {
     if (suggestion.sourceType === SearchSourceType.Location) {
-      return this.locationSearchSourceProperties[suggestion.locationSourceIndex].title;
+      return CustomSearchSources.locationSearchSourceProperties[suggestion.locationSourceIndex].title;
     } else if (suggestion.sourceType === SearchSourceType.Filter) {
       return 'Filters';
     } else {
@@ -94,7 +92,7 @@ class CustomSearchSources extends declared(Accessor) {
         references depending on the location.
       */
       return toNativePromise(esriRequest(
-        this.locationSearchSourceProperties[suggestion.locationSourceIndex].url + '/findAddressCandidates',
+        CustomSearchSources.locationSearchSourceProperties[suggestion.locationSourceIndex].url + '/findAddressCandidates',
         {
           query: {
             magicKey: suggestion.key,
@@ -138,9 +136,9 @@ class CustomSearchSources extends declared(Accessor) {
   private _suggestLocations(searchTerm: string): Promise<Array<Suggestion>> {
     const suggestPromises = [];
     // Create a promise for every locator service
-    for (let i = 0; i < this.locationSearchSourceProperties.length; i += 1) {
+    for (let i = 0; i < CustomSearchSources.locationSearchSourceProperties.length; i += 1) {
       suggestPromises.push(esriRequest(
-        this.locationSearchSourceProperties[i].url + '/suggest',
+        CustomSearchSources.locationSearchSourceProperties[i].url + '/suggest',
         {
           query: {
             text: searchTerm,

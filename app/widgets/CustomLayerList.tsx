@@ -12,18 +12,15 @@ import { SearchFilter } from 'app/search';
 class CustomLayerList extends declared(Widget) {
   // The map view
   @property()
-  @renderable()
-  private view: MapView
+  private readonly view: MapView
 
   // List of sections filtered by color into layers
   @property()
-  @renderable()
-  private sectionLayers: FilteredLayerList;
+  private readonly sectionLayers: FilteredLayerList;
 
   // List of spaces filtered by category into layers
   @property()
-  @renderable()
-  private spaceLayers: FilteredLayerList;
+  private readonly spaceLayers: FilteredLayerList;
 
   /*
     The filter representing how the map layers should be filtered by the

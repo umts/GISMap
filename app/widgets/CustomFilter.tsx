@@ -13,13 +13,11 @@ import CustomLayerList = require('app/widgets/CustomLayerList');
 class CustomFilter extends declared(Widget) {
   // The map view
   @property()
-  @renderable()
-  private view: MapView;
+  private readonly view: MapView;
 
   // Layer list to apply layer filters when this filter is closed
   @property()
-  @renderable()
-  private layerList: CustomLayerList;
+  private readonly layerList: CustomLayerList;
 
   // Filter to search by
   @property()
@@ -28,7 +26,10 @@ class CustomFilter extends declared(Widget) {
 
   // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: any) {
+  public constructor(properties?: {
+    view: MapView,
+    layerList: CustomLayerList
+  }) {
     super();
   }
 
