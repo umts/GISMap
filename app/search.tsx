@@ -1,7 +1,10 @@
+import Graphic = require('esri/Graphic');
+
 // The different types of sources used for searching
 enum SearchSourceType {
   Location = 0,
-  Filter = 1
+  Filter = 1,
+  Space = 2
 }
 
 interface SearchFilterClause {
@@ -21,6 +24,8 @@ interface SearchFilter {
   description?: string;
   // Strings to identify this filter in a search
   tags?: Array<string>;
+  // Target to goto on initial filter
+  target?: Array<Graphic>;
   subFilters?: Array<SearchFilter>;
 }
 
@@ -55,6 +60,11 @@ function searchTermMatchesTags(searchTerm: string, tags: Array<string>): boolean
   })
 }
 
+// Escape single quotes, mainly for querying
+function escapeQueryParam(text: string): string {
+  return text.replace(/'/g, '\'\'');
+}
+
 /*
   Export helper types related to search so they can be
   imported and used in other files.
@@ -65,5 +75,6 @@ export {
   SearchFilterClause,
   Suggestion,
   SearchResult,
-  searchTermMatchesTags
+  searchTermMatchesTags,
+  escapeQueryParam
 };

@@ -86,7 +86,9 @@ class CustomSearch extends declared(Widget) {
     this.required = properties.required || false;
     this.mainSearch = properties.mainSearch || false;
     this.warning = properties.warning || '';
-    this.sources = new CustomSearchSources({locationsOnly: !properties.mainSearch});
+    this.sources = new CustomSearchSources({
+      view: properties.view, locationsOnly: !properties.mainSearch
+    });
 
     // Hide suggestions when the escape key is pressed
     window.addEventListener('keydown', (event) => {
@@ -294,8 +296,11 @@ class CustomSearch extends declared(Widget) {
           zoom: 18
         });
         this._hideSuggestions();
-      } else if (this.searchResult.sourceType === SearchSourceType.Filter) {
-        // Filter by a filter result
+      } else if (
+        this.searchResult.sourceType === SearchSourceType.Filter ||
+        this.searchResult.sourceType === SearchSourceType.Space
+      ) {
+        // Filter by a filter or space result
         this.customFilter.filter = this.searchResult.filter;
       }
     // No search result, so use the first suggestion

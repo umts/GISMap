@@ -1,7 +1,10 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
 
 import esriRequest = require('esri/request');
+import Graphic = require('esri/Graphic');
 import Accessor = require('esri/core/Accessor');
+import FeatureLayer = require('esri/layers/FeatureLayer');
+import MapView = require('esri/views/MapView');
 
 import { umassLongLat } from 'app/latLong';
 import { toNativePromise } from 'app/promises';
@@ -11,7 +14,8 @@ import {
   SearchFilter,
   SearchResult,
   Suggestion,
-  searchTermMatchesTags
+  searchTermMatchesTags,
+  escapeQueryParam
 } from 'app/search';
 
 interface LocationSearchSourceProperties {
@@ -21,6 +25,9 @@ interface LocationSearchSourceProperties {
 
 @subclass('esri.CustomSearchSources')
 class CustomSearchSources extends declared(Accessor) {
+  @property()
+  private view: MapView;
+
   // The source properties for location searches
   @property()
   private locationSearchSourceProperties: Array<LocationSearchSourceProperties>;
@@ -48,6 +55,8 @@ class CustomSearchSources extends declared(Accessor) {
       return this.locationSearchSourceProperties[suggestion.locationSourceIndex].title;
     } else if (suggestion.sourceType === SearchSourceType.Filter) {
       return 'Filters';
+    } else if (suggestion.sourceType === SearchSourceType.Space) {
+      return 'Spaces';
     } else {
       return '';
     }
@@ -62,6 +71,7 @@ class CustomSearchSources extends declared(Accessor) {
     } else {
       suggestPromises = [
         this._suggestFilters(searchTerm),
+        this._suggestSpaces(searchTerm),
         this._suggestLocations(searchTerm)
       ];
     }
@@ -119,8 +129,11 @@ class CustomSearchSources extends declared(Accessor) {
       }).catch((error) => {
         throw error;
       }));
-    // Search for filter
-    } else if (suggestion.sourceType === SearchSourceType.Filter) {
+    // Search for filter or spaces
+    } else if (
+      suggestion.sourceType === SearchSourceType.Filter ||
+      suggestion.sourceType === SearchSourceType.Space
+    ) {
       searchResult = {
         name: suggestion.text,
         sourceType: suggestion.sourceType,
@@ -203,6 +216,63 @@ class CustomSearchSources extends declared(Accessor) {
       }
     });
     return Promise.resolve(suggestions);
+  }
+
+  // Return a promise for space suggestions
+  private _suggestSpaces(searchTerm: string): Promise<Array<Suggestion>> {
+    const layer = this.view.map.layers.find((layer) => {
+      return layer.title === 'Spaces';
+    }) as FeatureLayer;
+    const query = layer.createQuery();
+    query.where = `ParkingSpaceClientPublic like '%${escapeQueryParam(searchTerm)}%'`;
+
+    return toNativePromise(layer.queryFeatures(query)
+      .then((response: any) => {
+        const foundClients: Array<string> = [];
+        const maxResults = 5;
+        const suggestions: Array<Suggestion> = [];
+        // Go through each space returned
+        response.features.forEach((feature: Graphic) => {
+          const client = feature.attributes.ParkingSpaceClientPublic;
+          if (suggestions.length >= maxResults) {
+            return;
+          }
+          // Filter out duplicate space clients
+          if (
+            foundClients
+              .filter((eachClient) => eachClient === client).length > 0
+          ) {
+            return;
+          }
+          foundClients.push(client);
+          // Create a filter for spaces with this client
+          const target = response.features.filter((graphic: Graphic) => {
+            return graphic.attributes.ParkingSpaceClientPublic === client;
+          });
+          const filter = {
+            name: `${client} Spaces`,
+            description: `${target.length} space${target.length === 1 ? '' : 's'} reserved for ${client}.`,
+            visible: true,
+            clauses: [
+              {
+                layerName: 'Spaces',
+                clause: `ParkingSpaceClientPublic = '${escapeQueryParam(client)}'`
+              }
+            ],
+            target: target
+          };
+          // Add the suggestion
+          suggestions.push({
+            text: `${client} Spaces`,
+            key: feature.attributes.OBJECTID_1,
+            sourceType: SearchSourceType.Space,
+            filter: filter
+          });
+        });
+        return suggestions;
+      }).catch((error: string) => {
+        throw error;
+      }));
   }
 }
 
