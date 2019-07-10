@@ -5,11 +5,19 @@ import Basemap = require('esri/Basemap');
 import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
+interface BasemapOption {
+  id: string;
+  name: string;
+}
+
 @subclass('esri.widgets.BasemapPicker')
 class BasemapPicker extends declared(Widget) {
   // The map view
   @property()
   private view: MapView;
+
+  @property()
+  private basemapOptions: Array<BasemapOption>;
 
   // The id of the current basemap
   @property()
@@ -21,6 +29,11 @@ class BasemapPicker extends declared(Widget) {
   public constructor(properties?: any) {
     super();
     this.basemapId = 'topo';
+    this.basemapOptions = [
+      {id: 'satellite', name: 'Satellite'},
+      {id: 'topo', name: 'Topographical'},
+      {id: 'gray-vector', name: 'Vector'}
+    ];
   }
 
   public postInitialize(): void {
@@ -32,19 +45,14 @@ class BasemapPicker extends declared(Widget) {
 
   // Render this widget by returning JSX which is converted to HTML
   public render(): JSX.Element {
-    const optionInfos = [
-      {id: 'satellite', name: 'Satellite'},
-      {id: 'topo', name: 'Topographical'},
-      {id: 'gray-vector', name: 'Vector'}
-    ];
     // Generate options with one selected
     const options: Array<JSX.Element> = [];
-    optionInfos.forEach((optionInfo) => {
+    this.basemapOptions.forEach((basemapOption) => {
       options.push(
         <option
-          value={optionInfo.id}
-          selected={optionInfo.id === this.basemapId}>
-          {optionInfo.name}
+          value={basemapOption.id}
+          selected={basemapOption.id === this.basemapId}>
+          {basemapOption.name}
         </option>
       );
     });
@@ -67,7 +75,16 @@ class BasemapPicker extends declared(Widget) {
 
   // Set the basemap by preset id
   private _setBasemap(id: string): void {
-    this.view.map.basemap = Basemap.fromId(id);
+    if (this._validId(id)) {
+      this.view.map.basemap = Basemap.fromId(id);
+    }
+  }
+
+  // Return whether or not the given id is a valid basemap id
+  private _validId(id: string): boolean {
+    return this.basemapOptions.filter((basemapOption) => {
+      return basemapOption.id === id;
+    }).length > 0;
   }
 }
 
