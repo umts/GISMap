@@ -3,29 +3,16 @@ import WebMap = require('esri/WebMap');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
 import MapView = require('esri/views/MapView');
-import Compass = require('esri/widgets/Compass');
-import Home = require('esri/widgets/Home');
-import Locate = require('esri/widgets/Locate');
-import Print = require('esri/widgets/Print');
 
-import MainNavigation = require('app/widgets/MainNavigation');
-import CustomDirections = require('app/widgets/CustomDirections');
-import CustomFilter = require('app/widgets/CustomFilter');
-import CustomLayerList = require('app/widgets/CustomLayerList');
-import CustomPopup = require('app/widgets/CustomPopup');
-import CustomSearch = require('app/widgets/CustomSearch');
-import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
-import CustomWindow = require('app/widgets/CustomWindow');
-import { CustomZoom, ZoomDirection } from 'app/widgets/CustomZoom';
-import Feedback = require('app/widgets/Feedback');
-import PopupPointer = require('app/widgets/PopupPointer');
-import ShareEmail = require('app/widgets/ShareEmail');
-import ShareLink = require('app/widgets/ShareLink');
-import WindowExpand = require('app/widgets/WindowExpand');
 import { setupUmassMenu } from 'app/events';
-import { homeGoToOverride, umassLongLat } from 'app/latLong';
+import { umassLongLat } from 'app/latLong';
 import { updateRenderers, updateLabeling } from 'app/rendering';
 import { resetUrlTimer, updateAppFromUrl } from 'app/url';
+
+import MainNavigation = require('app/widgets/MainNavigation');
+import CustomPopup = require('app/widgets/CustomPopup');
+import Feedback = require('app/widgets/Feedback');
+import PopupPointer = require('app/widgets/PopupPointer');
 
 // Set up the UMass link menu
 setupUmassMenu();
@@ -88,79 +75,9 @@ view.when(() => {
   updateLabeling(map);
 
   /*
-    We will give this to both the layer window and the custom filter, that
-    way the custom filter can filter based on this widget.
+    Create the popup for the main navigation, which the popup pointer
+    also needs to reference.
   */
-  const layerList = new CustomLayerList({
-    view: view
-  });
-
-  // Create a layer window that will be hidden until opened by a window expand
-  const layersWindow = new CustomWindow({
-    name: 'layers',
-    iconName: 'layers',
-    useTabs: false,
-    widgets: [
-      {
-        label: 'Layers',
-        widget: layerList,
-      }
-    ]
-  });
-
-  /*
-    Create a directions window that will be hidden until opened by a
-    window expand.
-  */
-  const directionsWindow = new CustomWindow({
-    name: 'directions',
-    iconName: 'directions',
-    useTabs: true,
-    widgets: [
-      {
-        label: 'Driving directions',
-        widget: new CustomDirections({ view: view })
-      },
-      {
-        label: 'Walking directions',
-        widget: new CustomPedestrianDirections({ view: view })
-      }
-    ]
-  });
-
-  // Create a share window that will be hidden until opened by a window expand
-  const shareWindow = new CustomWindow({
-    name: 'share',
-    iconName: 'link',
-    useTabs: false,
-    widgets: [
-      {
-        label: 'Share link',
-        widget: new ShareLink()
-      }, {
-        label: 'Email',
-        widget: new ShareEmail()
-      }, {
-        label: 'Print',
-        widget: new Print({
-          view: view,
-          printServiceUrl: 'https://maps.umass.edu/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task'
-        })
-      }
-    ]
-  });
-
-  const customFilter = new CustomFilter({
-    view: view,
-    layerList: layerList
-  });
-
-  /*
-    Every window needs to know about the other windows, that way a single
-    window can close the other windows when it needs to open.
-  */
-  const customWindows = [layersWindow, directionsWindow, shareWindow];
-
   const popup = new CustomPopup({ view: view });
 
   /*
@@ -168,57 +85,9 @@ view.when(() => {
     The main navigation widget is the box that contains most of the
     other widgets.
   */
-  const mainNavigation = new MainNavigation({
-    view: view,
-    compass: new Compass({
-      view: view
-    }),
-    directionsExpand: new WindowExpand({
-      name: 'directions',
-      iconName: 'directions',
-      window: directionsWindow,
-      windows: customWindows
-    }),
-    home: new Home({
-      view: view,
-      goToOverride: homeGoToOverride
-    }),
-    layersExpand: new WindowExpand({
-      name: 'layers',
-      iconName: 'layers',
-      window: layersWindow,
-      windows: customWindows
-    }),
-    locate: new Locate({
-      view: view
-    }),
-    zoomIn: new CustomZoom({
-      view: view,
-      direction: ZoomDirection.In
-    }),
-    zoomOut: new CustomZoom({
-      view: view,
-      direction: ZoomDirection.Out
-    }),
-    search: new CustomSearch({
-      view: view,
-      name: 'main',
-      placeholder: 'Search the map',
-      customFilter: customFilter,
-      mainSearch: true
-    }),
-    customFilter: customFilter,
-    shareExpand: new WindowExpand({
-      name: 'share',
-      iconName: 'link',
-      window: shareWindow,
-      windows: customWindows
-    }),
-    customWindows: customWindows,
-    popup: popup
-  });
+  const mainNavigation = new MainNavigation({ view: view, popup: popup });
 
-  const popupPointer = new PopupPointer({view: view, popup: popup});
+  const popupPointer = new PopupPointer({ view: view, popup: popup });
 
   // Add popup pointer behind everything
   view.ui.add(popupPointer, 'manual');
@@ -241,4 +110,4 @@ view.when(() => {
   // Update the url hash when the position of the view changes
   view.watch(['center', 'zoom', 'rotation'], () => { resetUrlTimer(mainNavigation) });
 })
-  .otherwise((error) => console.warn(error));
+  .otherwise((error) => console.error(error));

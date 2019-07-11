@@ -4,12 +4,7 @@ import { renderable, tsx } from 'esri/widgets/support/widget';
 import Widget = require('esri/widgets/Widget');
 
 import { clickOnSpaceOrEnter } from 'app/events';
-import { iconButton } from 'app/rendering';
-
-// Interface for objects with a render method
-interface RenderableWidget {
-  render: any;
-}
+import { RenderableWidget, iconButton } from 'app/rendering';
 
 // Interface for objects with widget and label properties
 interface WidgetWithLabel {

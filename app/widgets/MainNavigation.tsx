@@ -1,93 +1,180 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
-import { renderable, tsx } from 'esri/widgets/support/widget';
+import { tsx } from 'esri/widgets/support/widget';
 
 import MapView = require('esri/views/MapView');
 import Compass = require('esri/widgets/Compass');
 import Home = require('esri/widgets/Home');
 import Locate = require('esri/widgets/Locate');
+import Print = require('esri/widgets/Print');
 import Widget = require('esri/widgets/Widget');
 
+import { homeGoToOverride } from 'app/latLong';
+import { RenderableWidget } from 'app/rendering';
+
+import CustomDirections = require('app/widgets/CustomDirections');
 import CustomFilter = require('app/widgets/CustomFilter');
+import CustomLayerList = require('app/widgets/CustomLayerList');
 import CustomSearch = require('app/widgets/CustomSearch');
+import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
 import CustomPopup = require('app/widgets/CustomPopup');
 import CustomWindow = require('app/widgets/CustomWindow');
-import { CustomZoom } from 'app/widgets/CustomZoom';
+import { CustomZoom, ZoomDirection } from 'app/widgets/CustomZoom';
+import ShareEmail = require('app/widgets/ShareEmail');
+import ShareLink = require('app/widgets/ShareLink');
 import WindowExpand = require('app/widgets/WindowExpand');
 
 @subclass('esri.widgets.MainNavigation')
 class MainNavigation extends declared(Widget) {
-  // Compass widget
-  @property()
-  @renderable()
-  private compass: Compass;
-
-  // Directions expand widget
-  @property()
-  @renderable()
-  private directionsExpand: WindowExpand;
-
-  // Home widget
-  @property()
-  @renderable()
-  private home: Home;
-
-  // Layers expand widget
-  @property()
-  @renderable()
-  private layersExpand: WindowExpand;
-
-  // Locate widget
-  @property()
-  @renderable()
-  private locate: Locate;
-
-  // Zoom in widget
-  @property()
-  @renderable()
-  private zoomIn: CustomZoom;
-
-  // Zoom out widget
-  @property()
-  @renderable()
-  private zoomOut: CustomZoom;
-
   // Search widget
   @property()
-  @renderable()
-  private search: CustomSearch;
+  private readonly search: CustomSearch;
+
+  @property()
+  private readonly layersExpand: WindowExpand;
+
+  @property()
+  private readonly buttonWidgets: Array<RenderableWidget>
 
   // Filter widget
   @property()
-  @renderable()
-  private customFilter: CustomFilter;
-
-  // Share expand widget
-  @property()
-  @renderable()
-  private shareExpand: WindowExpand;
+  private readonly customFilter: CustomFilter;
 
   // Custom windows that start hidden and can be opened by window expands
   @property()
-  @renderable()
-  private customWindows: Array<CustomWindow>;
+  private readonly customWindows: Array<CustomWindow>;
 
   // The main map view
   @property()
-  @renderable()
-  public view: MapView;
+  public readonly view: MapView;
 
   // Single popup for the whole app
   @property()
-  @renderable()
-  public popup: CustomPopup;
+  public readonly popup: CustomPopup;
 
   /*
     Pass in properties like widgets as `any` type which will then be cast to
     their correct types.
   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: any) {
+  public constructor(properties?: { view: MapView, popup: CustomPopup }) {
     super();
+
+    /*
+      We will give this to both the layer window and the custom filter, that
+      way the custom filter can filter based on this widget.
+    */
+    const layerList = new CustomLayerList({ view: properties.view });
+
+    const customFilter = new CustomFilter({
+      view: properties.view,
+      layerList: layerList
+    });
+
+    // Create a layer window that will be hidden until opened by a window expand
+    const layersWindow = new CustomWindow({
+      name: 'layers',
+      iconName: 'layers',
+      useTabs: false,
+      widgets: [
+        {
+          label: 'Layers',
+          widget: layerList,
+        }
+      ]
+    });
+
+    /*
+      Create a directions window that will be hidden until opened by a
+      window expand.
+    */
+    const directionsWindow = new CustomWindow({
+      name: 'directions',
+      iconName: 'directions',
+      useTabs: true,
+      widgets: [
+        {
+          label: 'Driving directions',
+          widget: new CustomDirections({ view: properties.view })
+        },
+        {
+          label: 'Walking directions',
+          widget: new CustomPedestrianDirections({ view: properties.view })
+        }
+      ]
+    });
+
+    // Create a share window that will be hidden until opened by a window expand
+    const shareWindow = new CustomWindow({
+      name: 'share',
+      iconName: 'link',
+      useTabs: false,
+      widgets: [
+        {
+          label: 'Share link',
+          widget: new ShareLink()
+        }, {
+          label: 'Email',
+          widget: new ShareEmail()
+        }, {
+          label: 'Print',
+          widget: new Print({
+            view: properties.view,
+            printServiceUrl: 'https://maps.umass.edu/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task'
+          })
+        }
+      ]
+    });
+
+    /*
+      Every window needs to know about the other windows, that way a single
+      window can close the other windows when it needs to open.
+    */
+    const customWindows = [layersWindow, directionsWindow, shareWindow];
+
+    this.search = new CustomSearch({
+      view: properties.view,
+      name: 'main',
+      placeholder: 'Search the map',
+      customFilter: customFilter,
+      mainSearch: true
+    });
+    this.layersExpand = new WindowExpand({
+      name: 'layers',
+      iconName: 'layers',
+      window: layersWindow,
+      windows: customWindows
+    });
+    this.buttonWidgets = [
+      new CustomZoom({
+        view: properties.view,
+        direction: ZoomDirection.In
+      }),
+      new CustomZoom({
+        view: properties.view,
+        direction: ZoomDirection.Out
+      }),
+      new Compass({ view: properties.view }),
+      new Home({
+        view: properties.view,
+        goToOverride: homeGoToOverride
+      }),
+      new Locate({ view: properties.view }),
+      this.layersExpand,
+      new WindowExpand({
+        name: 'directions',
+        iconName: 'directions',
+        window: directionsWindow,
+        windows: customWindows
+      }),
+      new WindowExpand({
+        name: 'share',
+        iconName: 'link',
+        window: shareWindow,
+        windows: customWindows
+      })
+    ];
+    this.customFilter = customFilter;
+    this.customWindows = customWindows;
   }
 
   // Run after this widget is ready
@@ -98,6 +185,16 @@ class MainNavigation extends declared(Widget) {
 
   // Render this widget by returning JSX which is converted to HTML
   public render(): JSX.Element {
+    const renderedButtons: Array<JSX.Element> = [];
+    // Render each navigation button into an array
+    this.buttonWidgets.forEach((buttonWidget) => {
+      renderedButtons.push(
+        <li class='widget-list-item' role='menuitem'>
+          {buttonWidget.render()}
+        </li>
+      );
+    });
+
     const renderedWindows: Array<JSX.Element> = [];
     /*
       Render each custom window into an array.
@@ -108,24 +205,17 @@ class MainNavigation extends declared(Widget) {
     });
 
     return (
-      <div id="main-navigation" role='presentation'>
-        <div class="column-left">
+      <div id='main-navigation' role='presentation'>
+        <div class='column-left'>
           <div
             aria-label='Main navigation window'
-            id="main-navigation-window"
-            class="navigation-window shadow">
+            id='main-navigation-window'
+            class='navigation-window shadow'>
             {this.search.render()}
 
-            <div class="widget-list" role='presentation'>
+            <div class='widget-list' role='presentation'>
               <ul aria-label='Main menu' role='menubar'>
-                <li class="widget-list-item" role='menuitem'>{this.zoomIn.render()}</li>
-                <li class="widget-list-item" role='menuitem'>{this.zoomOut.render()}</li>
-                <li class="widget-list-item" role='menuitem'>{this.compass.render()}</li>
-                <li class="widget-list-item" role='menuitem'>{this.home.render()}</li>
-                <li class="widget-list-item" role='menuitem'>{this.locate.render()}</li>
-                <li class="widget-list-item" role='menuitem'>{this.layersExpand.render()}</li>
-                <li class="widget-list-item" role='menuitem'>{this.directionsExpand.render()}</li>
-                <li class="widget-list-item" role='menuitem'>{this.shareExpand.render()}</li>
+                {renderedButtons}
               </ul>
             </div>
           </div>

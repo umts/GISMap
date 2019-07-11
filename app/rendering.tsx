@@ -13,6 +13,11 @@ import TextSymbol = require('esri/symbols/TextSymbol');
 import { clickOnSpaceOrEnter } from 'app/events';
 import { SearchFilter } from 'app/search';
 
+// Interface for objects with a render method
+interface RenderableWidget {
+  render: any;
+}
+
 const iconsPath = 'assets/icons';
 
 // Info that should be used to render different types of spaces
@@ -375,6 +380,7 @@ function iconButton(properties: {
   imported and used in other files.
 */
 export {
+  RenderableWidget,
   updateRenderers,
   updateLabeling,
   spaceRendererInfo,
