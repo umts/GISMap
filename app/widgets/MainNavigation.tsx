@@ -55,7 +55,6 @@ class MainNavigation extends declared(Widget) {
     Pass in properties like widgets as `any` type which will then be cast to
     their correct types.
   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public constructor(properties?: { view: MapView, popup: CustomPopup }) {
     super();
 

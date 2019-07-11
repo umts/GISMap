@@ -42,11 +42,17 @@ class CustomWindow extends declared(Widget) {
   @renderable()
   public visible: boolean;
 
-  // Pass in a name and an explicit array of widgets
-  public constructor(properties?: any) {
+  // Pass in any properties
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public constructor(properties?: {
+    name: string,
+    iconName: string,
+    useTabs: boolean,
+    widgets: Array<WidgetWithLabel>
+  }) {
     super();
     this.widgetIndex = 0;
-    this.visible = properties.visible || false;
+    this.visible = false;
   }
 
   // Render this widget by returning JSX which is converted to HTML

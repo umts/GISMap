@@ -75,14 +75,21 @@ class CustomSearch extends declared(Widget) {
   public searchResult: SearchResult;
 
   // Pass in any properties
-  public constructor(properties?: any) {
+  public constructor(properties?: {
+    view: MapView,
+    name: string,
+    placeholder: string,
+    customFilter?: CustomFilter,
+    required?: boolean,
+    mainSearch?: boolean
+  }) {
     super();
     this.suggestions = [];
     this.suggestionRequestSet = new RequestSet();
     this.showSuggestions = false;
     this.required = properties.required || false;
     this.mainSearch = properties.mainSearch || false;
-    this.warning = properties.warning || '';
+    this.warning = '';
     this.sources = new CustomSearchSources({locationsOnly: !properties.mainSearch});
 
     // Hide suggestions when the escape key is pressed

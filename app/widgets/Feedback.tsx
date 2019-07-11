@@ -10,7 +10,6 @@ class Feedback extends declared(Widget) {
   @renderable()
   private open: boolean;
 
-  // Pass in any properties
   public constructor() {
     super();
     this.open = true;
