@@ -29,9 +29,11 @@ class MainNavigation extends declared(Widget) {
   @property()
   private readonly search: CustomSearch;
 
+  // The layers expand widget. Exists here and in the layers custom window.
   @property()
   private readonly layersExpand: WindowExpand;
 
+  // Widgets that serve as navigation buttons in the main window
   @property()
   private readonly buttonWidgets: Array<RenderableWidget>
 
