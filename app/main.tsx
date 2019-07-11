@@ -1,4 +1,3 @@
-import Basemap = require('esri/Basemap');
 import WebMap = require('esri/WebMap');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
@@ -43,9 +42,6 @@ const view = new MapView({
 
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
-  // Set the default basemap
-  map.basemap = Basemap.fromId('topo');
-
   // Layer for directions
   map.add(new GraphicsLayer({
     title: 'Directions'

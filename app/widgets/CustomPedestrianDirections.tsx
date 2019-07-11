@@ -14,7 +14,7 @@ import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
 import { clickOnSpaceOrEnter } from 'app/events';
-import { imperialDistance } from 'app/rendering';
+import { goToSmart, imperialDistance } from 'app/rendering';
 import CustomSearch = require('app/widgets/CustomSearch');
 
 @subclass('esri.widgets.CustomPedestrianDirections')
@@ -165,7 +165,7 @@ class CustomPedestrianDirections extends declared(Widget) {
       color: '#000000',
       width: '4px'
     });
-    this.view.goTo(graphic);
+    goToSmart(this.view, [graphic]);
     const directionsSelectionLayer = this._getLayer('Directions Selection');
     directionsSelectionLayer.removeAll();
     directionsSelectionLayer.add(graphic);

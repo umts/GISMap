@@ -1,5 +1,6 @@
 import { tsx } from 'esri/widgets/support/widget';
 
+import Graphic = require('esri/Graphic');
 import WebMap = require('esri/WebMap');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import LabelClass = require('esri/layers/support/LabelClass');
@@ -9,6 +10,7 @@ import Font = require('esri/symbols/Font');
 import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
 import TextSymbol = require('esri/symbols/TextSymbol');
+import MapView = require('esri/views/MapView');
 
 import { clickOnSpaceOrEnter } from 'app/events';
 import { SearchFilter } from 'app/search';
@@ -254,6 +256,20 @@ function updateLabeling(map: WebMap): void {
 }
 
 /*
+  Make the view go to target normally, but use max zoom when the
+  target is just a point.
+*/
+function goToSmart(view: MapView, target: Array<Graphic>): void {
+  const targetParams = {
+    target: target
+  };
+  if (target.length === 1 && target[0].geometry.type === 'point') {
+    targetParams['zoom'] = 20;
+  }
+  view.goTo(targetParams);
+}
+
+/*
   Given a distance in feet return the imperial distance as a human
   readable string.
 */
@@ -386,6 +402,7 @@ export {
   spaceRendererInfo,
   sectionRendererInfo,
   filterInfo,
+  goToSmart,
   imperialDistance,
   attributeRow,
   expandable,

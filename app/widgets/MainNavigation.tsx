@@ -10,7 +10,9 @@ import Widget = require('esri/widgets/Widget');
 
 import { homeGoToOverride } from 'app/latLong';
 import { RenderableWidget } from 'app/rendering';
+import { resetUrlTimer } from 'app/url';
 
+import BasemapPicker = require('app/widgets/BasemapPicker');
 import CustomDirections = require('app/widgets/CustomDirections');
 import CustomFilter = require('app/widgets/CustomFilter');
 import CustomLayerList = require('app/widgets/CustomLayerList');
@@ -29,7 +31,7 @@ class MainNavigation extends declared(Widget) {
   @property()
   private readonly search: CustomSearch;
 
-  // The layers expand widget. Exists here and in the layers custom window.
+  // The layers expand widget. Exists here and in button widgets.
   @property()
   private readonly layersExpand: WindowExpand;
 
@@ -80,6 +82,10 @@ class MainNavigation extends declared(Widget) {
         {
           label: 'Layers',
           widget: layerList,
+        },
+        {
+          label: 'Basemap',
+          widget: new BasemapPicker({ view: properties.view })
         }
       ]
     });
@@ -182,6 +188,9 @@ class MainNavigation extends declared(Widget) {
   public postInitialize(): void {
     this._setLoading(true);
     this.view.watch('updating', (updating) => { this._setLoading(updating) });
+    // Update the url when the basemap changes
+    (this.findWindow('layers').findWidget('Basemap') as BasemapPicker)
+      .watch('basemapId', () => { resetUrlTimer(this) });
   }
 
   // Render this widget by returning JSX which is converted to HTML
@@ -226,6 +235,13 @@ class MainNavigation extends declared(Widget) {
         {this.popup.render()}
       </div>
     );
+  }
+
+  // Return a custom window by name
+  public findWindow(windowName: string): CustomWindow {
+    return this.customWindows.find((window) => {
+      return window.name === windowName;
+    });
   }
 
   private _element(): HTMLElement {
