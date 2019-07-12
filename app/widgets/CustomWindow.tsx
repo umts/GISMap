@@ -4,12 +4,7 @@ import { renderable, tsx } from 'esri/widgets/support/widget';
 import Widget = require('esri/widgets/Widget');
 
 import { clickOnSpaceOrEnter } from 'app/events';
-import { iconButton } from 'app/rendering';
-
-// Interface for objects with a render method
-interface RenderableWidget {
-  render: any;
-}
+import { RenderableWidget, iconButton } from 'app/rendering';
 
 // Interface for objects with widget and label properties
 interface WidgetWithLabel {
@@ -21,40 +16,43 @@ interface WidgetWithLabel {
 class CustomWindow extends declared(Widget) {
   // The name of the esri icon class to use
   @property()
-  @renderable()
-  private iconName: string;
+  private readonly iconName: string;
 
   // Whether or not to use tabs to separate the widgets
   @property()
-  private useTabs: boolean;
+  private readonly useTabs: boolean;
+
+  // The widgets to render in this window
+  @property()
+  private readonly widgets: Array<WidgetWithLabel>;
 
   // Which widget is currently being shown when using tabs
   @property()
   private widgetIndex: number;
-
-  // The widgets to render in this window
-  @property()
-  @renderable()
-  private widgets: Array<WidgetWithLabel>;
 
   /*
     Used for id and title, and is referenced by a window expand with the
     same name.
   */
   @property()
-  @renderable()
-  public name: string;
+  public readonly name: string;
 
   // Whether or not this window is visible
   @property()
   @renderable()
   public visible: boolean;
 
-  // Pass in a name and an explicit array of widgets
-  public constructor(properties?: any) {
+  // Pass in any properties
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public constructor(properties?: {
+    name: string,
+    iconName: string,
+    useTabs: boolean,
+    widgets: Array<WidgetWithLabel>
+  }) {
     super();
     this.widgetIndex = 0;
-    this.visible = properties.visible || false;
+    this.visible = false;
   }
 
   // Render this widget by returning JSX which is converted to HTML

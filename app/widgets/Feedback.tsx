@@ -5,13 +5,12 @@ import Widget = require('esri/widgets/Widget');
 
 @subclass('esri.widgets.Feedback')
 class Feedback extends declared(Widget) {
+  // Whether or not the window is open
   @property()
   @renderable()
   private open: boolean;
 
-  // Pass in any properties
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: any) {
+  public constructor() {
     super();
     this.open = true;
   }
