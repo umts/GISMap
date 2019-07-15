@@ -205,7 +205,6 @@ class CustomSearch extends declared(Widget) {
       });
     }
 
-    let mainElement;
     const input = (
       <div class='form-row-input'>
         <input
@@ -220,12 +219,26 @@ class CustomSearch extends declared(Widget) {
         {submitButton}
       </div>
     );
-    mainElement = input;
+
+    let mainElement;
     if (this.mainSearch) {
       mainElement = (
         <form bind={this} onsubmit={this._submitSearch}>
           {input}
         </form>
+      );
+    } else {
+      mainElement = (
+        <div class='shelf space-between'>
+          <div
+            bind={this}
+            class='marker-mini marker-start'
+            draggable="true"
+            ondragstart={this._startDrag}>
+            <div class='marker-mini-circle'></div>
+          </div>
+          {input}
+        </div>
       );
     }
 
@@ -279,6 +292,11 @@ class CustomSearch extends declared(Widget) {
   // Show the validation warning with the given message
   public showWarning(message: string): void {
     this.warning = message;
+  }
+
+  private _startDrag(event: any): void {
+    console.log(event);
+    event.dataTransfer.setData('search-id', this.name);
   }
 
   // Hide the validation warning

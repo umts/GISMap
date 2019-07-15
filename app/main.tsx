@@ -278,5 +278,13 @@ view.when(() => {
   window.addEventListener('hashchange', () => { updateAppFromUrl(mainNavigation) });
   // Update the url hash when the position of the view changes
   view.watch(['center', 'zoom', 'rotation'], () => { resetUrlTimer(mainNavigation) });
+
+  document.getElementById('viewDiv').addEventListener('drop', (event) => {
+    console.log(event);
+    console.log(event.dataTransfer.getData('search-id'));
+  })
+  document.getElementById('viewDiv').addEventListener('dragover', (event) => {
+    event.preventDefault();
+  })
 })
   .otherwise((error) => console.warn(error));

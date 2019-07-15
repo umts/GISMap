@@ -37,8 +37,8 @@ class PopupPointer extends declared(Widget) {
       `top: ${screenPoint.y}px`
     ];
     return (
-      <div class='independent-popup-pointer shadow' style={styles.join(';')}>
-        <div class='independent-popup-pointer-circle'></div>
+      <div class='marker marker-popup shadow' style={styles.join(';')}>
+        <div class='marker-circle'></div>
       </div>
     );
   }

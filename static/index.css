@@ -135,6 +135,7 @@ h2 {
 }
 .form-row-input {
   display: flex;
+  flex-basis: 100%;
 }
 .spaced-row {
   display: flex;
@@ -349,6 +350,9 @@ input:focus {
 .space-between {
   display: flex;
   justify-content: space-between;
+}
+.shelf > * + * {
+  margin-left: 0.5rem;
 }
 
 .attribute-row {
