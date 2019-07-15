@@ -36,7 +36,10 @@ class CustomPopup extends declared(Widget) {
   @property()
   // Re-render any time the view changes so we can re-render our popup
   @renderable(['view.center', 'view.zoom', 'view.rotation'])
-  private view: MapView;
+  private readonly view: MapView;
+
+  // Keep feature request promises in chronological order
+  private readonly featureRequestSet: RequestSet;
 
   /*
     An array of features in the popup's selection. These are Graphics since
@@ -45,10 +48,6 @@ class CustomPopup extends declared(Widget) {
   @property()
   @renderable()
   private features: Array<Graphic>;
-
-  // Keep feature request promises in chronological order
-  @property()
-  private featureRequestSet: RequestSet;
 
   /*
     The current index to a feature in features. Represents what feature
@@ -88,7 +87,7 @@ class CustomPopup extends declared(Widget) {
 
   // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: any) {
+  public constructor(properties?: { view: MapView }) {
     super();
     this.visible = false;
     this.docked = true;

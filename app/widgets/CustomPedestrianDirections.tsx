@@ -19,23 +19,21 @@ import CustomSearch = require('app/widgets/CustomSearch');
 
 @subclass('esri.widgets.CustomPedestrianDirections')
 class CustomPedestrianDirections extends declared(Widget) {
+  // The route task to use to query for routes
+  private static routeTask = new RouteTask({
+    url: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route'
+  });
+
   @property()
-  @renderable()
-  private view: MapView;
+  private readonly view: MapView;
 
   // Custom search widget for the starting location
   @property()
-  @renderable()
-  private startSearch: CustomSearch;
+  private readonly startSearch: CustomSearch;
 
   // Custom search widget for the ending location
   @property()
-  @renderable()
-  private endSearch: CustomSearch;
-
-  // The route task to use to query for routes
-  @property()
-  private routeTask: RouteTask;
+  private readonly endSearch: CustomSearch;
 
   // The result of querying using a route task. Contains directions.
   @property()
@@ -43,7 +41,6 @@ class CustomPedestrianDirections extends declared(Widget) {
   private routeResult: RouteResult;
 
   // Which direction is currently selected both in the menu and on the map
-  @property()
   private directionIndex: number;
 
   // Generic error message to display
@@ -52,11 +49,19 @@ class CustomPedestrianDirections extends declared(Widget) {
   private error: string;
 
   // Pass in any properties
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: any) {
+  public constructor(properties?: { view: MapView }) {
     super();
-    this.routeTask = new RouteTask({
-      url: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route'
+    this.startSearch = new CustomSearch({
+      view: properties.view,
+      name: 'pedestrian-directions-origin',
+      placeholder: 'Origin',
+      required: true
+    });
+    this.endSearch = new CustomSearch({
+      view: properties.view,
+      name: 'pedestrian-directions-destination',
+      placeholder: 'Destination',
+      required: true
     });
   }
 
@@ -183,7 +188,7 @@ class CustomPedestrianDirections extends declared(Widget) {
     const origin = this.startSearch.latitudeLongitude();
     const destination = this.endSearch.latitudeLongitude();
     if (origin && destination) {
-      this.routeTask.solve(new RouteParameters({
+      CustomPedestrianDirections.routeTask.solve(new RouteParameters({
         stops: new FeatureSet({
           features: [
             new Graphic({

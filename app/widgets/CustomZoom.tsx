@@ -1,5 +1,5 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
-import { renderable, tsx } from 'esri/widgets/support/widget';
+import { tsx } from 'esri/widgets/support/widget';
 
 import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
@@ -22,19 +22,18 @@ class CustomZoom extends declared(Widget) {
     We need this in order to manipulate properties of the view like `zoom`.
   */
   @property()
-  @renderable()
-  private view: MapView;
+  private readonly view: MapView;
 
   // Which direction the zoom widget should zoom, either in or out
   @property()
-  private direction: ZoomDirection;
+  private readonly direction: ZoomDirection;
 
   /*
     Pass in properties like widgets as `any` type which will then be cast to
     their correct types.
   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: any) {
+  public constructor(properties?: { view: MapView, direction: ZoomDirection }) {
     super();
   }
 

@@ -1,6 +1,7 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
-import { renderable, tsx } from 'esri/widgets/support/widget';
+import { tsx } from 'esri/widgets/support/widget';
 
+import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
 import CustomSearch = require('app/widgets/CustomSearch');
@@ -9,18 +10,27 @@ import CustomSearch = require('app/widgets/CustomSearch');
 class CustomDirections extends declared(Widget) {
   // Custom search widget for the starting location
   @property()
-  @renderable()
-  private startSearch: CustomSearch;
+  private readonly startSearch: CustomSearch;
 
   // Custom search widget for the ending location
   @property()
-  @renderable()
-  private endSearch: CustomSearch;
+  private readonly endSearch: CustomSearch;
 
   // Pass in any properties
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: any) {
+  public constructor(properties?: { view: MapView }) {
     super();
+    this.startSearch = new CustomSearch({
+      view: properties.view,
+      name: 'directions-origin',
+      placeholder: 'Origin',
+      required: true
+    });
+    this.endSearch = new CustomSearch({
+      view: properties.view,
+      name: 'directions-destination',
+      placeholder: 'Destination',
+      required: true
+    });
   }
 
   // Render this widget by returning JSX which is converted to HTML
