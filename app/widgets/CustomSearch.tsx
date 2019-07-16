@@ -1,6 +1,7 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
+import Point = require('esri/geometry/Point');
 import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
@@ -10,16 +11,13 @@ import { SearchSourceType, SearchResult, Suggestion } from 'app/search';
 import CustomSearchSources = require('app/CustomSearchSources');
 import RequestSet = require('app/RequestSet');
 import CustomFilter = require('app/widgets/CustomFilter');
+import { Marker } from 'app/widgets/Markers'
 
 @subclass('esri.widgets.CustomSearch')
 class CustomSearch extends declared(Widget) {
   // The main map view
   @property()
   private readonly view: MapView;
-
-  // Name used to uniquely identify elements
-  @property()
-  private readonly name: string;
 
   // Placeholder text for the input
   @property()
@@ -70,9 +68,17 @@ class CustomSearch extends declared(Widget) {
   @renderable()
   private warning: string;
 
+  // Name used to uniquely identify elements
+  @property()
+  public readonly name: string;
+
   // The single search result returned from the geolocator services
   @property()
   public searchResult: SearchResult;
+
+  // Markers sets the marker for each search
+  @property()
+  public marker: Marker;
 
   // Pass in any properties
   public constructor(properties?: {
@@ -232,15 +238,20 @@ class CustomSearch extends declared(Widget) {
         </form>
       );
     } else {
+      let marker;
+      if (this.marker) {
+        marker = <div
+          bind={this}
+          class='marker-mini'
+          style={`background-color: ${this.marker.color};`}
+          draggable='true'
+          ondragstart={this._startDrag}>
+          <div class='marker-mini-circle'></div>
+        </div>;
+      }
       mainElement = (
         <div class='shelf space-between'>
-          <div
-            bind={this}
-            class='marker-mini marker-start'
-            draggable="true"
-            ondragstart={this._startDrag}>
-            <div class='marker-mini-circle'></div>
-          </div>
+          {marker}
           {input}
         </div>
       );
@@ -285,6 +296,28 @@ class CustomSearch extends declared(Widget) {
     );
   }
 
+  // Set the search result directly without using a suggestion
+  public setSearchExplicit(searchResult: SearchResult): void {
+    this.searchResult = searchResult;
+    // Display the marker for this search over location results
+    if (searchResult.sourceType === SearchSourceType.Location) {
+      this.marker.point = new Point({
+        latitude: searchResult.latitude,
+        longitude: searchResult.longitude
+      });
+      this.marker.visible = true;
+    }
+    // Set the search input text to the name of the search result
+    (document.getElementById(this.name) as HTMLInputElement)
+      .value = this.searchResult.name;
+    this._hideSuggestions();
+    this._hideWarning();
+    // When this is the main search bar submit when a suggestion is selected
+    if (this.mainSearch) {
+      this._submitSearch();
+    }
+  }
+
   // Return the latitude and longitude as a comma seaparated string
   public latitudeLongitude(): string {
     if (!(this.searchResult)) {
@@ -299,7 +332,6 @@ class CustomSearch extends declared(Widget) {
   }
 
   private _startDrag(event: any): void {
-    console.log(event);
     event.dataTransfer.setData('search-id', this.name);
   }
 
@@ -375,16 +407,7 @@ class CustomSearch extends declared(Widget) {
   */
   private _setSearch(suggestion: Suggestion): void {
     this.sources.search(suggestion).then((searchResult) => {
-      this.searchResult = searchResult;
-      // Set the search input text to the name of the search result
-      (document.getElementById(this.name) as HTMLInputElement)
-        .value = this.searchResult.name;
-      this._hideSuggestions();
-      this._hideWarning();
-      // When this is the main search bar submit when a suggestion is selected
-      if (this.mainSearch) {
-        this._submitSearch();
-      }
+      this.setSearchExplicit(searchResult);
       return;
     }).catch((error) => {
       console.error(error);
@@ -399,6 +422,10 @@ class CustomSearch extends declared(Widget) {
     this.suggestions = [];
     this._inputElement().value = '';
     this._inputElement().focus();
+    // Hide marker if it was visible
+    if (this.marker) {
+      this.marker.visible = false;
+    }
   }
 
   // Called when a suggestion is clicked

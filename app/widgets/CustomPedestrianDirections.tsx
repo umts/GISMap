@@ -49,19 +49,16 @@ class CustomPedestrianDirections extends declared(Widget) {
   private error: string;
 
   // Pass in any properties
-  public constructor(properties?: { view: MapView }) {
+  public constructor(properties?: {
+    view: MapView,
+    searches: Array<CustomSearch>
+  }) {
     super();
-    this.startSearch = new CustomSearch({
-      view: properties.view,
-      name: 'pedestrian-directions-origin',
-      placeholder: 'Origin',
-      required: true
+    this.startSearch = properties.searches.find((search) => {
+      return search.name === 'pedestrian-directions-origin';
     });
-    this.endSearch = new CustomSearch({
-      view: properties.view,
-      name: 'pedestrian-directions-destination',
-      placeholder: 'Destination',
-      required: true
+    this.endSearch = properties.searches.find((search) => {
+      return search.name === 'pedestrian-directions-destination';
     });
   }
 

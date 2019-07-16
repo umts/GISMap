@@ -17,19 +17,16 @@ class CustomDirections extends declared(Widget) {
   private readonly endSearch: CustomSearch;
 
   // Pass in any properties
-  public constructor(properties?: { view: MapView }) {
+  public constructor(properties?: {
+    view: MapView,
+    searches: Array<CustomSearch>
+  }) {
     super();
-    this.startSearch = new CustomSearch({
-      view: properties.view,
-      name: 'directions-origin',
-      placeholder: 'Origin',
-      required: true
+    this.startSearch = properties.searches.find((search) => {
+      return search.name === 'directions-origin';
     });
-    this.endSearch = new CustomSearch({
-      view: properties.view,
-      name: 'directions-destination',
-      placeholder: 'Destination',
-      required: true
+    this.endSearch = properties.searches.find((search) => {
+      return search.name === 'directions-destination';
     });
   }
 

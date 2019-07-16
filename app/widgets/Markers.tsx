@@ -1,16 +1,18 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
-import { tsx } from 'esri/widgets/support/widget';
+import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import Point = require('esri/geometry/Point');
+import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
+import { SearchSourceType } from 'app/search';
 import CustomSearch = require('app/widgets/CustomSearch');
 import CustomPopup = require('app/widgets/CustomPopup');
 
 interface Marker {
-  name: string;
-  point: Point;
-  visible: boolean;
+  color: string;
+  point?: Point;
+  visible?: boolean;
   search?: CustomSearch;
   popup?: CustomPopup;
 }
@@ -18,32 +20,80 @@ interface Marker {
 @subclass('esri.widgets.Markers')
 class Markers extends declared(Widget) {
   @property()
-  private markers: Array<Marker>;
+  private readonly view: MapView;
 
-  public constructor() {
+  @property()
+  private readonly markers: Array<Marker>;
+
+  public constructor(properties?: { view: MapView, markers: Array<Marker> }) {
     super();
-    this.markers = [];
+    // Set the marker of each custom search
+    properties.markers.forEach((marker) => {
+      if (marker.search) {
+        marker.search.marker = marker;
+      }
+    });
   }
 
+  // Render this widget by returning JSX which is converted to HTML
   public render(): JSX.Element {
-    const renderedMarkers = [];
+    const renderedMarkers: Array<JSX.Element> = [];
     this.markers.forEach((marker) => {
-      if 
+      if (marker.popup) {
+        marker.point = marker.popup.point;
+        marker.visible = marker.popup.visible && marker.popup.docked;
+      }
+      const screenPoint = this.view.toScreen(marker.point);
+      const styles = [
+        `background-color: ${marker.color}`,
+        `display: ${marker.visible ? 'block' : 'none'}`,
+        `left: ${screenPoint.x}px`,
+        `top: ${screenPoint.y}px`
+      ];
+      renderedMarkers.push(
+        <div
+          class='marker shadow'
+          data-id={marker.search ? marker.search.name : ''}
+          draggable='true'
+          ondragstart={this._startDrag}
+          style={styles.join(';')}>
+          <div class='marker-circle'></div>
+        </div>
+      );
     });
     return (
-      <div></div>
+      <div>
+        {renderedMarkers}
+      </div>
     );
   }
 
-  public searchById(id: string): CustomSearch {
-    return this.markers.filter((marker) => {
-      return id === marker.search.name;
-    })[0];
+  public setSearch(name: string, point: Point): void {
+    const marker = this.markers.find((marker) => {
+      if (marker.search) {
+        return marker.search.name === name;
+      }
+      return false;
+    });
+    marker.visible = true;
+    marker.point = point;
+    marker.search.setSearchExplicit({
+      name: `${point.latitude.toFixed(5)}, ${point.longitude.toFixed(5)}`,
+      sourceType: SearchSourceType.Location,
+      latitude: point.latitude,
+      longitude: point.longitude,
+    });
+    console.log('Set search at', point, 'for', marker);
+    this.scheduleRender();
+  }
+
+  private _startDrag(event: any): void {
+    event.dataTransfer.setData('search-id', event.target.dataset.id);
   }
 }
 
 /*
-  Set the markers widget as the export for this file so it can be
-  imported and used in other files.
+  Set the markers widget and the marker interface as the export for this file
+  so they can be imported and used in other files.
 */
-export = Markers;
+export { Marker, Markers };

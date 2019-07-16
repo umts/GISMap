@@ -20,12 +20,6 @@
   background-color: #881c1c;
   pointer-events: none !important;
 }
-.marker-start {
-  background-color: #63ef4a;
-}
-.marker-end {
-  background-color: #ef4a63;
-}
 
 .marker-mini {
   cursor: move;

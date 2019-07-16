@@ -59,7 +59,11 @@ class MainNavigation extends declared(Widget) {
     Pass in properties like widgets as `any` type which will then be cast to
     their correct types.
   */
-  public constructor(properties?: { view: MapView, popup: CustomPopup }) {
+  public constructor(properties?: {
+    view: MapView,
+    popup: CustomPopup,
+    searches: Array<CustomSearch>
+  }) {
     super();
 
     /*
@@ -101,11 +105,15 @@ class MainNavigation extends declared(Widget) {
       widgets: [
         {
           label: 'Driving directions',
-          widget: new CustomDirections({ view: properties.view })
+          widget: new CustomDirections({
+            view: properties.view, searches: properties.searches
+          })
         },
         {
           label: 'Walking directions',
-          widget: new CustomPedestrianDirections({ view: properties.view })
+          widget: new CustomPedestrianDirections({
+            view: properties.view, searches: properties.searches
+          })
         }
       ]
     });
