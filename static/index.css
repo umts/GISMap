@@ -362,6 +362,20 @@ input:focus {
   text-align: right;
 }
 
+.lot-notice > * {
+  margin: 0;
+  padding: 0;
+}
+.lot-notice > * + * {
+  margin-top: 0.5rem;
+}
+.lot-notice {
+  background-color: #fccc9c;
+  border-radius: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+}
+
 .feedback {
   display: flex;
   align-items: flex-end;
