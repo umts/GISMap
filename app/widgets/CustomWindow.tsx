@@ -133,9 +133,9 @@ class CustomWindow extends declared(Widget) {
 
   // Return a widget by label
   public findWidget(label: string): RenderableWidget {
-    return this.widgets.find((widgetWithLabel) => {
+    return this.widgets.filter((widgetWithLabel) => {
       return widgetWithLabel.label === label;
-    }).widget;
+    })[0].widget;
   }
 
   // Close this window

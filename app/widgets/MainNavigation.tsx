@@ -239,9 +239,9 @@ class MainNavigation extends declared(Widget) {
 
   // Return a custom window by name
   public findWindow(windowName: string): CustomWindow {
-    return this.customWindows.find((window) => {
+    return this.customWindows.filter((window) => {
       return window.name === windowName;
-    });
+    })[0];
   }
 
   private _element(): HTMLElement {
