@@ -105,10 +105,13 @@ class CustomWindow extends declared(Widget) {
           </h1>
         );
       }
-      if (!this.useTabs || i === this.widgetIndex) {
-        renderedElements.push(widgetLabel);
-        renderedElements.push(widgetWithLabel.widget.render());
-      }
+      const visible = !this.useTabs || i === this.widgetIndex;
+      renderedElements.push(
+        <div style={`display: ${visible ? 'block' : 'none'}`}>
+          {widgetLabel}
+          {widgetWithLabel.widget.render()}
+        </div>
+      );
     });
 
     const closeButton = iconButton({

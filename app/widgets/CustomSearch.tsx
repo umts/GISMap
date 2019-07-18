@@ -309,12 +309,8 @@ class CustomSearch extends declared(Widget) {
       }
     // No search result, so use the first suggestion
     } else {
-      for (let i = 0; i < this.suggestions.length; i += 1) {
-        const suggestion = this.suggestions[i];
-        if (suggestion.sourceType === SearchSourceType.Location) {
-          this._setSearch(suggestion);
-          break;
-        }
+      if (this.suggestions.length > 0) {
+        this._setSearch(this.suggestions[0]);
       }
     }
     // Don't submit the form
