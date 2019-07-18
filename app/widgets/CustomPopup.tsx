@@ -450,23 +450,28 @@ class CustomPopup extends declared(Widget) {
     }
 
     const noticeElements: Array<JSX.Element> = [];
-    getLotNotices().forEach((lotNotice: any) => {
-      const useLotNotice = lotNotice.citation_location_ids
-        .find((id: number) => {
-          return id.toString() === feature.attributes.CitationLocationID;
-        });
-      if (useLotNotice) {
-        const start = (new Date(lotNotice.start)).toLocaleString();
-        const end = (new Date(lotNotice.end)).toLocaleString();
-        noticeElements.push(
-          <div class='lot-notice'>
-            <h2>{lotNotice.title}</h2>
-            <p>{lotNotice.description}</p>
-            <p>From {start} to {end}</p>
-          </div>
-        );
-      }
-    });
+    const lotNotices = getLotNotices();
+    // If the notices have been loaded yet
+    if (lotNotices) {
+      lotNotices.forEach((lotNotice: any) => {
+        const useLotNotice = lotNotice.citation_location_ids
+          .find((id: number) => {
+            return id.toString() === feature.attributes.CitationLocationID;
+          });
+        // If this lot notice is for this lot (section)
+        if (useLotNotice) {
+          const start = (new Date(lotNotice.start_date)).toLocaleString();
+          const end = (new Date(lotNotice.end_date)).toLocaleString();
+          noticeElements.push(
+            <div class='lot-notice'>
+              <h2>{lotNotice.title}</h2>
+              <p>{lotNotice.description}</p>
+              <p>From {start} to {end}</p>
+            </div>
+          );
+        }
+      });
+    }
 
     let parkmobile;
     if (feature.attributes.ParkmobileZoneID) {
