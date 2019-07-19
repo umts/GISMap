@@ -1,8 +1,22 @@
+.marker-container {
+  position: absolute;
+}
+.marker-annotation {
+  display: none;
+  background-color: white;
+  padding: 0.2rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  transform: translate(-50%, -1.8rem);
+}
+.marker-container:hover > .marker-annotation {
+  display: block;
+}
 .marker {
   cursor: move;
-  position: absolute;
   width: 2rem;
   height: 2rem;
+  padding: 0.1px;
   border-radius: 50%;
   border-bottom-left-radius: 0;
   transform: translate(-50%, -120%) rotate(-45deg);
@@ -16,8 +30,6 @@
 }
 
 .marker-popup {
-  display: none;
-  background-color: #881c1c;
   pointer-events: none !important;
 }
 

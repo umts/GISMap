@@ -111,21 +111,25 @@ view.when(() => {
       popup: popup
     }, {
       color: '#63ef4a',
+      annotation: 'Driving Origin',
       search: searches.find((search) => {
         return search.name === 'directions-origin';
       })
     }, {
       color: '#ef4a63',
+      annotation: 'Driving Destination',
       search: searches.find((search) => {
         return search.name === 'directions-destination';
       })
     }, {
       color: '#63ef4a',
+      annotation: 'Walking Origin',
       search: searches.find((search) => {
         return search.name === 'pedestrian-directions-origin';
       })
     }, {
       color: '#ef4a63',
+      annotation: 'Walking Destination',
       search: searches.find((search) => {
         return search.name === 'pedestrian-directions-destination';
       })

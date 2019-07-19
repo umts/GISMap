@@ -11,6 +11,7 @@ import CustomPopup = require('app/widgets/CustomPopup');
 
 interface Marker {
   color: string;
+  annotation?: string;
   point?: Point;
   visible?: boolean;
   search?: CustomSearch;
@@ -45,19 +46,27 @@ class Markers extends declared(Widget) {
       }
       const screenPoint = this.view.toScreen(marker.point);
       const styles = [
-        `background-color: ${marker.color}`,
         `display: ${marker.visible ? 'block' : 'none'}`,
         `left: ${screenPoint.x}px`,
         `top: ${screenPoint.y}px`
       ];
+      const classes = ['marker-container'];
+      if (marker.popup) {
+        classes.push('marker-popup');
+      }
       renderedMarkers.push(
         <div
-          class='marker shadow'
+          class={classes.join(' ')}
           data-id={marker.search ? marker.search.name : ''}
           draggable='true'
           ondragstart={this._startDrag}
           style={styles.join(';')}>
-          <div class='marker-circle'></div>
+          <div
+            class='marker shadow'
+            style={`background-color: ${marker.color}`}>
+            <div class='marker-circle'></div>
+          </div>
+          <div class='marker-annotation shadow'>{marker.annotation}</div>
         </div>
       );
     });
@@ -83,7 +92,6 @@ class Markers extends declared(Widget) {
       latitude: point.latitude,
       longitude: point.longitude,
     });
-    console.log('Set search at', point, 'for', marker);
     this.scheduleRender();
   }
 
