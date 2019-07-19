@@ -9,6 +9,7 @@ import { SearchSourceType } from 'app/search';
 import CustomSearch = require('app/widgets/CustomSearch');
 import CustomPopup = require('app/widgets/CustomPopup');
 
+// Neccesary information to display a marker
 interface Marker {
   color: string;
   annotation?: string;
@@ -20,9 +21,11 @@ interface Marker {
 
 @subclass('esri.widgets.Markers')
 class Markers extends declared(Widget) {
+  // The map view
   @property()
   private readonly view: MapView;
 
+  // All the markers that this widget handles
   @property()
   private readonly markers: Array<Marker>;
 
@@ -51,6 +54,7 @@ class Markers extends declared(Widget) {
         `top: ${screenPoint.y}px`
       ];
       const classes = ['marker-container'];
+      // Special class for the marker for the popup
       if (marker.popup) {
         classes.push('marker-popup');
       }
@@ -77,6 +81,7 @@ class Markers extends declared(Widget) {
     );
   }
 
+  // 
   public setSearch(name: string, point: Point): void {
     const marker = this.markers.find((marker) => {
       if (marker.search) {
@@ -95,6 +100,7 @@ class Markers extends declared(Widget) {
     this.scheduleRender();
   }
 
+  // Store the id of the markers search in the drag event
   private _startDrag(event: any): void {
     event.dataTransfer.setData('search-id', event.target.dataset.id);
   }

@@ -245,6 +245,7 @@ input:focus {
 }
 .custom-search-container {
   width: 100%;
+  outline: none;
 }
 .custom-search-pane-container {
   position: relative;

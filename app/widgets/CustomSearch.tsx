@@ -238,6 +238,7 @@ class CustomSearch extends declared(Widget) {
         </form>
       );
     } else {
+      // Draggable marker icon if there is a marker for this search
       let marker;
       if (this.marker) {
         marker = <div
@@ -331,6 +332,7 @@ class CustomSearch extends declared(Widget) {
     this.warning = message;
   }
 
+  // Store the id of this search in the drag event
   private _startDrag(event: any): void {
     event.dataTransfer.setData('search-id', this.name);
   }

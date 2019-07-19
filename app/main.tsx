@@ -13,7 +13,6 @@ import { Marker, Markers } from 'app/widgets/Markers';
 import CustomPopup = require('app/widgets/CustomPopup');
 import CustomSearch = require('app/widgets/CustomSearch');
 import Feedback = require('app/widgets/Feedback');
-import PopupPointer = require('app/widgets/PopupPointer');
 
 // Set up the UMass link menu
 setupUmassMenu();
@@ -107,32 +106,32 @@ view.when(() => {
 
   const markers = [
     {
-      color: '#881c1c',
-      popup: popup
-    }, {
       color: '#63ef4a',
       annotation: 'Driving Origin',
-      search: searches.find((search) => {
+      search: searches.filter((search) => {
         return search.name === 'directions-origin';
-      })
+      })[0]
     }, {
       color: '#ef4a63',
       annotation: 'Driving Destination',
-      search: searches.find((search) => {
+      search: searches.filter((search) => {
         return search.name === 'directions-destination';
-      })
+      })[0]
     }, {
       color: '#63ef4a',
       annotation: 'Walking Origin',
-      search: searches.find((search) => {
+      search: searches.filter((search) => {
         return search.name === 'pedestrian-directions-origin';
-      })
+      })[0]
     }, {
       color: '#ef4a63',
       annotation: 'Walking Destination',
-      search: searches.find((search) => {
+      search: searches.filter((search) => {
         return search.name === 'pedestrian-directions-destination';
-      })
+      })[0]
+    }, {
+      color: '#881c1c',
+      popup: popup
     }
   ];
 
