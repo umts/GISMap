@@ -12,10 +12,16 @@ import CustomPopup = require('app/widgets/CustomPopup');
 // Neccesary information to display a marker
 interface Marker {
   color: string;
+  // The text that displays on hover beneath the marker
   annotation?: string;
   point?: Point;
   visible?: boolean;
+  /*
+    If a marker has a search it will set the search result to the location
+    of the marker.
+  */
   search?: CustomSearch;
+  // If a marker has a popup the popup determines the position of the marker
   popup?: CustomPopup;
 }
 
@@ -81,14 +87,14 @@ class Markers extends declared(Widget) {
     );
   }
 
-  // 
+  // Set the marker and the marker search by name to the given point on the map
   public setSearch(name: string, point: Point): void {
-    const marker = this.markers.find((marker) => {
+    const marker = this.markers.filter((marker) => {
       if (marker.search) {
         return marker.search.name === name;
       }
       return false;
-    });
+    })[0];
     marker.visible = true;
     marker.point = point;
     marker.search.setSearchExplicit({
@@ -97,6 +103,7 @@ class Markers extends declared(Widget) {
       latitude: point.latitude,
       longitude: point.longitude,
     });
+    // Render all the markers again
     this.scheduleRender();
   }
 

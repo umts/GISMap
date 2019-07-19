@@ -77,6 +77,10 @@ view.when(() => {
   */
   const popup = new CustomPopup({ view: view });
 
+  /*
+    Searches that have markers are assigned here so they can be displayed in
+    the main navigation and be modified by the markers widget.
+  */
   const searches = [
     new CustomSearch({
       view: view,

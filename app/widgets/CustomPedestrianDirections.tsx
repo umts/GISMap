@@ -54,12 +54,12 @@ class CustomPedestrianDirections extends declared(Widget) {
     searches: Array<CustomSearch>
   }) {
     super();
-    this.startSearch = properties.searches.find((search) => {
+    this.startSearch = properties.searches.filter((search) => {
       return search.name === 'pedestrian-directions-origin';
-    });
-    this.endSearch = properties.searches.find((search) => {
+    })[0];
+    this.endSearch = properties.searches.filter((search) => {
       return search.name === 'pedestrian-directions-destination';
-    });
+    })[0];
   }
 
   // Render this widget by returning JSX which is converted to HTML
