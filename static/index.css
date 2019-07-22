@@ -356,6 +356,21 @@ input:focus {
   margin-left: 0.5rem;
 }
 
+table {
+  border-collapse: collapse;
+}
+th {
+  text-align: left;
+  background-color: #ddd;
+}
+td, th {
+  border: 1px solid black;
+  padding: 0.5rem;
+}
+td.number, th.number {
+  text-align: right;
+}
+
 .attribute-row {
   margin: 1rem 0;
 }
