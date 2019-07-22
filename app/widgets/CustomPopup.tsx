@@ -513,16 +513,19 @@ class CustomPopup extends declared(Widget) {
       Object.keys(spaceCounts).forEach((category) => {
         if (Object.prototype.hasOwnProperty.call(spaceRendererInfo, category)) {
           spaceCountElements.push(
-            <li>
-              {spaceRendererInfo[category].label}: {spaceCounts[category]}
-            </li>
+            <tr>
+              <td>{spaceRendererInfo[category].label}</td>
+              <td class='number'>{spaceCounts[category]}</td>
+            </tr>
           );
         }
       });
       // Add total space counts
       if (Object.prototype.hasOwnProperty.call(spaceCounts, 'Total')) {
         spaceCountElements.push(
-          <li><b>Total Spaces: {spaceCounts['Total']}</b></li>
+          <tr>
+            <th>Total Spaces</th><th class='number'>{spaceCounts['Total']}</th>
+          </tr>
         );
       }
     }
@@ -533,7 +536,14 @@ class CustomPopup extends declared(Widget) {
         'Spaces',
         false,
         'expandable-header',
-        <ul>{spaceCountElements}</ul>
+        <table>
+          <thead>
+            <tr><th>Space Type</th><th>Count</th></tr>
+          </thead>
+          <tbody>
+            {spaceCountElements}
+          </tbody>
+        </table>
       );
     }
 
