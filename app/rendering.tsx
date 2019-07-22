@@ -7,6 +7,7 @@ import LabelClass = require('esri/layers/support/LabelClass');
 import UniqueValueRenderer = require('esri/renderers/UniqueValueRenderer');
 import PictureMarkerSymbol = require('esri/symbols/PictureMarkerSymbol');
 import Font = require('esri/symbols/Font');
+import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleMarkerSymbol = require('esri/symbols/SimpleMarkerSymbol');
 import TextSymbol = require('esri/symbols/TextSymbol');
@@ -85,42 +86,49 @@ const spaceRendererInfo = {
 const sectionRendererInfo = {
   'Red': {
     label: 'Red Lots',
+    color: [255, 0, 0],
     checked: 'checked',
     iconUrl: `${iconsPath}/red-lot.png`,
     altText: 'Red rectangle'
   },
   'Blue': {
     label: 'Blue Lots',
+    color: [0, 112, 255],
     checked: 'checked',
     iconUrl: `${iconsPath}/blue-lot.png`,
     altText: 'Blue rectangle'
   },
   'Purple': {
     label: 'Purple Lots',
+    color: [132, 0, 168],
     checked: 'checked',
     iconUrl: `${iconsPath}/purple-lot.png`,
     altText: 'Purple rectangle'
   },
   'Yellow': {
     label: 'Yellow Lots',
+    color: [255, 255, 0],
     checked: 'checked',
     iconUrl: `${iconsPath}/yellow-lot.png`,
     altText: 'Yellow rectangle'
   },
   'Green': {
     label: 'Green Lots',
+    color: [56, 168, 0],
     checked: 'checked',
     iconUrl: `${iconsPath}/green-lot.png`,
     altText: 'Green rectangle'
   },
   'Pink': {
     label: 'Meter Lots',
+    color: [255, 0, 197],
     checked: 'checked',
     iconUrl: `${iconsPath}/meter-lot.png`,
     altText: 'Pink rectangle'
   },
   'Null': {
     label: 'Other Lots',
+    color: [153, 153, 153],
     checked: 'checked',
     iconUrl: `${iconsPath}/other-lot.png`,
     altText: 'Gray rectangle'
@@ -204,10 +212,41 @@ function updateRenderers(map: WebMap): void {
       return null;
     }).filter((info) => { return info !== null })
   });
+  const sectionRenderer = new UniqueValueRenderer({
+    field: 'SectionColor',
+    defaultSymbol: new SimpleFillSymbol({
+      color: [153, 153, 153],
+      outline: new SimpleLineSymbol({
+        color: [153, 153, 153],
+        width: '1px'
+      })
+    }),
+    defaultLabel: 'Other Lots',
+    uniqueValueInfos: Object.keys(sectionRendererInfo).map((sectionColor) => {
+      const rendererInfo = sectionRendererInfo[sectionColor];
+      return {
+        value: sectionColor,
+        label: rendererInfo.label,
+        symbol: new SimpleFillSymbol({
+          color: rendererInfo.color,
+          outline: new SimpleLineSymbol({
+            color: rendererInfo.color,
+            width: '1px'
+          })
+        })
+      }
+    })
+  });
+
   const spacesLayer = map.layers.find((layer) => {
     return layer.title === 'Spaces';
   }) as FeatureLayer;
   spacesLayer.renderer = spaceRenderer;
+
+  const sectionsLayer = map.layers.find((layer) => {
+    return layer.title === 'Sections';
+  }) as FeatureLayer;
+  sectionsLayer.renderer = sectionRenderer;
 }
 
 // Update the labeling of layers
