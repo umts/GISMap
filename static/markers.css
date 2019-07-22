@@ -1,0 +1,50 @@
+.marker-container {
+  position: absolute;
+}
+.marker-annotation {
+  display: none;
+  background-color: white;
+  padding: 0.2rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  transform: translate(-50%, -1.8rem);
+}
+.marker-container:hover > .marker-annotation {
+  display: block;
+}
+.marker {
+  cursor: move;
+  width: 2rem;
+  height: 2rem;
+  padding: 0.1px;
+  border-radius: 50%;
+  border-bottom-left-radius: 0;
+  transform: translate(-50%, -120%) rotate(-45deg);
+}
+.marker-circle {
+  margin: 0.5rem;
+  width: 1rem;
+  height: 1rem;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.marker-popup {
+  pointer-events: none !important;
+}
+
+.marker-mini {
+  cursor: move;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border-bottom-left-radius: 0;
+  transform: rotate(-45deg);
+}
+.marker-mini-circle {
+  margin: 0.375rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: white;
+  border-radius: 50%;
+}

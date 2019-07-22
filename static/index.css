@@ -7,6 +7,7 @@ body {
 }
 
 #viewDiv {
+  font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
   padding: 0;
   margin: 0;
   width: 100%;
@@ -44,7 +45,6 @@ body {
 }
 
 .navigation-window {
-  font-family: "Avenir Next W00", "Helvetica Neue", Helvetica, Arial, sans-serif;
   background-color: white;
   border: 0.2rem solid #881c1c;
   border-radius: 0.8rem;
@@ -135,6 +135,7 @@ h2 {
 }
 .form-row-input {
   display: flex;
+  flex-basis: 100%;
 }
 .spaced-row {
   display: flex;
@@ -244,6 +245,7 @@ input:focus {
 }
 .custom-search-container {
   width: 100%;
+  outline: none;
 }
 .custom-search-pane-container {
   position: relative;
@@ -349,6 +351,9 @@ input:focus {
 .space-between {
   display: flex;
   justify-content: space-between;
+}
+.shelf > * + * {
+  margin-left: 0.5rem;
 }
 
 .attribute-row {
