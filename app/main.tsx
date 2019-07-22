@@ -5,6 +5,7 @@ import MapView = require('esri/views/MapView');
 
 import { setupUmassMenu } from 'app/events';
 import { umassLongLat } from 'app/latLong';
+import { updateLotNotices } from 'app/lotNotices';
 import { updateRenderers, updateLabeling } from 'app/rendering';
 import { resetUrlTimer, updateAppFromUrl } from 'app/url';
 
@@ -40,6 +41,9 @@ const view = new MapView({
   // Don't use the default popups
   popup: null
 });
+
+// Get and store lot notices from the hub
+updateLotNotices();
 
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
