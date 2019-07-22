@@ -5,7 +5,7 @@ import { toNativePromise } from 'app/promises';
 let lotNotices: any;
 
 function updateLotNotices(): void {
-  toNativePromise(esriRequest('http://localhost:3000/gis')
+  toNativePromise(esriRequest('https://hub.parking.umass.edu/gis')
     .then((response) => {
       lotNotices = response.data.lot_notices;
       return;
