@@ -105,10 +105,13 @@ class CustomWindow extends declared(Widget) {
           </h1>
         );
       }
-      if (!this.useTabs || i === this.widgetIndex) {
-        renderedElements.push(widgetLabel);
-        renderedElements.push(widgetWithLabel.widget.render());
-      }
+      const visible = !this.useTabs || i === this.widgetIndex;
+      renderedElements.push(
+        <div style={`display: ${visible ? 'block' : 'none'}`}>
+          {widgetLabel}
+          {widgetWithLabel.widget.render()}
+        </div>
+      );
     });
 
     const closeButton = iconButton({
@@ -133,9 +136,9 @@ class CustomWindow extends declared(Widget) {
 
   // Return a widget by label
   public findWidget(label: string): RenderableWidget {
-    return this.widgets.find((widgetWithLabel) => {
+    return this.widgets.filter((widgetWithLabel) => {
       return widgetWithLabel.label === label;
-    }).widget;
+    })[0].widget;
   }
 
   // Close this window
