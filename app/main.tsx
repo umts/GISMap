@@ -10,7 +10,7 @@ import { updateRenderers, updateLabeling } from 'app/rendering';
 import { resetUrlTimer, updateAppFromUrl } from 'app/url';
 
 import MainNavigation = require('app/widgets/MainNavigation');
-import { Marker, Markers } from 'app/widgets/Markers';
+import { Markers } from 'app/widgets/Markers';
 import CustomPopup = require('app/widgets/CustomPopup');
 import CustomSearch = require('app/widgets/CustomSearch');
 import Feedback = require('app/widgets/Feedback');

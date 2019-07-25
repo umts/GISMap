@@ -422,6 +422,10 @@ class CustomPopup extends declared(Widget) {
     }
   }
 
+  /*
+    If the current popup feature is a section then query the lots layer
+    for the lot corresponding to this section.
+  */
   private _updateLot(): void {
     this.lot = null;
     if (this.page >= 0 && this.page < this.features.length) {
@@ -451,6 +455,7 @@ class CustomPopup extends declared(Widget) {
     }) as FeatureLayer;
   }
 
+  // Return waitlist info using data from the hub and the associated lot
   private _waitlistInfo(): any {
     const hubData = getHubData();
     if (hubData && this.lot) {
