@@ -176,15 +176,16 @@ view.when(() => {
   // Update the url hash when the position of the view changes
   view.watch(['center', 'zoom', 'rotation'], () => { resetUrlTimer(mainNavigation) });
 
+  const canvas = document.getElementsByTagName('canvas')[0];
   // Catch drag and drop events by setting the search of the appropriate marker
-  document.getElementById('viewDiv').addEventListener('drop', (event) => {
+  canvas.addEventListener('drop', (event) => {
     markersWidget.setSearch(
       event.dataTransfer.getData('search-id'),
       view.toMap({ x: event.layerX, y: event.layerY })
     );
   });
   // Allow elements to be dragged over the map
-  document.getElementById('viewDiv').addEventListener('dragover', (event) => {
+  canvas.addEventListener('dragover', (event) => {
     event.preventDefault();
   });
 })
