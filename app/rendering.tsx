@@ -327,6 +327,7 @@ function imperialDistance(distanceInFeet: number): string {
   return `${distance.toFixed(places)} ${unit}`
 }
 
+let uniqueKey = 0;
 // Return two elements formatted as row with a label and content
 function attributeRow(label: string, content: string, link?: string): JSX.Element {
   // Label content is either text or a link
@@ -334,8 +335,9 @@ function attributeRow(label: string, content: string, link?: string): JSX.Elemen
   if (link) {
     labelContent = <a target='_blank' href={link}>{label}</a>;
   }
+  uniqueKey += 1;
   return (
-    <div class='space-between attribute-row'>
+    <div class='space-between attribute-row' key={uniqueKey}>
       <b class='attribute-row-label'>{labelContent}</b>
       <p class='attribute-row-content'>{content}</p>
     </div>
