@@ -2,24 +2,24 @@ import esriRequest = require('esri/request');
 
 import { toNativePromise } from 'app/promises';
 
-let lotNotices: any;
+let hubData: any;
 
-function updateLotNotices(): void {
+function updateHubData(): void {
   toNativePromise(esriRequest('https://hub.parking.umass.edu/gis')
     .then((response) => {
-      lotNotices = response.data.lot_notices;
+      hubData = response.data;
       return;
     }).catch((error) => {
       console.error(error);
     }));
 }
 
-function getLotNotices(): any {
-  return lotNotices;
+function getHubData(): any {
+  return hubData;
 }
 
 /*
-  Export helper functions related to lot notices so they can be
+  Export helper functions related to hub data so they can be
   imported and used in other files.
 */
-export { updateLotNotices, getLotNotices };
+export { updateHubData, getHubData };

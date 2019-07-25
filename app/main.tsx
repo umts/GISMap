@@ -5,12 +5,12 @@ import MapView = require('esri/views/MapView');
 
 import { setupUmassMenu } from 'app/events';
 import { umassLongLat } from 'app/latLong';
-import { updateLotNotices } from 'app/lotNotices';
+import { updateHubData } from 'app/hubData';
 import { updateRenderers, updateLabeling } from 'app/rendering';
 import { resetUrlTimer, updateAppFromUrl } from 'app/url';
 
 import MainNavigation = require('app/widgets/MainNavigation');
-import { Marker, Markers } from 'app/widgets/Markers';
+import { Markers } from 'app/widgets/Markers';
 import CustomPopup = require('app/widgets/CustomPopup');
 import CustomSearch = require('app/widgets/CustomSearch');
 import Feedback = require('app/widgets/Feedback');
@@ -42,8 +42,8 @@ const view = new MapView({
   popup: null
 });
 
-// Get and store lot notices from the hub
-updateLotNotices();
+// Get and store data from the hub
+updateHubData();
 
 // Wait until the view has loaded before loading the widgets
 view.when(() => {

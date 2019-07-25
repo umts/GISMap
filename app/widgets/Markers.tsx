@@ -1,5 +1,5 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
-import { renderable, tsx } from 'esri/widgets/support/widget';
+import { tsx } from 'esri/widgets/support/widget';
 
 import Point = require('esri/geometry/Point');
 import MapView = require('esri/views/MapView');

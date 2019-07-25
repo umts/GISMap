@@ -15,7 +15,7 @@ import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
 import RequestSet = require('app/RequestSet');
 import { circleAt } from 'app/latLong';
-import { getLotNotices } from 'app/lotNotices';
+import { getHubData } from 'app/hubData';
 import { toNativePromise } from 'app/promises';
 import {
   spaceRendererInfo,
@@ -49,6 +49,11 @@ class CustomPopup extends declared(Widget) {
   @property()
   @renderable()
   private features: Array<Graphic>;
+
+  // If the current popup is for a section then this is the associated lot
+  @property()
+  @renderable()
+  private lot: Graphic;
 
   /*
     The current index to a feature in features. Represents what feature
@@ -102,7 +107,10 @@ class CustomPopup extends declared(Widget) {
     // Open popup by click event listener
     this.view.on('click', (event) => { this.openFromMouseClick(event) });
     // Update the feature for the URL when the current page or features change
-    this.watch(['page', 'features'], this._updateFeatureForUrl);
+    this.watch(['page', 'features'], () => {
+      this._updateFeatureForUrl();
+      this._updateLot();
+    });
   }
 
   // Render this widget by returning JSX which is converted to HTML
@@ -414,11 +422,45 @@ class CustomPopup extends declared(Widget) {
     }
   }
 
+  /*
+    If the current popup feature is a section then query the lots layer
+    for the lot corresponding to this section.
+  */
+  private _updateLot(): void {
+    this.lot = null;
+    if (this.page >= 0 && this.page < this.features.length) {
+      const feature = this.features[this.page];
+      if (feature.layer.title === 'Sections') {
+        const lotsLayer = this._getLayer('Lots');
+        const query = lotsLayer.createQuery();
+        query.where = `CitationZoneID = ${feature.attributes.CitationZoneID}`;
+
+        lotsLayer.queryFeatures(query)
+          .then((featureSet) => {
+            if (featureSet.features.length > 0) {
+              this.lot = featureSet.features[0];
+            }
+            return;
+          }).catch((error) => {
+            console.error(error);
+          });
+      }
+    }
+  }
+
   // Return a feature layer by title
   private _getLayer(name: string): FeatureLayer {
     return (this.view.map as WebMap).layers.find((layer) => {
       return layer.title === name;
     }) as FeatureLayer;
+  }
+
+  // Return waitlist info using data from the hub and the associated lot
+  private _waitlistInfo(): any {
+    const hubData = getHubData();
+    if (hubData && this.lot) {
+      return hubData.facilities[this.lot.attributes.FacilityID];
+    }
   }
 
   /*
@@ -450,9 +492,10 @@ class CustomPopup extends declared(Widget) {
     }
 
     const noticeElements: Array<JSX.Element> = [];
-    const lotNotices = getLotNotices();
-    // If the notices have been loaded yet
-    if (lotNotices) {
+    const hubData = getHubData();
+    // If the hub data has been loaded yet
+    if (hubData) {
+      const lotNotices = hubData.lot_notices;
       lotNotices.forEach((lotNotice: any) => {
         const useLotNotice = lotNotice.citation_location_ids
           .find((id: number) => {
@@ -471,6 +514,9 @@ class CustomPopup extends declared(Widget) {
           );
         }
       });
+    // If there is no hub data display an error
+    } else {
+      noticeElements.push(<div class='error'>Could not load notices</div>);
     }
 
     let parkmobile;
@@ -530,6 +576,32 @@ class CustomPopup extends declared(Widget) {
       );
     }
 
+    // Waitlist info for entire lot
+    const waitlistInfo = this._waitlistInfo();
+    let waitlistCount;
+    let waitlistTime;
+    // If there is no hub data display an error
+    if (!hubData) {
+      waitlistCount = <div class='error'>
+        Could not load waitlist information
+      </div>;
+    // Otherwise try to load waitlist info
+    } else if (
+      waitlistInfo &&
+      feature.attributes.SectionColor &&
+      feature.attributes.SectionColor !== 'Pink'
+    ) {
+      const people = waitlistInfo.waitlist_count === 1 ? 'person' : 'people';
+      waitlistCount = attributeRow(
+        `${this.lot.attributes.ParkingLotName} waitlist`,
+        `${waitlistInfo.waitlist_count} ${people}`
+      );
+      waitlistTime = attributeRow(
+        'Approximate waitlist time',
+        waitlistInfo.approximate_wait_time
+      );
+    }
+
     // Render space counts
     const spaceCountElements: Array<JSX.Element> = [];
     if (feature.attributes.SpaceCounts) {
@@ -581,7 +653,14 @@ class CustomPopup extends declared(Widget) {
           'Description',
           true,
           'expandable-header',
-          <div>{sectionHours}{payment}{permitInfo}{parkmobile}</div>
+          <div>
+            {sectionHours}
+            {payment}
+            {permitInfo}
+            {parkmobile}
+            {waitlistCount}
+            {waitlistTime}
+          </div>
         )}
         {spaceCountExpand}
       </div>
