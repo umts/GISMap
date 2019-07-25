@@ -36,7 +36,7 @@ const spaceRendererInfo = {
     label: 'Carpool Spaces',
     description: 'Carpool space',
     iconUrl: `${iconsPath}/carpool-space.png`,
-    altText: 'Black C in an orange circle'
+    altText: 'White C in an orange circle'
   },
   'R-State': {
     label: 'State Vehicle Spaces',
@@ -48,7 +48,7 @@ const spaceRendererInfo = {
     label: 'Paystation Spaces',
     description: 'Paystation space',
     iconUrl: `${iconsPath}/paystation-space.png`,
-    altText: 'White P in a dark blue rectangle'
+    altText: 'White P in a dark blue square'
   },
   'Meter-Coin': {
     label: 'Meter Spaces',
@@ -60,7 +60,7 @@ const spaceRendererInfo = {
     label: 'Electric Vehicle Charging Stations',
     description: 'Electric vehicle charging station',
     iconUrl: `${iconsPath}/electric-space.png`,
-    altText: 'White charging station in a blue rectangle'
+    altText: 'White E V in a light green square'
   },
   'R-Visitor': {
     label: 'Visitor Spaces',
@@ -79,6 +79,12 @@ const spaceRendererInfo = {
     description: 'Loading zone',
     iconUrl: `${iconsPath}/loading-zone.png`,
     altText: 'White L in a green circle'
+  },
+  'Painted-Dock': {
+    label: 'Loading Docks',
+    description: 'Loading dock',
+    iconUrl: `${iconsPath}/loading-dock.png`,
+    altText: 'White D in a purple circle'
   }
 };
 
