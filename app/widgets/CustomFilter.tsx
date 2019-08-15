@@ -11,6 +11,11 @@ import CustomLayerList = require('app/widgets/CustomLayerList');
 
 @subclass('esri.widgets.CustomFilter')
 class CustomFilter extends declared(Widget) {
+  // Clauses that should always be applied to specific layers
+  private static defaultClauses = {
+    'Sections': 'SectionPublicVisible = \'Yes\''
+  }
+
   // The map view
   @property()
   private readonly view: MapView;
@@ -43,7 +48,18 @@ class CustomFilter extends declared(Widget) {
         const layer = (this.view.map.layers.find((layer) => {
           return layer.title === clause.layerName;
         }) as FeatureLayer);
-        layer.definitionExpression = clause.clause;
+        // Try to append a default clause if it exists
+        const defaultClause = CustomFilter.defaultClauses[clause.layerName];
+        if (defaultClause) {
+          if (clause.clause) {
+            layer.definitionExpression = `(${clause.clause}) and ${defaultClause}`;
+          } else {
+            layer.definitionExpression = defaultClause;
+          }
+        } else {
+          layer.definitionExpression = clause.clause;
+        }
+
         // Set layer label visibility
         if (clause.labelsVisible === true || clause.labelsVisible === false) {
           layer.labelsVisible = clause.labelsVisible;
