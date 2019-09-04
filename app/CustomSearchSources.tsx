@@ -30,7 +30,7 @@ class CustomSearchSources extends declared(Accessor) {
 
   // The source properties for location searches
   private static locationSearchSourceProperties: Array<LocationSearchSourceProperties> = [{
-    url: 'https://maps.umass.edu/arcgis/rest/services/Locators/CampusAddressLocatorWithSuggestions/GeocodeServer',
+    url: 'https://maps.umass.edu/arcgis/rest/services/Locators/UmaCampusLocatorGazetteer/GeocodeServer',
     title: 'On-campus locations'
   }, {
     url: 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer',

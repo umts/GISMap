@@ -301,7 +301,10 @@ class CustomSearch extends declared(Widget) {
   public setSearchExplicit(searchResult: SearchResult): void {
     this.searchResult = searchResult;
     // Display the marker for this search over location results
-    if (searchResult.sourceType === SearchSourceType.Location) {
+    if (
+      searchResult.sourceType === SearchSourceType.Location &&
+      this.marker
+    ) {
       this.marker.point = new Point({
         latitude: searchResult.latitude,
         longitude: searchResult.longitude
