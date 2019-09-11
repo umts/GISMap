@@ -27,7 +27,9 @@ class Feedback extends declared(Widget) {
           email
         </a>
       );
-      feedbackWindow = <div class='feedback-window navigation-window shadow'>
+      feedbackWindow = <div
+        class='feedback-window navigation-window shadow'
+        aria-label='Feedback window'>
         This map is in beta. Please give us feedback on {githubLink} or
         by {emailLink}.
       </div>;
@@ -39,9 +41,11 @@ class Feedback extends declared(Widget) {
           bind={this}
           class='feedback-button shadow'
           onclick={this._toggle}
+          role='button'
           tabindex='0'
           title={`${this.open ? 'Close' : 'Open'} feedback`}>
-          <span class='esri-icon esri-icon-description'></span>
+          <span class='esri-icon esri-icon-description' aria-hidden='true'>
+          </span>
         </div>
       </div>
     );

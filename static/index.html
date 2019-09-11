@@ -32,8 +32,8 @@
   </head>
   <body>
     <!--Mandated UMass header-->
-    <div id="umass--global--header">
-      <div id="container">
+    <div id="umass--global--header" aria-label="UMass header">
+      <div id="container" role="presentation">
         <a
           id="wordmark"
           class="ir"
@@ -41,7 +41,7 @@
           title="UMass Amherst">
           The University of Massachusetts Amherst
         </a>
-        <nav id="umass--global--navigation">
+        <nav id="umass--global--navigation" role="presentation">
           <button
             aria-label="Open UMass Global Links Menu"
             id="umass--global--navigation--navicon"
@@ -87,7 +87,7 @@
       </div>
     </div>
     <!--The map-->
-    <div id="viewDiv"></div>
+    <div id="viewDiv" aria-label="Map view"></div>
     <script>require(["app/main"]);</script>
   </body>
 </html>
