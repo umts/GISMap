@@ -23,7 +23,7 @@ class Feedback extends declared(Widget) {
         GitHub
       </a>;
       const emailLink = (
-        <a href='mailto:parking-it@admin.umass.edu?subject=UMass Map Feedback'>
+        <a href='mailto:parking@umass.edu?subject=UMass Parking Map Feedback'>
           email
         </a>
       );
