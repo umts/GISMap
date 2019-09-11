@@ -21,6 +21,7 @@ import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirecti
 import CustomPopup = require('app/widgets/CustomPopup');
 import CustomWindow = require('app/widgets/CustomWindow');
 import { CustomZoom, ZoomDirection } from 'app/widgets/CustomZoom';
+import Screenshot = require('app/widgets/Screenshot');
 import ShareEmail = require('app/widgets/ShareEmail');
 import ShareLink = require('app/widgets/ShareLink');
 import WindowExpand = require('app/widgets/WindowExpand');
@@ -136,6 +137,9 @@ class MainNavigation extends declared(Widget) {
             view: properties.view,
             printServiceUrl: 'https://maps.umass.edu/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task'
           })
+        }, {
+          label: 'Screenshot',
+          widget: new Screenshot({ view: properties.view })
         }
       ]
     });
