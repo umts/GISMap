@@ -5,7 +5,6 @@ import MapView = require('esri/views/MapView');
 import Compass = require('esri/widgets/Compass');
 import Home = require('esri/widgets/Home');
 import Locate = require('esri/widgets/Locate');
-import Print = require('esri/widgets/Print');
 import Widget = require('esri/widgets/Widget');
 
 import { homeGoToOverride } from 'app/latLong';
@@ -130,12 +129,6 @@ class MainNavigation extends declared(Widget) {
         }, {
           label: 'Email',
           widget: new ShareEmail()
-        }, {
-          label: 'Print',
-          widget: new Print({
-            view: properties.view,
-            printServiceUrl: 'https://maps.umass.edu/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task'
-          })
         }
       ]
     });
