@@ -21,7 +21,7 @@ setupUmassMenu();
 // Set the map to load data from our ArcGIS Online web map
 const map = new WebMap({
   portalItem: {
-    id: '15298012bff94b1482cf3fee6277fad8'
+    id: '5ede9a2354ef4276b0b157bfe2ba63c5'
   }
 });
 
