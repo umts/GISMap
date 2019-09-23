@@ -162,11 +162,18 @@ class CustomSearchSources extends declared(Accessor) {
 
   // Return a promise for location suggestions
   private _suggestLocations(searchTerm: string): Promise<Array<Suggestion>> {
-    const suggestPromises = [];
+    const suggestPromises: Array<IPromise<any>> = [];
+    let sources = CustomSearchSources.locationSearchSourceProperties;
+    // Dont use off campus locations unless this is an explicit location search
+    if (!this.locationsOnly) {
+      sources = sources.filter((source) => {
+        return source.title === 'On-campus locations';
+      });
+    }
     // Create a promise for every locator service
-    for (let i = 0; i < CustomSearchSources.locationSearchSourceProperties.length; i += 1) {
+    sources.forEach((source) => {
       suggestPromises.push(esriRequest(
-        CustomSearchSources.locationSearchSourceProperties[i].url + '/suggest',
+        source.url + '/suggest',
         {
           query: {
             text: searchTerm,
@@ -177,7 +184,7 @@ class CustomSearchSources extends declared(Accessor) {
           }
         }
       ));
-    }
+    });
     // Resolve all promises with their results as an array in order
     return Promise.all(suggestPromises).then((responses) => {
       const suggestions: Array<Suggestion> = [];
