@@ -348,7 +348,10 @@ class CustomSearch extends declared(Widget) {
   // Called when the main search is submitted
   private _submitSearch(): boolean {
     if (this.searchResult) {
-      if (this.searchResult.sourceType === SearchSourceType.Location) {
+      if (
+        this.searchResult.sourceType === SearchSourceType.Location ||
+        this.searchResult.sourceType === SearchSourceType.Department
+      ) {
         // Go to a location result
         this.view.goTo({
           target: [this.searchResult.longitude, this.searchResult.latitude],

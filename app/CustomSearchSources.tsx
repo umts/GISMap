@@ -8,7 +8,7 @@ import MapView = require('esri/views/MapView');
 
 import { umassLongLat } from 'app/latLong';
 import { toNativePromise } from 'app/promises';
-import { filterInfo } from 'app/rendering';
+import { filterInfo, departmentInfo } from 'app/rendering';
 import {
   SearchSourceType,
   SearchFilter,
@@ -55,6 +55,8 @@ class CustomSearchSources extends declared(Accessor) {
       return 'Filters';
     } else if (suggestion.sourceType === SearchSourceType.Space) {
       return 'Spaces';
+    } else if (suggestion.sourceType === SearchSourceType.Department) {
+      return 'Departments';
     } else {
       return '';
     }
@@ -68,6 +70,7 @@ class CustomSearchSources extends declared(Accessor) {
       suggestPromises = [this._suggestLocations(searchTerm)];
     } else {
       suggestPromises = [
+        this._suggestDepartments(searchTerm),
         this._suggestFilters(searchTerm),
         this._suggestSpaces(searchTerm),
         this._suggestLocations(searchTerm)
@@ -138,6 +141,18 @@ class CustomSearchSources extends declared(Accessor) {
         filter: suggestion.filter
       }
       return Promise.resolve(searchResult);
+    // Search for departments
+    } else if (suggestion.sourceType == SearchSourceType.Department) {
+      const department = departmentInfo.filter((department) => {
+        return department.name === suggestion.text;
+      })[0];
+      searchResult = {
+        name: suggestion.text,
+        sourceType: SearchSourceType.Department,
+        latitude: department.latitude,
+        longitude: department.longitude,
+      };
+      return Promise.resolve(searchResult);
     } else {
       return Promise.reject(
         `Cannot search for suggestion from source type ${suggestion.sourceType}`
@@ -183,6 +198,28 @@ class CustomSearchSources extends declared(Accessor) {
     }).catch((error) => {
       throw error;
     });
+  }
+
+  private _suggestDepartments(searchTerm: string): Promise<Array<Suggestion>> {
+    const maxResults = 5;
+    const suggestions: Array<Suggestion> = [];
+    departmentInfo.forEach((department: any) => {
+      if (suggestions.length >= maxResults) {
+        return;
+      }
+      /*
+        Only include the department as a suggestion if the search term matches
+        the department's tags.
+      */
+      if (searchTermMatchesTags(searchTerm, department.tags)) {
+        suggestions.push({
+          text: department.name,
+          key: `department-${department.name}`,
+          sourceType: SearchSourceType.Department
+        });
+      }
+    });
+    return Promise.resolve(suggestions);
   }
 
   // Return a promise for filter suggestions

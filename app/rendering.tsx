@@ -141,7 +141,7 @@ const sectionRendererInfo = {
   }
 }
 
-const _filterInfo: Array<SearchFilter> = [
+const filterInfo: Array<SearchFilter> = [
   {
     name: 'Metered/Visitor Parking',
     description: 'Locations to park without a permit. Pay at a meter or a paystation.',
@@ -179,15 +179,22 @@ const _filterInfo: Array<SearchFilter> = [
 ];
 
 ['Red', 'Blue', 'Purple', 'Yellow', 'Green'].forEach((color) => {
-  _filterInfo.push({
+  filterInfo.push({
     name: `${color} Lots`,
     tags: [color],
     visible: true,
     clauses: [{layerName: 'Sections', clause: `SectionColor = '${color}'`}]
   });
 });
-// For simplicity we should never be modifying filterInfo outside of this file
-const filterInfo = _filterInfo;
+
+const departmentInfo: Array<any> = [
+  {
+    name: 'Parking Services',
+    tags: ['parking', 'services'],
+    latitude: 42.39256,
+    longitude: -72.53520,
+  }
+];
 
 // Update the renderers of layers to add our own icons
 function updateRenderers(map: WebMap): void {
@@ -449,6 +456,7 @@ export {
   spaceRendererInfo,
   sectionRendererInfo,
   filterInfo,
+  departmentInfo,
   goToSmart,
   imperialDistance,
   attributeRow,
