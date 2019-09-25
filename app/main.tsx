@@ -102,13 +102,15 @@ view.when(() => {
       view: view,
       name: 'pedestrian-directions-origin',
       placeholder: 'Origin',
-      required: true
+      required: true,
+      onCampusLocationsOnly: true
     }),
     new CustomSearch({
       view: view,
       name: 'pedestrian-directions-destination',
       placeholder: 'Destination',
-      required: true
+      required: true,
+      onCampusLocationsOnly: true
     })
   ];
 

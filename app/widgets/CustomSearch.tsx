@@ -87,7 +87,8 @@ class CustomSearch extends declared(Widget) {
     placeholder: string,
     customFilter?: CustomFilter,
     required?: boolean,
-    mainSearch?: boolean
+    mainSearch?: boolean,
+    onCampusLocationsOnly?: boolean,
   }) {
     super();
     this.suggestions = [];
@@ -97,7 +98,9 @@ class CustomSearch extends declared(Widget) {
     this.mainSearch = properties.mainSearch || false;
     this.warning = '';
     this.sources = new CustomSearchSources({
-      view: properties.view, locationsOnly: !properties.mainSearch
+      view: properties.view,
+      locationsOnly: !properties.mainSearch,
+      onCampusLocationsOnly: properties.onCampusLocationsOnly,
     });
 
     // Hide suggestions when the escape key is pressed
