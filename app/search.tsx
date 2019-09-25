@@ -4,14 +4,13 @@ import Graphic = require('esri/Graphic');
 enum SearchSourceType {
   Location = 0,
   Filter = 1,
-  Space = 2,
-  Department = 3,
+  Space = 2
 }
 
 interface SearchFilterClause {
   layerName: string;
   clause?: string;
-  labelsVisible?: boolean;
+  labelsVisible?: boolean,
 }
 
 interface SearchFilter {
