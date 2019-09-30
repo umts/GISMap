@@ -69,6 +69,10 @@ view.when(() => {
   (map.layers.find((layer) => {
     return layer.title === 'Sections';
   }) as FeatureLayer).maxScale = 500;
+  // Ensure spaces show up when zoomed out to the whole campus
+  (map.layers.find((layer) => {
+    return layer.title === 'Spaces';
+  }) as FeatureLayer).minScale = 75000;
 
   // Set custom icons in the layer renderers
   updateRenderers(map);
