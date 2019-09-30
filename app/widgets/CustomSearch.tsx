@@ -87,7 +87,8 @@ class CustomSearch extends declared(Widget) {
     placeholder: string,
     customFilter?: CustomFilter,
     required?: boolean,
-    mainSearch?: boolean
+    mainSearch?: boolean,
+    onCampusLocationsOnly?: boolean,
   }) {
     super();
     this.suggestions = [];
@@ -97,7 +98,9 @@ class CustomSearch extends declared(Widget) {
     this.mainSearch = properties.mainSearch || false;
     this.warning = '';
     this.sources = new CustomSearchSources({
-      view: properties.view, locationsOnly: !properties.mainSearch
+      view: properties.view,
+      locationsOnly: !properties.mainSearch,
+      onCampusLocationsOnly: properties.onCampusLocationsOnly,
     });
 
     // Hide suggestions when the escape key is pressed
@@ -123,18 +126,21 @@ class CustomSearch extends declared(Widget) {
     const visitedSources: Array<string> = [];
     if (this.showSuggestions) {
       this.suggestions.forEach((suggestion, i) => {
-        const header = this.sources.suggestionHeader(suggestion);
-        // Push a source header if the suggestions are from a new source
-        if (visitedSources.indexOf(header) === -1) {
-          visitedSources.push(header);
-          suggestionElements.push(
-            <div
-              class='custom-search-header suggestion-item'
-              key={`${suggestion.key}-header`}
-              role='heading'>
-              {header}
-            </div>
-          );
+        // No headers for the main search
+        if (!this.mainSearch) {
+          const header = this.sources.suggestionHeader(suggestion);
+          // Push a source header if the suggestions are from a new source
+          if (visitedSources.indexOf(header) === -1) {
+            visitedSources.push(header);
+            suggestionElements.push(
+              <div
+                class='custom-search-header suggestion-item'
+                key={`${suggestion.key}-header`}
+                role='heading'>
+                {header}
+              </div>
+            );
+          }
         }
         // Push a new suggestion
         suggestionElements.push(
@@ -161,15 +167,27 @@ class CustomSearch extends declared(Widget) {
             Loading...
           </div>
         );
-      }
       // Push error text
-      if (this.error) {
+      } else if (this.error) {
         suggestionElements.push(
           <div
             class='custom-search-header suggestion-item'
             key='error-header'
             role='heading'>
             Error loading suggestions. Please try again later.
+          </div>
+        );
+      // Push no results text
+      } else if (
+        this.suggestions.length === 0 &&
+        this._inputElement().value !== ''
+      ) {
+        suggestionElements.push(
+          <div
+            class='custom-search-header suggestion-item'
+            key='no-results-header'
+            role='heading'>
+            No Results.
           </div>
         );
       }

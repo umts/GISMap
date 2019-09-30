@@ -141,7 +141,7 @@ const sectionRendererInfo = {
   }
 }
 
-const _filterInfo: Array<SearchFilter> = [
+const filterInfo: Array<SearchFilter> = [
   {
     name: 'Metered/Visitor Parking',
     description: 'Locations to park without a permit. Pay at a meter or a paystation.',
@@ -178,16 +178,25 @@ const _filterInfo: Array<SearchFilter> = [
   }
 ];
 
+// Add lot search filters
 ['Red', 'Blue', 'Purple', 'Yellow', 'Green'].forEach((color) => {
-  _filterInfo.push({
+  filterInfo.push({
     name: `${color} Lots`,
     tags: [color],
     visible: true,
     clauses: [{layerName: 'Sections', clause: `SectionColor = '${color}'`}]
   });
 });
-// For simplicity we should never be modifying filterInfo outside of this file
-const filterInfo = _filterInfo;
+
+// Add space search filters
+Object.keys(spaceRendererInfo).forEach((spaceCategory) => {
+  filterInfo.push({
+    name: spaceRendererInfo[spaceCategory].label,
+    tags: spaceRendererInfo[spaceCategory].label.split(' '),
+    visible: true,
+    clauses: [{layerName: 'Spaces', clause: `ParkingSpaceSubCategory = '${spaceCategory}'`}]
+  });
+});
 
 // Update the renderers of layers to add our own icons
 function updateRenderers(map: WebMap): void {

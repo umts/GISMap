@@ -41,10 +41,19 @@ class CustomSearchSources extends declared(Accessor) {
   @property()
   private readonly locationsOnly: boolean;
 
+  // Only use on campus locations for searching
+  @property()
+  private readonly onCampusLocationsOnly: boolean;
+
   // Pass in any properties
-  public constructor(properties?: { view: MapView, locationsOnly: boolean }) {
+  public constructor(properties?: {
+    view: MapView,
+    locationsOnly: boolean,
+    onCampusLocationsOnly: boolean,
+  }) {
     super();
     this.locationsOnly = properties.locationsOnly || false;
+    this.onCampusLocationsOnly = properties.onCampusLocationsOnly || false;
   }
 
   // Return header text to describe a list of suggestions of the same type
@@ -147,11 +156,21 @@ class CustomSearchSources extends declared(Accessor) {
 
   // Return a promise for location suggestions
   private _suggestLocations(searchTerm: string): Promise<Array<Suggestion>> {
-    const suggestPromises = [];
+    const suggestPromises: Array<IPromise<any>> = [];
+    let sources = CustomSearchSources.locationSearchSourceProperties;
+    /*
+      Dont use off campus locations unless this is an explicit location search
+      with onCampusLocationsOnly set to false.
+    */
+    if (!this.locationsOnly || this.onCampusLocationsOnly) {
+      sources = sources.filter((source) => {
+        return source.title === 'On-campus locations';
+      });
+    }
     // Create a promise for every locator service
-    for (let i = 0; i < CustomSearchSources.locationSearchSourceProperties.length; i += 1) {
+    sources.forEach((source) => {
       suggestPromises.push(esriRequest(
-        CustomSearchSources.locationSearchSourceProperties[i].url + '/suggest',
+        source.url + '/suggest',
         {
           query: {
             text: searchTerm,
@@ -162,7 +181,7 @@ class CustomSearchSources extends declared(Accessor) {
           }
         }
       ));
-    }
+    });
     // Resolve all promises with their results as an array in order
     return Promise.all(suggestPromises).then((responses) => {
       const suggestions: Array<Suggestion> = [];

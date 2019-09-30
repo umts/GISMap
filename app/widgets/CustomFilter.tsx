@@ -1,6 +1,7 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
+import Extent = require('esri/geometry/Extent');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
@@ -68,6 +69,36 @@ class CustomFilter extends declared(Widget) {
       // Go to filter target
       if (newFilter.target) {
         goToSmart(this.view, newFilter.target);
+      // Go to the extent of main layers if this filter is visible
+      } else if (newFilter.visible) {
+        const mainLayers = this.view.map.layers.filter((layer) => {
+          return layer.title === 'Sections' || layer.title === 'Spaces';
+        });
+        if (mainLayers) {
+          const extentPromises = mainLayers.map((layer) => {
+            return (layer as FeatureLayer).queryExtent();
+          }).toArray();
+          Promise.all(extentPromises).then((extents) => {
+            let mainExtent: Extent;
+            extents.forEach((extent: Extent) => {
+              // Skip to next extent if this one doesnt exist
+              if (!extent.extent) {
+                return;
+              }
+              if (mainExtent) {
+                mainExtent.union(extent.extent);
+              } else {
+                mainExtent = extent.extent;
+              }
+            });
+            if (mainExtent) {
+              this.view.goTo(mainExtent);
+            }
+            return;
+          }).catch((error) => {
+            throw error;
+          });
+        }
       }
     });
     /*
