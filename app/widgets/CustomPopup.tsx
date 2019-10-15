@@ -21,7 +21,8 @@ import {
   spaceRendererInfo,
   attributeRow,
   expandable,
-  iconButton
+  iconButton,
+  formatDate
 } from 'app/rendering';
 import { FeatureForUrl } from 'app/url';
 
@@ -503,10 +504,10 @@ class CustomPopup extends declared(Widget) {
           });
         // If this lot notice is for this lot (section)
         if (useLotNotice) {
-          const start = (new Date(lotNotice.start_date)).toLocaleString();
-          const end = (new Date(lotNotice.end_date)).toLocaleString();
+          const start = formatDate(new Date(lotNotice.start_date));
+          const end = formatDate(new Date(lotNotice.end_date));
           noticeElements.push(
-            <div class='lot-notice'>
+            <div class='lot-notice' key='lot-notice'>
               <h2>{lotNotice.title}</h2>
               <p>{lotNotice.description}</p>
               <p>From {start} to {end}</p>
@@ -516,7 +517,9 @@ class CustomPopup extends declared(Widget) {
       });
     // If there is no hub data display an error
     } else {
-      noticeElements.push(<div class='error'>Could not load notices</div>);
+      noticeElements.push(
+        <div class='error' key='lot-notice-error'>Could not load notices</div>
+      );
     }
 
     let parkmobile;
