@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@types/arcgis-js-api": "^4.10.0",
+    "@types/arcgis-js-api": "4.13.0",
     "es6-promise": "^4.2.6"
   },
   "devDependencies": {
