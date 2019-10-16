@@ -447,6 +447,7 @@ function iconButton(properties: {
   );
 }
 
+// Format a JS Date as a readable string
 function formatDate(date: Date): string {
   return date.toLocaleString('en-US', {
     weekday: 'short',

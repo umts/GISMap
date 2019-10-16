@@ -156,6 +156,7 @@ h2 {
   padding: 0;
   margin: 0 0 -0.4rem 0;
   list-style-type: none;
+  overflow-x: auto;
 }
 
 .widget-list ul li.widget-list-item {
@@ -417,6 +418,9 @@ td.number, th.number {
   margin: 0;
 }
 
+.pointer-cursor {
+  cursor: pointer;
+}
 .progress-cursor {
   cursor: progress;
 }

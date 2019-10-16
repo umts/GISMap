@@ -2,7 +2,6 @@ import { subclass, declared, property } from 'esri/core/accessorSupport/decorato
 import { tsx } from 'esri/widgets/support/widget';
 
 import MapView = require('esri/views/MapView');
-import Compass = require('esri/widgets/Compass');
 import Home = require('esri/widgets/Home');
 import Locate = require('esri/widgets/Locate');
 import Widget = require('esri/widgets/Widget');
@@ -20,6 +19,7 @@ import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirecti
 import CustomPopup = require('app/widgets/CustomPopup');
 import CustomWindow = require('app/widgets/CustomWindow');
 import { CustomZoom, ZoomDirection } from 'app/widgets/CustomZoom';
+import LotNotices = require('app/widgets/LotNotices');
 import ShareEmail = require('app/widgets/ShareEmail');
 import ShareLink = require('app/widgets/ShareLink');
 import WindowExpand = require('app/widgets/WindowExpand');
@@ -133,11 +133,25 @@ class MainNavigation extends declared(Widget) {
       ]
     });
 
+    const lotNoticesWindow = new CustomWindow({
+      name: 'lot notices',
+      iconName: 'notice-triangle',
+      useTabs: false,
+      widgets: [
+        {
+          label: 'Lot notices',
+          widget: new LotNotices({ popup: properties.popup })
+        }
+      ]
+    });
+
     /*
       Every window needs to know about the other windows, that way a single
       window can close the other windows when it needs to open.
     */
-    const customWindows = [layersWindow, directionsWindow, shareWindow];
+    const customWindows = [
+      layersWindow, directionsWindow, shareWindow, lotNoticesWindow
+    ];
 
     this.search = new CustomSearch({
       view: properties.view,
@@ -161,7 +175,6 @@ class MainNavigation extends declared(Widget) {
         view: properties.view,
         direction: ZoomDirection.Out
       }),
-      new Compass({ view: properties.view }),
       new Home({
         view: properties.view,
         goToOverride: homeGoToOverride
@@ -178,6 +191,12 @@ class MainNavigation extends declared(Widget) {
         name: 'share',
         iconName: 'link',
         window: shareWindow,
+        windows: customWindows
+      }),
+      new WindowExpand({
+        name: 'lot notices',
+        iconName: 'notice-triangle',
+        window: lotNoticesWindow,
         windows: customWindows
       })
     ];
