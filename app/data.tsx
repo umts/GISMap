@@ -14,7 +14,7 @@ let hubData: any;
   lot notices window immediately.
 */
 function updateHubData(mainNavigation: MainNavigation): void {
-  toNativePromise(esriRequest('http://localhost:3000/gis')
+  toNativePromise(esriRequest('https://hub.parking.umass.edu/gis')
     .then((response) => {
       if (response.data.lot_notices.length > 0) {
         mainNavigation.findWindow('lot notices').visible = true;
@@ -38,6 +38,11 @@ function updateSectionData(view: MapView): any {
   }) as FeatureLayer;
   const query = layer.createQuery();
   query.where = '1 = 1'
+  /*
+    Sometimes querying without outFields defined returns features with
+    no attributes, so this is necessary.
+  */
+  query.outFields = ['*']
   layer.queryFeatures(query).then((response: any) => {
     sectionData = response;
     return;

@@ -516,12 +516,20 @@ class CustomPopup extends declared(Widget) {
           });
         // If this lot notice is for this lot (section)
         if (useLotNotice) {
+          // If there is a url with the lot notice, display it as a link
+          let linkElement;
+          if (lotNotice.url !== '') {
+            linkElement = <p>
+              <a href={lotNotice.url} target='_blank'>Click here for more info</a>
+            </p>;
+          }
           const start = formatDate(new Date(lotNotice.start_date));
           const end = formatDate(new Date(lotNotice.end_date));
           noticeElements.push(
             <div class='lot-notice' key='lot-notice'>
               <h2>{lotNotice.title}</h2>
               <p>{lotNotice.description}</p>
+              {linkElement}
               <p>From {start} to {end}</p>
             </div>
           );

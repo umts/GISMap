@@ -27,6 +27,9 @@ class LotNotices extends declared(Widget) {
     // If the hub data has been loaded yet
     if (hubData && sectionData) {
       const lotNotices = hubData.lot_notices;
+
+      // Create a 'notice' for every lot associated with a single notice
+      const sortedNotices: Array<any> = [];
       lotNotices.forEach((lotNotice: any) => {
         // Grab the lot names based on citation location id from section data
         const lots = sectionData.features.filter((feature: Graphic) => {
@@ -34,19 +37,47 @@ class LotNotices extends declared(Widget) {
         });
 
         lots.forEach((lot: Graphic) => {
-          noticeElements.push(
-            <div
-              bind={this}
-              class='lot-notice pointer-cursor'
-              key={`${lotNotice.id}-${lot.attributes.CitationLocationID}`}
-              onclick={() => {
-                this._openLotNotice(lot.attributes.CitationLocationID)}
-              }>
-              {attributeRow(lot.attributes.SectionName, lotNotice.title)}
-            </div>
-          );
+          sortedNotices.push({ lotNotice: lotNotice, lot: lot });
         });
       });
+      // For all lot notices, sort by lot name then start time
+      sortedNotices.sort((a: any, b: any) => {
+        const aName = a.lot.attributes.SectionName.toUpperCase();
+        const bName = b.lot.attributes.SectionName.toUpperCase();
+        if (aName < bName) {
+          return -1;
+        }
+        if (aName > bName) {
+          return 1;
+        }
+        if (a.lotNotice.start < b.lotNotice.start) {
+          return -1;
+        }
+        if (a.lotNotice.start > b.lotNotice.start) {
+          return 1;
+        }
+        return 0;
+      });
+      // Go through each sorted notice and render it
+      sortedNotices.forEach((sortedNotice: any) => {
+        const lotNotice = sortedNotice.lotNotice;
+        const lot = sortedNotice.lot;
+        noticeElements.push(
+          <div
+            bind={this}
+            class='lot-notice pointer-cursor'
+            key={`${lotNotice.id}-${lot.attributes.CitationLocationID}`}
+            onclick={() => {
+              this._openLotNotice(lot.attributes.CitationLocationID)}
+            }>
+            {attributeRow(lot.attributes.SectionName, lotNotice.title)}
+          </div>
+        );
+      });
+      // No lot notices
+      if (sortedNotices.length <= 0) {
+        noticeElements.push(<p>No lot notices are active at this time.</p>);
+      }
     } else {
       noticeElements.push(<div class='error'>Could not load lot notices</div>);
     }
