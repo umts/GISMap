@@ -48,11 +48,12 @@ class CustomWindow extends declared(Widget) {
     name: string,
     iconName: string,
     useTabs: boolean,
-    widgets: Array<WidgetWithLabel>
+    widgets: Array<WidgetWithLabel>,
+    visible?: boolean
   }) {
     super();
     this.widgetIndex = 0;
-    this.visible = false;
+    this.visible = properties.visible || false;
   }
 
   // Render this widget by returning JSX which is converted to HTML
