@@ -219,8 +219,8 @@ function updateRenderers(map: WebMap): void {
           label: rendererInfo.label,
           symbol: new PictureMarkerSymbol({
             url: rendererInfo.iconUrl,
-            width: '24px',
-            height: '24px'
+            width: '22px',
+            height: '22px'
           })
         };
       }
