@@ -15,13 +15,14 @@ import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
 import RequestSet = require('app/RequestSet');
 import { circleAt } from 'app/latLong';
-import { getHubData } from 'app/hubData';
+import { getHubData } from 'app/data';
 import { toNativePromise } from 'app/promises';
 import {
   spaceRendererInfo,
   attributeRow,
   expandable,
-  iconButton
+  iconButton,
+  formatDate
 } from 'app/rendering';
 import { FeatureForUrl } from 'app/url';
 
@@ -232,6 +233,7 @@ class CustomPopup extends declared(Widget) {
         outFields: ['*'],
       }, {
         useGeometry: false,
+        goTo: false,
         point: event.mapPoint
       }
     );
@@ -261,9 +263,16 @@ class CustomPopup extends declared(Widget) {
         outSpatialReference: new SpatialReference({'wkid': 4326}),
         // Ensure the query returns all fields, in particular the OBJECTID field
         outFields: ['*']
-      }, {
-        useGeometry: true
-      }
+      },
+      { useGeometry: true, goTo: false }
+    );
+  }
+
+  public openFromCitationLocationId(id: string): void {
+    this._queryAndUseFeatures(
+      ['Sections'],
+      { where: `CitationLocationID = ${id}` },
+      { useGeometry: true, goTo: true }
     );
   }
 
@@ -274,7 +283,7 @@ class CustomPopup extends declared(Widget) {
   private _queryAndUseFeatures(
     layerNames: Array<string>,
     queryParams: any,
-    pointParams: { useGeometry: boolean, point?: Point }
+    pointParams: { useGeometry: boolean, goTo: boolean, point?: Point }
   ): void {
     // Generate promises to query each layer
     const layerPromises: Array<Promise<any>> = [];
@@ -316,6 +325,10 @@ class CustomPopup extends declared(Widget) {
         // Open popup only if any of the layer queries returned features
         if (this.features.length > 0) {
           this._open();
+          // Make the view go to where the popup was opened if requested
+          if (pointParams.goTo) {
+            this.view.goTo(this.point);
+          }
         }
         return;
       }).catch((error: string) => {
@@ -503,12 +516,20 @@ class CustomPopup extends declared(Widget) {
           });
         // If this lot notice is for this lot (section)
         if (useLotNotice) {
-          const start = (new Date(lotNotice.start_date)).toLocaleString();
-          const end = (new Date(lotNotice.end_date)).toLocaleString();
+          // If there is a url with the lot notice, display it as a link
+          let linkElement;
+          if (lotNotice.url !== '') {
+            linkElement = <p>
+              <a href={lotNotice.url} target='_blank'>Click here for more info</a>
+            </p>;
+          }
+          const start = formatDate(new Date(lotNotice.start_date));
+          const end = formatDate(new Date(lotNotice.end_date));
           noticeElements.push(
-            <div class='lot-notice'>
+            <div class='lot-notice' key='lot-notice'>
               <h2>{lotNotice.title}</h2>
               <p>{lotNotice.description}</p>
+              {linkElement}
               <p>From {start} to {end}</p>
             </div>
           );
@@ -516,7 +537,9 @@ class CustomPopup extends declared(Widget) {
       });
     // If there is no hub data display an error
     } else {
-      noticeElements.push(<div class='error'>Could not load notices</div>);
+      noticeElements.push(
+        <div class='error' key='lot-notice-error'>Could not load lot notices</div>
+      );
     }
 
     let parkmobile;

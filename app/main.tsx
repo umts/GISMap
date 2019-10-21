@@ -5,7 +5,7 @@ import MapView = require('esri/views/MapView');
 
 import { setupUmassMenu } from 'app/events';
 import { umassLongLat } from 'app/latLong';
-import { updateHubData } from 'app/hubData';
+import { updateHubData, updateSectionData } from 'app/data';
 import { updateRenderers, updateLabeling } from 'app/rendering';
 import { resetUrlTimer, updateAppFromUrl } from 'app/url';
 
@@ -42,11 +42,11 @@ const view = new MapView({
   popup: null
 });
 
-// Get and store data from the hub
-updateHubData();
-
 // Wait until the view has loaded before loading the widgets
 view.when(() => {
+  // Get and store raw data for sections all at once
+  updateSectionData(view);
+
   // Layer for directions
   map.add(new GraphicsLayer({
     title: 'Directions'
@@ -157,6 +157,9 @@ view.when(() => {
   const mainNavigation = new MainNavigation({
     view: view, popup: popup, searches: searches
   });
+
+  // Get and store data from the hub
+  updateHubData(mainNavigation);
 
   // Create the markers widget which manages all the markers on the map
   const markersWidget = new Markers({ view: view, markers: markers });

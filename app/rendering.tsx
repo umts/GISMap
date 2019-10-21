@@ -447,6 +447,19 @@ function iconButton(properties: {
   );
 }
 
+// Format a JS Date as a readable string
+function formatDate(date: Date): string {
+  return date.toLocaleString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true
+  });
+}
+
 /*
   Export helper functions related to rendering so they can be
   imported and used in other files.
@@ -462,5 +475,6 @@ export {
   imperialDistance,
   attributeRow,
   expandable,
-  iconButton
+  iconButton,
+  formatDate
 };
