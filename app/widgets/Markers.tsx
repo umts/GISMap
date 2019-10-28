@@ -49,6 +49,10 @@ class Markers extends declared(Widget) {
   public render(): JSX.Element {
     const renderedMarkers: Array<JSX.Element> = [];
     this.markers.forEach((marker) => {
+      // Set point to new point if undefined
+      if (!marker.point) {
+        marker.point = new Point();
+      }
       if (marker.popup) {
         marker.point = marker.popup.point;
         marker.visible = marker.popup.visible && marker.popup.docked;

@@ -112,6 +112,11 @@ class CustomPopup extends declared(Widget) {
       this._updateFeatureForUrl();
       this._updateLot();
     });
+    // Update the selection graphic when the popup visibility changes or the
+    // selected feature changes.
+    this.watch(['visible', 'page', 'features'], () => {
+      this._updateSelectionGraphic();
+    });
   }
 
   // Render this widget by returning JSX which is converted to HTML
@@ -120,7 +125,6 @@ class CustomPopup extends declared(Widget) {
     // Render the feature information
     if (this.page >= 0 && this.page < this.features.length) {
       const feature = this.features[this.page];
-      this._updateSelectionGraphic();
       featureInfo = this._renderFeature(feature);
     }
     // If there is an error override feature information with an error message
