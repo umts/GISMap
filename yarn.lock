@@ -16,10 +16,10 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@types/arcgis-js-api@4.13.0":
-  version "4.13.0"
-  resolved "https://registry.yarnpkg.com/@types/arcgis-js-api/-/arcgis-js-api-4.13.0.tgz#6ce08002a9a0f1087d603632904fb44bbe58b983"
-  integrity sha512-b57TD45v8/lsLPqZJaEShL50+xfg+smm8TWOjTM/lkplXygCpHgWxtgWGX/XGfGxsasS/4bbXbduuSc1RbdrgQ==
+"@types/arcgis-js-api@4.12.0":
+  version "4.12.0"
+  resolved "https://registry.yarnpkg.com/@types/arcgis-js-api/-/arcgis-js-api-4.12.0.tgz#d2e99d5a53cdeef8f8bc24032d99a8b4aff68f56"
+  integrity sha512-hNJnuqfM1BQZR+muyqFQp8Srw8rshOIsJbSTX2G2zstIj20k09LdwZNAAVYK/QXt90vIJAUnKqP+6JrBv5l/VA==
 
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
