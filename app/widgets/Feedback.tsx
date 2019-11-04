@@ -30,8 +30,7 @@ class Feedback extends declared(Widget) {
       feedbackWindow = <div
         class='feedback-window navigation-window shadow'
         aria-label='Feedback window'>
-        This map is in beta. Please give us feedback on {githubLink} or
-        by {emailLink}.
+        Please give us feedback on {githubLink} or by {emailLink}.
       </div>;
     }
     return (
