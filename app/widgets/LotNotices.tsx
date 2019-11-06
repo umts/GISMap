@@ -76,7 +76,9 @@ class LotNotices extends declared(Widget) {
       });
       // No lot notices
       if (sortedNotices.length <= 0) {
-        noticeElements.push(<p>No lot notices are active at this time.</p>);
+        noticeElements.push(
+          <p>No lot notices or events are active at this time.</p>
+        );
       }
     } else {
       noticeElements.push(<div class='error'>Could not load lot notices</div>);

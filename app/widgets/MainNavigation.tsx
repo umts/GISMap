@@ -139,7 +139,7 @@ class MainNavigation extends declared(Widget) {
       useTabs: false,
       widgets: [
         {
-          label: 'Lot notices',
+          label: 'Lot notices/events',
           widget: new LotNotices({ popup: properties.popup })
         }
       ]
