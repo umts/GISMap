@@ -25,6 +25,7 @@ import {
   featurePoint,
   formatDate
 } from 'app/rendering';
+import { SearchSourceType } from 'app/search';
 import { FeatureForUrl } from 'app/url';
 
 import CustomDirections = require('app/widgets/CustomDirections');
@@ -379,11 +380,17 @@ class CustomPopup extends declared(Widget) {
     if (!feature || !this.mainNavigation) {
       return;
     }
+    const searchResult = {
+      name: featureTitle(feature),
+      sourceType: SearchSourceType.Location,
+      latitude: featurePoint(feature).latitude,
+      longitude: featurePoint(feature).longitude,
+    }
     const directionsWindow = this.mainNavigation.findWindow('directions');
     (directionsWindow.findWidget('Driving directions') as CustomDirections)
-      .setDestination(feature);
+      .endSearch.setSearchExplicit(searchResult);
     (directionsWindow.findWidget('Walking directions') as CustomPedestrianDirections)
-      .setDestination(feature);
+      .endSearch.setSearchExplicit(searchResult);
     directionsWindow.visible = true;
   }
 

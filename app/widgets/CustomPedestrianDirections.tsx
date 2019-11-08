@@ -14,13 +14,7 @@ import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
 import { clickOnSpaceOrEnter } from 'app/events';
-import {
-  goToSmart,
-  imperialDistance,
-  featureTitle,
-  featurePoint
-} from 'app/rendering';
-import { SearchSourceType } from 'app/search';
+import { goToSmart, imperialDistance } from 'app/rendering';
 
 import CustomSearch = require('app/widgets/CustomSearch');
 
@@ -40,7 +34,7 @@ class CustomPedestrianDirections extends declared(Widget) {
 
   // Custom search widget for the ending location
   @property()
-  private readonly endSearch: CustomSearch;
+  public endSearch: CustomSearch;
 
   // The result of querying using a route task. Contains directions.
   @property()
@@ -124,16 +118,6 @@ class CustomPedestrianDirections extends declared(Widget) {
         {directionsElement}
       </div>
     );
-  }
-
-  // Set the destination search to be the given feature
-  public setDestination(feature: Graphic): void {
-    this.endSearch.setSearchExplicit({
-      name: featureTitle(feature),
-      sourceType: SearchSourceType.Location,
-      latitude: featurePoint(feature).latitude,
-      longitude: featurePoint(feature).longitude,
-    });
   }
 
   // Render a direction which is given to us as a graphic by the api
