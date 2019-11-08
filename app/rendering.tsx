@@ -2,6 +2,8 @@ import { tsx } from 'esri/widgets/support/widget';
 
 import Graphic = require('esri/Graphic');
 import WebMap = require('esri/WebMap');
+import Point = require('esri/geometry/Point');
+import Polygon = require('esri/geometry/Polygon');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import LabelClass = require('esri/layers/support/LabelClass');
 import UniqueValueRenderer = require('esri/renderers/UniqueValueRenderer');
@@ -447,6 +449,34 @@ function iconButton(properties: {
   );
 }
 
+// Return the human readable title of a feature
+function featureTitle(feature: Graphic): string {
+  let title = 'Unknown feature';
+  if (feature.layer.title === 'Sections') {
+    if (feature.attributes.SectionColor) {
+      title = `${feature.attributes.SectionName} (${feature.attributes.SectionColor})`;
+    } else {
+      title = feature.attributes.SectionName;
+    }
+  } else if (feature.layer.title === 'Campus Buildings') {
+    title = feature.attributes.Building_Name;
+  } else if (feature.layer.title === 'Spaces') {
+    title = spaceRendererInfo[feature.attributes.ParkingSpaceSubCategory].description;
+  }
+  return title;
+}
+
+// Return the point that a feature is located at
+function featurePoint(feature: Graphic): Point {
+  let point;
+  if ((feature.geometry as any).centroid) {
+    point = (feature.geometry as Polygon).centroid;
+  } else {
+    point = feature.geometry as Point;
+  }
+  return point;
+}
+
 // Format a JS Date as a readable string
 function formatDate(date: Date): string {
   return date.toLocaleString('en-US', {
@@ -476,5 +506,7 @@ export {
   attributeRow,
   expandable,
   iconButton,
+  featureTitle,
+  featurePoint,
   formatDate
 };

@@ -4,7 +4,6 @@ import { renderable, tsx } from 'esri/widgets/support/widget';
 import Graphic = require('esri/Graphic');
 import WebMap = require('esri/WebMap');
 import Point = require('esri/geometry/Point');
-import Polygon = require('esri/geometry/Polygon');
 import SpatialReference = require('esri/geometry/SpatialReference');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
@@ -22,6 +21,8 @@ import {
   attributeRow,
   expandable,
   iconButton,
+  featureTitle,
+  featurePoint,
   formatDate
 } from 'app/rendering';
 import { FeatureForUrl } from 'app/url';
@@ -92,6 +93,10 @@ class CustomPopup extends declared(Widget) {
   @renderable()
   public docked: boolean;
 
+  // The feature that should replace the directions destination
+  @property()
+  public destinationFeature: Graphic;
+
   // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public constructor(properties?: { view: MapView }) {
@@ -157,6 +162,13 @@ class CustomPopup extends declared(Widget) {
       </div>
     );
 
+    const directionsToButton = iconButton({
+      object: this,
+      onclick: this._directionsTo,
+      name: 'Directions to feature',
+      iconName: 'directions'
+    });
+
     const dockButton = iconButton({
       object: this,
       onclick: this._dock,
@@ -206,6 +218,7 @@ class CustomPopup extends declared(Widget) {
           role='dialog'>
           <div class='widget-list right' role='presentation'>
             <ul>
+              <li class='widget-list-item'>{directionsToButton}</li>
               <li class='widget-list-item'>{dockButton}</li>
               <li class='widget-list-item'>{closeButton}</li>
             </ul>
@@ -318,11 +331,7 @@ class CustomPopup extends declared(Widget) {
             this.features = this.features.concat(results.features);
             // Set point from geometry
             if (pointParams.useGeometry) {
-              if ((results.features[0].geometry as any).centroid) {
-                this.point = (results.features[0].geometry as Polygon).centroid;
-              } else {
-                this.point = results.features[0].geometry as Point;
-              }
+              this.point = featurePoint(results.features[0]);
             }
           }
         });
@@ -358,6 +367,11 @@ class CustomPopup extends declared(Widget) {
   // Go to the previous page or feature
   private _previousPage(): void {
     this._changePage(-1);
+  }
+
+  // Set the destination feature, which is being watched for updates
+  private _directionsTo(): void {
+    this.destinationFeature = this.features[this.page];
   }
 
   // Toggle whether or not the popup is docked
@@ -497,16 +511,7 @@ class CustomPopup extends declared(Widget) {
 
   // Return a JSX element describing a section
   private _renderSection(feature: Graphic): JSX.Element {
-    let title;
-    if (feature.attributes.SectionColor) {
-      title = <h1>
-        {feature.attributes.SectionName} ({feature.attributes.SectionColor})
-      </h1>;
-    } else {
-      title = <h1>
-        {feature.attributes.SectionName}
-      </h1>;
-    }
+    const title = <h1>{featureTitle(feature)}</h1>;
 
     const noticeElements: Array<JSX.Element> = [];
     const hubData = getHubData();
@@ -698,7 +703,7 @@ class CustomPopup extends declared(Widget) {
   private _renderBuilding(feature: Graphic): JSX.Element {
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID}>
-        <h1>{feature.attributes.Building_Name}</h1>
+        <h1>{featureTitle(feature)}</h1>
         <p><b>{feature.attributes.Address}</b></p>
         {
           expandable(
@@ -745,9 +750,7 @@ class CustomPopup extends declared(Widget) {
     }
     return (
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
-        <h1>
-          {categoryInfo.description}{icon}
-        </h1>
+        <h1>{featureTitle(feature)}{icon}</h1>
         {reserved}{payment}{duration}
       </div>
     );

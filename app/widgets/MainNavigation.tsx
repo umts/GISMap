@@ -211,6 +211,13 @@ class MainNavigation extends declared(Widget) {
     // Update the url when the basemap changes
     (this.findWindow('layers').findWidget('Basemap') as BasemapPicker)
       .watch('basemapId', () => { resetUrlTimer(this) });
+
+    this.popup.watch('destinationFeature', (destinationFeature) => {
+      const directionsWindow = this.findWindow('directions');
+      (directionsWindow.findWidget('Driving directions') as CustomDirections)
+        .setDestination(destinationFeature);
+      directionsWindow.visible = true;
+    });
   }
 
   // Render this widget by returning JSX which is converted to HTML

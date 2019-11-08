@@ -1,8 +1,12 @@
 import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
 import { tsx } from 'esri/widgets/support/widget';
 
+import Graphic = require('esri/Graphic');
 import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
+
+import { featureTitle, featurePoint } from 'app/rendering';
+import { SearchSourceType } from 'app/search';
 
 import CustomSearch = require('app/widgets/CustomSearch');
 
@@ -58,6 +62,16 @@ class CustomDirections extends declared(Widget) {
         </form>
       </div>
     );
+  }
+
+  // Set the destination search to be the given feature
+  public setDestination(feature: Graphic): void {
+    this.endSearch.setSearchExplicit({
+      name: featureTitle(feature),
+      sourceType: SearchSourceType.Location,
+      latitude: featurePoint(feature).latitude,
+      longitude: featurePoint(feature).longitude,
+    });
   }
 
   /*
