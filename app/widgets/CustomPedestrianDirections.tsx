@@ -15,6 +15,7 @@ import Widget = require('esri/widgets/Widget');
 
 import { clickOnSpaceOrEnter } from 'app/events';
 import { goToSmart, imperialDistance } from 'app/rendering';
+
 import CustomSearch = require('app/widgets/CustomSearch');
 
 @subclass('esri.widgets.CustomPedestrianDirections')
@@ -33,7 +34,7 @@ class CustomPedestrianDirections extends declared(Widget) {
 
   // Custom search widget for the ending location
   @property()
-  private readonly endSearch: CustomSearch;
+  public endSearch: CustomSearch;
 
   // The result of querying using a route task. Contains directions.
   @property()
@@ -100,6 +101,7 @@ class CustomPedestrianDirections extends declared(Widget) {
     return (
       <div class='esri-widget'>
         {error}
+        <p>Drag and drop the green and red markers, or start typing a location</p>
         <form>
           {this.startSearch.render()}
           {this.endSearch.render()}

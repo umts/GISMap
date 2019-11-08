@@ -206,6 +206,8 @@ class MainNavigation extends declared(Widget) {
 
   // Run after this widget is ready
   public postInitialize(): void {
+    // Popup needs this widget to open the directions window and set searches
+    this.popup.mainNavigation = this;
     this._setLoading(true);
     this.view.watch('updating', (updating) => { this._setLoading(updating) });
     // Update the url when the basemap changes
