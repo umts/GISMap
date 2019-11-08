@@ -374,7 +374,10 @@ class CustomPopup extends declared(Widget) {
     this._changePage(-1);
   }
 
-  // Set the destination feature, which is being watched for updates
+  /*
+    Set the destinations of the direction searches to the current popup
+    feature. Also open the directions window.
+  */
   private _directionsTo(): void {
     const feature = this.features[this.page];
     if (!feature || !this.mainNavigation) {
