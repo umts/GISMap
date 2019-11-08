@@ -100,6 +100,7 @@ class CustomPedestrianDirections extends declared(Widget) {
     return (
       <div class='esri-widget'>
         {error}
+        <p>Drag and drop the green and red markers, or start typing a location</p>
         <form>
           {this.startSearch.render()}
           {this.endSearch.render()}

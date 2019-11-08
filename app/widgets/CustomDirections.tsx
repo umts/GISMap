@@ -34,6 +34,7 @@ class CustomDirections extends declared(Widget) {
   public render(): JSX.Element {
     return (
       <div class='esri-widget'>
+        <p>Drag and drop the green and red markers, or start typing a location</p>
         <form>
           {this.startSearch.render()}
           {this.endSearch.render()}
