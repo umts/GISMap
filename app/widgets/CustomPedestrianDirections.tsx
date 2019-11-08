@@ -14,7 +14,14 @@ import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
 import { clickOnSpaceOrEnter } from 'app/events';
-import { goToSmart, imperialDistance } from 'app/rendering';
+import {
+  goToSmart,
+  imperialDistance,
+  featureTitle,
+  featurePoint
+} from 'app/rendering';
+import { SearchSourceType } from 'app/search';
+
 import CustomSearch = require('app/widgets/CustomSearch');
 
 @subclass('esri.widgets.CustomPedestrianDirections')
@@ -117,6 +124,16 @@ class CustomPedestrianDirections extends declared(Widget) {
         {directionsElement}
       </div>
     );
+  }
+
+  // Set the destination search to be the given feature
+  public setDestination(feature: Graphic): void {
+    this.endSearch.setSearchExplicit({
+      name: featureTitle(feature),
+      sourceType: SearchSourceType.Location,
+      latitude: featurePoint(feature).latitude,
+      longitude: featurePoint(feature).longitude,
+    });
   }
 
   // Render a direction which is given to us as a graphic by the api

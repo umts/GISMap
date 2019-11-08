@@ -27,6 +27,10 @@ import {
 } from 'app/rendering';
 import { FeatureForUrl } from 'app/url';
 
+import CustomDirections = require('app/widgets/CustomDirections');
+import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
+import MainNavigation = require('app/widgets/MainNavigation');
+
 // Direction the popup window should open towards
 enum Direction {
   Up = 0,
@@ -75,6 +79,10 @@ class CustomPopup extends declared(Widget) {
   @renderable()
   private error: boolean;
 
+  // The main navigation widget so we can open the directions window
+  @property()
+  public mainNavigation: MainNavigation;
+
   // Representation of current feature in the popup for use in the URL
   @property()
   public featureForUrl: FeatureForUrl;
@@ -92,10 +100,6 @@ class CustomPopup extends declared(Widget) {
   @property()
   @renderable()
   public docked: boolean;
-
-  // The feature that should replace the directions destination
-  @property()
-  public destinationFeature: Graphic;
 
   // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -371,7 +375,16 @@ class CustomPopup extends declared(Widget) {
 
   // Set the destination feature, which is being watched for updates
   private _directionsTo(): void {
-    this.destinationFeature = this.features[this.page];
+    const feature = this.features[this.page];
+    if (!feature || !this.mainNavigation) {
+      return;
+    }
+    const directionsWindow = this.mainNavigation.findWindow('directions');
+    (directionsWindow.findWidget('Driving directions') as CustomDirections)
+      .setDestination(feature);
+    (directionsWindow.findWidget('Walking directions') as CustomPedestrianDirections)
+      .setDestination(feature);
+    directionsWindow.visible = true;
   }
 
   // Toggle whether or not the popup is docked
