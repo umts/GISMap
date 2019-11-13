@@ -19,9 +19,6 @@ class Feedback extends declared(Widget) {
   public render(): JSX.Element {
     let feedbackWindow;
     if (this.open) {
-      const githubLink = <a target='_blank' href='https://github.com/umts/GISMap'>
-        GitHub
-      </a>;
       const emailLink = (
         <a href='mailto:parking@umass.edu?subject=UMass Parking Map Feedback'>
           email
@@ -30,7 +27,7 @@ class Feedback extends declared(Widget) {
       feedbackWindow = <div
         class='feedback-window navigation-window shadow'
         aria-label='Feedback window'>
-        Please give us feedback on {githubLink} or by {emailLink}.
+        Please give us feedback by {emailLink}.
       </div>;
     }
     return (
