@@ -10,6 +10,16 @@
     <link rel="stylesheet" href="popup.css">
     <link rel="stylesheet" href="markers.css">
     <link rel="shortcut icon" href="favicon.ico" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-152614380-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-152614380-1');
+    </script>
+
     <script>
       // Current path minus everything after the last forward slash
       var locationPath = location.pathname.replace(/\/[^\/]*$/, "");
@@ -30,6 +40,7 @@
     </script>
     <script src="https://js.arcgis.com/4.12"></script>
   </head>
+
   <body>
     <!--Mandated UMass header-->
     <div id="umass--global--header" aria-label="UMass header">
