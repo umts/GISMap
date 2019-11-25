@@ -122,6 +122,7 @@ class CustomSearchSources extends declared(Accessor) {
             if (duplicateSuggestions.length === 0) {
               finalSuggestions.push(suggestion);
             }
+          // Otherwise add the suggestion
           } else {
             finalSuggestions.push(suggestion);
           }
