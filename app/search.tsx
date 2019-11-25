@@ -4,7 +4,9 @@ import Graphic = require('esri/Graphic');
 enum SearchSourceType {
   Location = 0,
   Filter = 1,
-  Space = 2
+  Space = 2,
+  // Used to supplement Location searches with better results
+  Building = 3,
 }
 
 interface SearchFilterClause {
@@ -32,10 +34,12 @@ interface SearchFilter {
 // Everything needed to store a suggestion for future search
 interface Suggestion {
   text: string;
-  key: string;
   sourceType: SearchSourceType;
+  key?: string;
   locationSourceIndex?: number;
   filter?: SearchFilter;
+  latitude?: number;
+  longitude?: number;
 }
 
 // Everything needed to store what a user has searched
