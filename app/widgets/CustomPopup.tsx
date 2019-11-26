@@ -219,17 +219,19 @@ class CustomPopup extends declared(Widget) {
         </div>
         <div
           aria-label='Feature information'
-          class='navigation-window custom-popup shadow'
+          class='navigation-window scrollable custom-popup shadow'
           role='dialog'>
-          <div class='widget-list right' role='presentation'>
-            <ul>
-              <li class='widget-list-item'>{directionsToButton}</li>
-              <li class='widget-list-item'>{dockButton}</li>
-              <li class='widget-list-item'>{closeButton}</li>
-            </ul>
+          <div class='navigation-window-inner scrollable'>
+            <div class='widget-list right' role='presentation'>
+              <ul>
+                <li class='widget-list-item'>{directionsToButton}</li>
+                <li class='widget-list-item'>{dockButton}</li>
+                <li class='widget-list-item'>{closeButton}</li>
+              </ul>
+            </div>
+            {pageCounter}
+            {featureInfo}
           </div>
-          {pageCounter}
-          {featureInfo}
         </div>
       </div>
     );

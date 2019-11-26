@@ -48,12 +48,22 @@ body {
   background-color: white;
   border: 0.2rem solid #881c1c;
   border-radius: 0.8rem;
-  padding: 0.6rem;
   margin: 1rem;
+}
+.navigation-window-inner {
+  padding: 0.6rem;
+}
+
+.navigation-window.scrollable {
+  display: flex;
+  overflow: hidden;
+}
+.navigation-window-inner.scrollable {
+  overflow-y: auto;
+  flex-grow: 1;
 }
 
 .custom-window {
-  overflow: auto;
   z-index: 1;
 }
 

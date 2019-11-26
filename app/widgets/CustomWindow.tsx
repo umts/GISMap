@@ -126,11 +126,13 @@ class CustomWindow extends declared(Widget) {
     return (
       <div
         aria-label={`${this.name} window`}
-        class='navigation-window custom-window shadow'
+        class='navigation-window scrollable custom-window shadow'
         key={`${this.name}-window`}
-        style={`display: ${this.visible ? 'block' : 'none'}`}>
-        {closeButton}
-        {renderedElements}
+        style={`display: ${this.visible ? 'flex' : 'none'}`}>
+        <div class='navigation-window-inner scrollable'>
+          {closeButton}
+          {renderedElements}
+        </div>
       </div>
     );
   }

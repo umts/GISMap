@@ -243,12 +243,14 @@ class MainNavigation extends declared(Widget) {
             aria-label='Main navigation window'
             id='main-navigation-window'
             class='navigation-window shadow'>
-            {this.search.render()}
+            <div class='navigation-window-inner'>
+              {this.search.render()}
 
-            <div class='widget-list' role='presentation'>
-              <ul aria-label='Main menu' role='menubar'>
-                {renderedButtons}
-              </ul>
+              <div class='widget-list' role='presentation'>
+                <ul aria-label='Main menu' role='menubar'>
+                  {renderedButtons}
+                </ul>
+              </div>
             </div>
           </div>
           {this.customFilter.render()}

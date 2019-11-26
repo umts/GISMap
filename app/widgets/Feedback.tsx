@@ -27,7 +27,9 @@ class Feedback extends declared(Widget) {
       feedbackWindow = <div
         class='feedback-window navigation-window shadow'
         aria-label='Feedback window'>
-        Please give us feedback by {emailLink}.
+        <div class='navigation-window-inner'>
+          Please give us feedback by {emailLink}.
+        </div>
       </div>;
     }
     return (
