@@ -2,6 +2,7 @@ import { subclass, declared, property } from 'esri/core/accessorSupport/decorato
 import { tsx } from 'esri/widgets/support/widget';
 
 import MapView = require('esri/views/MapView');
+import BasemapToggle = require('esri/widgets/BasemapToggle');
 import Home = require('esri/widgets/Home');
 import Locate = require('esri/widgets/Locate');
 import Widget = require('esri/widgets/Widget');
@@ -54,6 +55,10 @@ class MainNavigation extends declared(Widget) {
   @property()
   public readonly popup: CustomPopup;
 
+  // The basemap toggle to watch for basemap changes
+  @property()
+  public basemapToggle: BasemapToggle
+
   /*
     Pass in properties like widgets as `any` type which will then be cast to
     their correct types.
@@ -61,7 +66,8 @@ class MainNavigation extends declared(Widget) {
   public constructor(properties?: {
     view: MapView,
     popup: CustomPopup,
-    searches: Array<CustomSearch>
+    searches: Array<CustomSearch>,
+    basemapToggle: BasemapToggle,
   }) {
     super();
 
@@ -211,6 +217,9 @@ class MainNavigation extends declared(Widget) {
     this._setLoading(true);
     this.view.watch('updating', (updating) => { this._setLoading(updating) });
     // Update the url when the basemap changes
+    this.basemapToggle.watch('activeBasemap', () => {
+      resetUrlTimer(this);
+    });
     (this.findWindow('layers').findWidget('Basemap') as BasemapPicker)
       .watch('basemapId', () => { resetUrlTimer(this) });
   }

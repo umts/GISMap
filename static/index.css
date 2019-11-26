@@ -416,6 +416,7 @@ td.number, th.number {
 }
 .feedback-window {
   margin: 0;
+  max-width: 40vw;
 }
 
 .pointer-cursor {
