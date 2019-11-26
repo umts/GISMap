@@ -1,3 +1,4 @@
+import Basemap = require('esri/Basemap');
 import WebMap = require('esri/WebMap');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
@@ -150,8 +151,14 @@ view.when(() => {
     }
   ];
 
+  const topoBasemap = Basemap.fromId('topo');
+  topoBasemap.title = 'Map';
+  const satelliteBasemap = Basemap.fromId('satellite');
+  satelliteBasemap.title = 'Satellite';
+  // Set up basemap toggle
+  map.basemap = topoBasemap;
   const basemapToggle = new BasemapToggle({
-    view: view, nextBasemap: 'satellite'
+    view: view, nextBasemap: satelliteBasemap, titleVisible: true
   });
 
   /*

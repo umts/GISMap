@@ -11,7 +11,6 @@ import { homeGoToOverride } from 'app/latLong';
 import { RenderableWidget } from 'app/rendering';
 import { resetUrlTimer } from 'app/url';
 
-import BasemapPicker = require('app/widgets/BasemapPicker');
 import CustomDirections = require('app/widgets/CustomDirections');
 import CustomFilter = require('app/widgets/CustomFilter');
 import CustomLayerList = require('app/widgets/CustomLayerList');
@@ -91,10 +90,6 @@ class MainNavigation extends declared(Widget) {
         {
           label: 'Layers',
           widget: layerList,
-        },
-        {
-          label: 'Basemap',
-          widget: new BasemapPicker({ view: properties.view })
         }
       ]
     });
@@ -220,8 +215,6 @@ class MainNavigation extends declared(Widget) {
     this.basemapToggle.watch('activeBasemap', () => {
       resetUrlTimer(this);
     });
-    (this.findWindow('layers').findWidget('Basemap') as BasemapPicker)
-      .watch('basemapId', () => { resetUrlTimer(this) });
   }
 
   // Render this widget by returning JSX which is converted to HTML
