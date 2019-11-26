@@ -3,12 +3,13 @@ import { subclass, declared, property } from 'esri/core/accessorSupport/decorato
 import esriRequest = require('esri/request');
 import Graphic = require('esri/Graphic');
 import Accessor = require('esri/core/Accessor');
+import SpatialReference = require('esri/geometry/SpatialReference');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require('esri/views/MapView');
 
 import { umassLongLat } from 'app/latLong';
 import { toNativePromise } from 'app/promises';
-import { filterInfo } from 'app/rendering';
+import { filterInfo, featurePoint } from 'app/rendering';
 import {
   SearchSourceType,
   SearchFilter,
@@ -74,19 +75,58 @@ class CustomSearchSources extends declared(Accessor) {
     let suggestPromises;
     // Prepare suggestion promises from multiple sources
     if (this.locationsOnly) {
-      suggestPromises = [this._suggestLocations(searchTerm)];
+      suggestPromises = [
+        this._suggestLocations(searchTerm),
+        this._suggestBuildings(searchTerm)
+      ];
     } else {
       suggestPromises = [
         this._suggestFilters(searchTerm),
         this._suggestSpaces(searchTerm),
-        this._suggestLocations(searchTerm)
+        this._suggestLocations(searchTerm),
+        this._suggestBuildings(searchTerm)
       ];
     }
     // Evaluate after all promises have completed
     return Promise.all(suggestPromises).then((allSuggestions) => {
-      let finalSuggestions: Array<Suggestion> = [];
+      /*
+        Store location suggestions for later to filter out duplicate building
+        results.
+      */
+      const filteredLocationSuggestions = allSuggestions.filter((suggestions) => {
+        if (suggestions.length <= 0) {
+          return false;
+        }
+        return suggestions[0].sourceType == SearchSourceType.Location;
+      });
+      // Use the first set of filtered suggestions
+      let locationSuggestions: Array<Suggestion> = [];
+      if (filteredLocationSuggestions.length > 0) {
+        locationSuggestions = filteredLocationSuggestions[0];
+      }
+
+      const finalSuggestions: Array<Suggestion> = [];
+      // Go through suggestions from each source
       allSuggestions.forEach((suggestions) => {
-        finalSuggestions = finalSuggestions.concat(suggestions);
+        // Go through each suggestion from that source
+        suggestions.forEach((suggestion) => {
+          /*
+            Add building suggestions only if they don't overlap with location
+            suggestions.
+          */
+          if (suggestion.sourceType == SearchSourceType.Building) {
+            const duplicateSuggestions = locationSuggestions
+              .filter((locationSuggestion) => {
+                return locationSuggestion.text === suggestion.text;
+              });
+            if (duplicateSuggestions.length === 0) {
+              finalSuggestions.push(suggestion);
+            }
+          // Otherwise add the suggestion
+          } else {
+            finalSuggestions.push(suggestion);
+          }
+        });
       });
       return finalSuggestions;
     }).catch((error) => {
@@ -147,6 +187,15 @@ class CustomSearchSources extends declared(Accessor) {
         filter: suggestion.filter
       }
       return Promise.resolve(searchResult);
+    // Search for buildings
+    } else if (suggestion.sourceType == SearchSourceType.Building) {
+      searchResult = {
+        name: suggestion.text,
+        sourceType: suggestion.sourceType,
+        latitude: suggestion.latitude,
+        longitude: suggestion.longitude
+      }
+      return Promise.resolve(searchResult);
     } else {
       return Promise.reject(
         `Cannot search for suggestion from source type ${suggestion.sourceType}`
@@ -202,6 +251,39 @@ class CustomSearchSources extends declared(Accessor) {
     }).catch((error) => {
       throw error;
     });
+  }
+
+  /*
+    Return similar results to suggest locations except we are only querying
+    buildings. This is so we can search by building name by text in the
+    middle of the name.
+  */
+  private _suggestBuildings(searchTerm: string): Promise<Array<Suggestion>> {
+    const layer = this.view.map.layers.find((layer) => {
+      return layer.title === 'Campus Buildings';
+    }) as FeatureLayer;
+    const query = layer.createQuery();
+    query.where = `Building_Name like '%${escapeQueryParam(searchTerm)}%'`;
+    query.outSpatialReference = new SpatialReference({wkid: 4326});
+    query.num = 5;
+
+    return toNativePromise(layer.queryFeatures(query))
+      .then((response: any) => {
+        const suggestions: Array<Suggestion> = [];
+        response.features.forEach((feature: Graphic) => {
+          const point = featurePoint(feature);
+          const suggestion = {
+            text: feature.attributes.Building_Name,
+            sourceType: SearchSourceType.Building,
+            latitude: point.latitude,
+            longitude: point.longitude
+          };
+          suggestions.push(suggestion);
+        });
+        return suggestions;
+      }).catch((error: string) => {
+        throw error;
+      });
   }
 
   // Return a promise for filter suggestions
