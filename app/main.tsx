@@ -1,7 +1,9 @@
+import Basemap = require('esri/Basemap');
 import WebMap = require('esri/WebMap');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import GraphicsLayer = require('esri/layers/GraphicsLayer');
 import MapView = require('esri/views/MapView');
+import BasemapToggle = require('esri/widgets/BasemapToggle');
 
 import { setupUmassMenu } from 'app/events';
 import { umassLongLat } from 'app/latLong';
@@ -149,13 +151,23 @@ view.when(() => {
     }
   ];
 
+  const topoBasemap = Basemap.fromId('topo');
+  topoBasemap.title = 'Map';
+  const satelliteBasemap = Basemap.fromId('satellite');
+  satelliteBasemap.title = 'Satellite';
+  // Set up basemap toggle
+  map.basemap = topoBasemap;
+  const basemapToggle = new BasemapToggle({
+    view: view, nextBasemap: satelliteBasemap, titleVisible: true
+  });
+
   /*
     Create the main navigation widget.
     The main navigation widget is the box that contains most of the
     other widgets.
   */
   const mainNavigation = new MainNavigation({
-    view: view, popup: popup, searches: searches
+    view: view, popup: popup, searches: searches, basemapToggle: basemapToggle
   });
 
   // Get and store data from the hub
@@ -168,6 +180,8 @@ view.when(() => {
   view.ui.add(markersWidget, 'manual');
   // Add the feedback widget to the bottom right
   view.ui.add(new Feedback(), 'bottom-right');
+  // Basemap toggle to the bottom left
+  view.ui.add(basemapToggle, 'bottom-left');
   // Add the main navigation widget to the map
   view.ui.add(mainNavigation, 'manual');
 

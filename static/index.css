@@ -36,7 +36,7 @@ body {
   flex-shrink: 0;
   overflow: auto;
   height: 100%;
-  width: 24rem;
+  width: 22.5rem;
 }
 
 #main-navigation-window {
@@ -426,6 +426,7 @@ td.number, th.number {
 }
 .feedback-window {
   margin: 0;
+  max-width: 40vw;
 }
 
 .pointer-cursor {
