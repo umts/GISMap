@@ -462,6 +462,8 @@ function featureTitle(feature: Graphic): string {
     title = feature.attributes.Building_Name;
   } else if (feature.layer.title === 'Spaces') {
     title = spaceRendererInfo[feature.attributes.ParkingSpaceSubCategory].description;
+  } else if (feature.layer.title === 'Generic') {
+    title = feature.attributes.name;
   }
   return title;
 }

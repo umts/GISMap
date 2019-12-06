@@ -11,14 +11,11 @@ import { SearchSourceType, SearchResult, Suggestion } from 'app/search';
 import CustomSearchSources = require('app/CustomSearchSources');
 import RequestSet = require('app/RequestSet');
 import CustomFilter = require('app/widgets/CustomFilter');
+import CustomPopup = require('app/widgets/CustomPopup');
 import { Marker } from 'app/widgets/Markers'
 
 @subclass('esri.widgets.CustomSearch')
 class CustomSearch extends declared(Widget) {
-  // The main map view
-  @property()
-  private readonly view: MapView;
-
   // Placeholder text for the input
   @property()
   private readonly placeholder: string;
@@ -42,6 +39,10 @@ class CustomSearch extends declared(Widget) {
   // Whether or not this is the main search bar for the entire app
   @property()
   private readonly mainSearch: boolean;
+
+  // Popup to open when searching using the main search
+  @property()
+  private readonly popup: CustomPopup;
 
   // Array of suggesions based on text already typed in
   @property()
@@ -88,6 +89,7 @@ class CustomSearch extends declared(Widget) {
     customFilter?: CustomFilter,
     required?: boolean,
     mainSearch?: boolean,
+    popup?: CustomPopup,
     onCampusLocationsOnly?: boolean,
   }) {
     super();
@@ -318,11 +320,8 @@ class CustomSearch extends declared(Widget) {
   // Set the search result directly without using a suggestion
   public setSearchExplicit(searchResult: SearchResult): void {
     this.searchResult = searchResult;
-    // Display the marker for this search over location results
-    if (
-      searchResult.sourceType === SearchSourceType.Location &&
-      this.marker
-    ) {
+    // Display the marker for this search over results with a latitude/longitude
+    if (searchResult.latitude && searchResult.longitude && this.marker) {
       this.marker.point = new Point({
         latitude: searchResult.latitude,
         longitude: searchResult.longitude
@@ -370,11 +369,12 @@ class CustomSearch extends declared(Widget) {
         this.searchResult.sourceType === SearchSourceType.Location ||
         this.searchResult.sourceType === SearchSourceType.Building
       ) {
-        // Go to a location result
-        this.view.goTo({
-          target: [this.searchResult.longitude, this.searchResult.latitude],
-          zoom: 18
-        });
+        // Open and go to a generic popup for this result
+        this.popup.openFromGeneric(
+          this.searchResult.name,
+          this.searchResult.latitude,
+          this.searchResult.longitude
+        )
         this._hideSuggestions();
       } else if (
         this.searchResult.sourceType === SearchSourceType.Filter ||
