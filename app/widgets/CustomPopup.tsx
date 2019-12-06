@@ -246,6 +246,21 @@ class CustomPopup extends declared(Widget) {
     this._updateSelectionGraphic();
   }
 
+  // Open a generic popup for some text at a location
+  public openFromGeneric(
+    name: string, latitude: number, longitude: number
+  ): void {
+    this.reset();
+    this.point = new Point({ latitude: latitude, longitude: longitude });
+    const layer = new FeatureLayer({ title: 'Generic' });
+    this.features = [
+      new Graphic({
+        geometry: this.point, layer: layer, attributes: { name: name }
+      })
+    ]
+    this._open(true, 18);
+  }
+
   // Update the popup widget based on a mouse click event
   public openFromMouseClick(event: any): void {
     this._queryAndUseFeatures(
@@ -292,6 +307,7 @@ class CustomPopup extends declared(Widget) {
     );
   }
 
+  // Open a section popup using a citation location id
   public openFromCitationLocationId(id: string): void {
     this._queryAndUseFeatures(
       ['Sections'],
@@ -342,13 +358,9 @@ class CustomPopup extends declared(Widget) {
             }
           }
         });
-        // Open popup only if any of the layer queries returned features
+        // Only open the popup if any features were returned
         if (this.features.length > 0) {
-          this._open();
-          // Make the view go to where the popup was opened if requested
-          if (pointParams.goTo) {
-            this.view.goTo(this.point);
-          }
+          this._open(pointParams.goTo);
         }
         return;
       }).catch((error: string) => {
@@ -361,9 +373,17 @@ class CustomPopup extends declared(Widget) {
   }
 
   // Open the popup
-  private _open(): void {
+  private _open(goTo?: boolean, zoom?: number): void {
     this.visible = true;
     this._setDirection();
+    // Make the view go to where the popup was opened if requested
+    if (goTo) {
+      const target: any = { target: this.point };
+      if (zoom) {
+        target.zoom = zoom;
+      }
+      this.view.goTo(target);
+    }
   }
 
   // Go to the next page or feature
@@ -530,6 +550,8 @@ class CustomPopup extends declared(Widget) {
       return this._renderBuilding(feature);
     } else if (feature.layer.title === 'Spaces') {
       return this._renderSpace(feature);
+    } else if (feature.layer.title === 'Generic') {
+      return this._renderGeneric(feature);
     }
     return null;
   }
@@ -777,6 +799,14 @@ class CustomPopup extends declared(Widget) {
       <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
         <h1>{featureTitle(feature)}{icon}</h1>
         {reserved}{payment}{duration}
+      </div>
+    );
+  }
+
+  private _renderGeneric(feature: Graphic): JSX.Element {
+    return (
+      <div key={feature.layer.title + feature.attributes.name}>
+        <h1>{featureTitle(feature)}</h1>
       </div>
     );
   }
