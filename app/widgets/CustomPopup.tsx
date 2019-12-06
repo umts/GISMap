@@ -358,7 +358,7 @@ class CustomPopup extends declared(Widget) {
             }
           }
         });
-        // Only open the popup if any features were returned
+        // Open popup only if any of the layer queries returned features
         if (this.features.length > 0) {
           this._open(pointParams.goTo);
         }
