@@ -160,7 +160,8 @@ class MainNavigation extends declared(Widget) {
       placeholder: 'Search the map',
       customFilter: customFilter,
       mainSearch: true,
-      popup: properties.popup,
+      onCampusLocationsOnly: true,
+      popup: properties.popup
     });
     this.layersExpand = new WindowExpand({
       name: 'layers',
@@ -269,6 +270,13 @@ class MainNavigation extends declared(Widget) {
     return this.customWindows.filter((window) => {
       return window.name === windowName;
     })[0];
+  }
+
+  // Return a window expand by name
+  public findWindowExpand(name: string): WindowExpand {
+    return this.buttonWidgets.filter((widget) => {
+      return (widget instanceof WindowExpand && widget.name == name);
+    })[0] as WindowExpand;
   }
 
   private _element(): HTMLElement {
