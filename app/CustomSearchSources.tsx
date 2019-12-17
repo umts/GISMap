@@ -61,6 +61,8 @@ class CustomSearchSources extends declared(Accessor) {
   public suggestionHeader(suggestion: Suggestion): string {
     if (suggestion.sourceType === SearchSourceType.Location) {
       return CustomSearchSources.locationSearchSourceProperties[suggestion.locationSourceIndex].title;
+    } else if (suggestion.sourceType === SearchSourceType.Building) {
+      return CustomSearchSources.locationSearchSourceProperties[0].title;
     } else if (suggestion.sourceType === SearchSourceType.Filter) {
       return 'Filters';
     } else if (suggestion.sourceType === SearchSourceType.Space) {
@@ -76,16 +78,22 @@ class CustomSearchSources extends declared(Accessor) {
     // Prepare suggestion promises from multiple sources
     if (this.locationsOnly) {
       suggestPromises = [
-        this._suggestLocations(searchTerm),
+        this._suggestLocations(searchTerm, ['On-campus locations']),
         this._suggestBuildings(searchTerm)
       ];
     } else {
       suggestPromises = [
         this._suggestFilters(searchTerm),
         this._suggestSpaces(searchTerm),
-        this._suggestLocations(searchTerm),
+        this._suggestLocations(searchTerm, ['On-campus locations']),
         this._suggestBuildings(searchTerm)
       ];
+    }
+    // Add off campus locations to the end if needed
+    if (!this.onCampusLocationsOnly) {
+      suggestPromises.push(
+        this._suggestLocations(searchTerm, ['Off-campus locations'])
+      );
     }
     // Evaluate after all promises have completed
     return Promise.all(suggestPromises).then((allSuggestions) => {
@@ -203,20 +211,26 @@ class CustomSearchSources extends declared(Accessor) {
     }
   }
 
-  // Return a promise for location suggestions
-  private _suggestLocations(searchTerm: string): Promise<Array<Suggestion>> {
+  /*
+    Return a promise for location suggestions, only pulling locations from
+    sources with the given titles.
+  */
+  private _suggestLocations(
+    searchTerm: string, sourceTitles: Array<string>
+  ): Promise<Array<Suggestion>> {
     const suggestPromises: Array<IPromise<any>> = [];
     let sources = CustomSearchSources.locationSearchSourceProperties;
-    /*
-      Dont use off campus locations unless this is an explicit location search
-      with onCampusLocationsOnly set to false.
-    */
-    if (!this.locationsOnly || this.onCampusLocationsOnly) {
-      sources = sources.filter((source) => {
-        return source.title === 'On-campus locations';
-      });
-    }
-    // Create a promise for every locator service
+    // Filter locations by source title
+    sources = sources.filter((source) => {
+      let titleInSources = false;
+      sourceTitles.forEach((title) => {
+        if (title === source.title) {
+          titleInSources = true;
+        }
+      })
+      return titleInSources;
+    });
+    // Create a promise for each locator service
     sources.forEach((source) => {
       suggestPromises.push(esriRequest(
         source.url + '/suggest',
@@ -235,7 +249,18 @@ class CustomSearchSources extends declared(Accessor) {
     return Promise.all(suggestPromises).then((responses) => {
       const suggestions: Array<Suggestion> = [];
       // Iterate over each set of suggestions obtained from a suggest promise
-      responses.forEach((response, sourceIndex) => {
+      responses.forEach((response, responseIndex) => {
+        let sourceIndex = -1;
+        /*
+          Find the source index based on the response index. This is neccessary
+          because we filter out some sources, so response and source index
+          are not the same.
+        */
+        CustomSearchSources.locationSearchSourceProperties.forEach((properties, propertiesIndex) => {
+          if (properties.title == sources[responseIndex].title) {
+            sourceIndex = propertiesIndex;
+          }
+        });
         // Iterate over each suggestion from that source
         response.data.suggestions.forEach((responseSuggestion: any) => {
           const suggestion = {
