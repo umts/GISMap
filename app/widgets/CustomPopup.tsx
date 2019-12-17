@@ -411,12 +411,16 @@ class CustomPopup extends declared(Widget) {
       latitude: featurePoint(feature).latitude,
       longitude: featurePoint(feature).longitude,
     }
+    // Set the directions window inputs
     const directionsWindow = this.mainNavigation.findWindow('directions');
     (directionsWindow.findWidget('Driving directions') as CustomDirections)
       .endSearch.setSearchExplicit(searchResult);
     (directionsWindow.findWidget('Walking directions') as CustomPedestrianDirections)
       .endSearch.setSearchExplicit(searchResult);
-    directionsWindow.visible = true;
+    // Open the directions window if needed
+    if (!directionsWindow.visible) {
+      this.mainNavigation.findWindowExpand('directions').expand();
+    }
   }
 
   // Toggle whether or not the popup is docked

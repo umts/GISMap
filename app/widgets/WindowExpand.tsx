@@ -9,10 +9,6 @@ import { iconButton } from 'app/rendering';
 
 @subclass('esri.widgets.WindowExpand')
 class WindowExpand extends declared(Widget) {
-  // A descriptive name for the window this expand will open
-  @property()
-  private readonly name: string;
-
   // The name of the esri icon class to use
   @property()
   private readonly iconName: string;
@@ -24,6 +20,10 @@ class WindowExpand extends declared(Widget) {
   // Any other windows that need to be closed before this window can be opened
   @property()
   private readonly windows: Array<CustomWindow>;
+
+  // A descriptive name for the window this expand will open
+  @property()
+  public readonly name: string;
 
   // Whether or not to display the loading icon instead of our icon
   @property()
@@ -51,7 +51,7 @@ class WindowExpand extends declared(Widget) {
     }
     return iconButton({
       object: this,
-      onclick: this._expand,
+      onclick: this.expand,
       name: name,
       iconName: iconName,
       classes: classes
@@ -62,7 +62,7 @@ class WindowExpand extends declared(Widget) {
     Referencing the custom window by the same name, open the window if it
     is closed, and close the window if it is open.
   */
-  private _expand(): void {
+  public expand(): void {
     if (this.window.visible) {
       // Close this window
       this.window.visible = false;

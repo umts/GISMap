@@ -272,6 +272,13 @@ class MainNavigation extends declared(Widget) {
     })[0];
   }
 
+  // Return a window expand by name
+  public findWindowExpand(name: string): WindowExpand {
+    return this.buttonWidgets.filter((widget) => {
+      return (widget instanceof WindowExpand && widget.name == name);
+    })[0] as WindowExpand;
+  }
+
   private _element(): HTMLElement {
     return document.getElementById('main-navigation');
   }
