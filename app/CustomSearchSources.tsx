@@ -181,7 +181,8 @@ class CustomSearchSources extends declared(Accessor) {
           };
           return searchResult;
         } else {
-          throw `Could not find search result for suggestion with magicKey ${suggestion.key}`;
+          throw `Failed to find result for suggestion. (Key ${suggestion.key}). ` +
+            'Try a different query.'
         }
       }).catch((error) => {
         throw error;
@@ -218,12 +219,13 @@ class CustomSearchSources extends declared(Accessor) {
           };
           resolve(searchResult);
         }, () => {
-          reject('Could not find your location');
+          reject('Could not find your location. Try a different query.');
         });
       });
     } else {
       return Promise.reject(
-        `Cannot search for suggestion from source type ${suggestion.sourceType}`
+        `Failed to find result for suggestion (Type ${suggestion.sourceType}). ` +
+        'Try a different query.'
       );
     }
   }
