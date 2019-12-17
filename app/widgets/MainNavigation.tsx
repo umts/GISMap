@@ -160,7 +160,8 @@ class MainNavigation extends declared(Widget) {
       placeholder: 'Search the map',
       customFilter: customFilter,
       mainSearch: true,
-      onCampusLocationsOnly: true
+      onCampusLocationsOnly: true,
+      popup: properties.popup
     });
     this.layersExpand = new WindowExpand({
       name: 'layers',
