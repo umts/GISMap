@@ -462,7 +462,10 @@ class CustomPopup extends declared(Widget) {
     }) as GraphicsLayer;
     selectionLayer.removeAll();
 
+    // Don't render a selection if this popup is closed
     if (!this.visible) return;
+    // Don't try to render a selection for point geometry
+    if (this.features[this.page].geometry.type === 'point') return;
 
     const graphic = this.features[this.page].clone();
     graphic.symbol = new SimpleFillSymbol({
