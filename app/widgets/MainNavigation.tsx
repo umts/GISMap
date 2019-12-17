@@ -4,7 +4,6 @@ import { tsx } from 'esri/widgets/support/widget';
 import MapView = require('esri/views/MapView');
 import BasemapToggle = require('esri/widgets/BasemapToggle');
 import Home = require('esri/widgets/Home');
-import Locate = require('esri/widgets/Locate');
 import Widget = require('esri/widgets/Widget');
 
 import { homeGoToOverride } from 'app/latLong';
@@ -14,6 +13,7 @@ import { resetUrlTimer } from 'app/url';
 import CustomDirections = require('app/widgets/CustomDirections');
 import CustomFilter = require('app/widgets/CustomFilter');
 import CustomLayerList = require('app/widgets/CustomLayerList');
+import CustomLocate = require('app/widgets/CustomLocate');
 import CustomSearch = require('app/widgets/CustomSearch');
 import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
 import CustomPopup = require('app/widgets/CustomPopup');
@@ -182,7 +182,7 @@ class MainNavigation extends declared(Widget) {
         view: properties.view,
         goToOverride: homeGoToOverride
       }),
-      new Locate({ view: properties.view }),
+      new CustomLocate({ view: properties.view, popup: properties.popup }),
       this.layersExpand,
       new WindowExpand({
         name: 'directions',

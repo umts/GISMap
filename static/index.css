@@ -220,6 +220,13 @@ h2 {
   background-color: #333333 !important;
 }
 
+.esri-widget--button.disabled,
+.esri-widget--button.disabled:focus {
+  background-color: #bbbbbb !important;
+  cursor: default;
+  outline: none;
+}
+
 .custom-search-suggestion:focus,
 .esri-widget--button:focus,
 .esri-button:focus,

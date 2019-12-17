@@ -7,7 +7,7 @@ import SpatialReference = require('esri/geometry/SpatialReference');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require('esri/views/MapView');
 
-import { umassLongLat } from 'app/latLong';
+import { umassLongLat, myLocation } from 'app/latLong';
 import { toNativePromise } from 'app/promises';
 import { filterInfo, featurePoint } from 'app/rendering';
 import {
@@ -67,6 +67,8 @@ class CustomSearchSources extends declared(Accessor) {
       return 'Filters';
     } else if (suggestion.sourceType === SearchSourceType.Space) {
       return 'Spaces';
+    } else if (suggestion.sourceType === SearchSourceType.MyLocation) {
+      return 'Locations';
     } else {
       return '';
     }
@@ -95,8 +97,9 @@ class CustomSearchSources extends declared(Accessor) {
         this._suggestLocations(searchTerm, ['Off-campus locations'])
       );
     }
-    // Suggest my location after everything else
+    // Suggest my location after all other suggestions
     suggestPromises.push(this._suggestMyLocation(searchTerm));
+
     // Evaluate after all promises have completed
     return Promise.all(suggestPromises).then((allSuggestions) => {
       /*
@@ -209,18 +212,14 @@ class CustomSearchSources extends declared(Accessor) {
       return Promise.resolve(searchResult);
     // Use my location
     } else if (suggestion.sourceType == SearchSourceType.MyLocation) {
-      return new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition((location) => {
-          const searchResult = {
-            name: 'My location',
-            sourceType: suggestion.sourceType,
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude
-          };
-          resolve(searchResult);
-        }, () => {
-          reject('Could not find your location. Try a different query.');
-        });
+      return myLocation().then((location) => {
+        searchResult = {
+          name: 'My location',
+          sourceType: suggestion.sourceType,
+          latitude: location.latitude,
+          longitude: location.longitude
+        };
+        return searchResult;
       });
     } else {
       return Promise.reject(
