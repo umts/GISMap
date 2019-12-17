@@ -367,7 +367,8 @@ class CustomSearch extends declared(Widget) {
     if (this.searchResult) {
       if (
         this.searchResult.sourceType === SearchSourceType.Location ||
-        this.searchResult.sourceType === SearchSourceType.Building
+        this.searchResult.sourceType === SearchSourceType.Building ||
+        this.searchResult.sourceType === SearchSourceType.MyLocation
       ) {
         // Open and go to a generic popup for this result
         this.popup.openFromGeneric(

@@ -95,6 +95,8 @@ class CustomSearchSources extends declared(Accessor) {
         this._suggestLocations(searchTerm, ['Off-campus locations'])
       );
     }
+    // Suggest my location after everything else
+    suggestPromises.push(this._suggestMyLocation(searchTerm));
     // Evaluate after all promises have completed
     return Promise.all(suggestPromises).then((allSuggestions) => {
       /*
@@ -204,6 +206,21 @@ class CustomSearchSources extends declared(Accessor) {
         longitude: suggestion.longitude
       }
       return Promise.resolve(searchResult);
+    // Use my location
+    } else if (suggestion.sourceType == SearchSourceType.MyLocation) {
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition((location) => {
+          const searchResult = {
+            name: 'My location',
+            sourceType: suggestion.sourceType,
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude
+          };
+          resolve(searchResult);
+        }, () => {
+          reject('Could not find your location');
+        });
+      });
     } else {
       return Promise.reject(
         `Cannot search for suggestion from source type ${suggestion.sourceType}`
@@ -339,6 +356,18 @@ class CustomSearchSources extends declared(Accessor) {
         });
       }
     });
+    return Promise.resolve(suggestions);
+  }
+
+  private _suggestMyLocation(searchTerm: string): Promise<Array<Suggestion>> {
+    const suggestions = [];
+    if (searchTermMatchesTags(searchTerm, ['my', 'me'])) {
+      suggestions.push({
+        text: 'My location',
+        key: 'my-location',
+        sourceType: SearchSourceType.MyLocation
+      });
+    }
     return Promise.resolve(suggestions);
   }
 
