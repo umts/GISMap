@@ -7,7 +7,7 @@ import SpatialReference = require('esri/geometry/SpatialReference');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require('esri/views/MapView');
 
-import { umassLongLat } from 'app/latLong';
+import { umassLongLat, myLocation } from 'app/latLong';
 import { toNativePromise } from 'app/promises';
 import { filterInfo, featurePoint } from 'app/rendering';
 import {
@@ -67,6 +67,8 @@ class CustomSearchSources extends declared(Accessor) {
       return 'Filters';
     } else if (suggestion.sourceType === SearchSourceType.Space) {
       return 'Spaces';
+    } else if (suggestion.sourceType === SearchSourceType.MyLocation) {
+      return 'Locations';
     } else {
       return '';
     }
@@ -95,6 +97,9 @@ class CustomSearchSources extends declared(Accessor) {
         this._suggestLocations(searchTerm, ['Off-campus locations'])
       );
     }
+    // Suggest my location after all other suggestions
+    suggestPromises.push(this._suggestMyLocation(searchTerm));
+
     // Evaluate after all promises have completed
     return Promise.all(suggestPromises).then((allSuggestions) => {
       /*
@@ -179,7 +184,8 @@ class CustomSearchSources extends declared(Accessor) {
           };
           return searchResult;
         } else {
-          throw `Could not find search result for suggestion with magicKey ${suggestion.key}`;
+          throw `Failed to find result for suggestion. (Key ${suggestion.key}). ` +
+            'Try a different query.'
         }
       }).catch((error) => {
         throw error;
@@ -204,9 +210,21 @@ class CustomSearchSources extends declared(Accessor) {
         longitude: suggestion.longitude
       }
       return Promise.resolve(searchResult);
+    // Use my location
+    } else if (suggestion.sourceType == SearchSourceType.MyLocation) {
+      return myLocation().then((location) => {
+        searchResult = {
+          name: 'My location',
+          sourceType: suggestion.sourceType,
+          latitude: location.latitude,
+          longitude: location.longitude
+        };
+        return searchResult;
+      });
     } else {
       return Promise.reject(
-        `Cannot search for suggestion from source type ${suggestion.sourceType}`
+        `Failed to find result for suggestion (Type ${suggestion.sourceType}). ` +
+        'Try a different query.'
       );
     }
   }
@@ -339,6 +357,18 @@ class CustomSearchSources extends declared(Accessor) {
         });
       }
     });
+    return Promise.resolve(suggestions);
+  }
+
+  private _suggestMyLocation(searchTerm: string): Promise<Array<Suggestion>> {
+    const suggestions = [];
+    if (searchTermMatchesTags(searchTerm, ['my', 'me'])) {
+      suggestions.push({
+        text: 'My location',
+        key: 'my-location',
+        sourceType: SearchSourceType.MyLocation
+      });
+    }
     return Promise.resolve(suggestions);
   }
 

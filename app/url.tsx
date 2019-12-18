@@ -155,6 +155,11 @@ function safeUrl(): string {
   return `${startUrl}${endUrl}`;
 }
 
+// Return true if the url is http not including localhost
+function isUrlInsecure(): boolean {
+  return location.protocol === 'http:' && location.hostname !== 'localhost';
+}
+
 /*
   Export helper functions related to urls so they can be
   imported and used in other files.
@@ -164,5 +169,6 @@ export {
   resetUrlTimer,
   updateAppFromUrl,
   safeUrl,
+  isUrlInsecure,
   rootUrl
 };

@@ -64,6 +64,11 @@ class CustomSearch extends declared(Widget) {
   @renderable()
   private error: boolean;
 
+  // The error message to display when error is true
+  @property()
+  @renderable()
+  private errorMessage: string;
+
   // The warning to show related to the search input
   @property()
   @renderable()
@@ -169,14 +174,18 @@ class CustomSearch extends declared(Widget) {
             Loading...
           </div>
         );
-      // Push error text
+      // Push error message
       } else if (this.error) {
+        let errorMessage = 'Error loading suggestions. Please try again later.';
+        if (this.errorMessage) {
+          errorMessage = this.errorMessage;
+        }
         suggestionElements.push(
           <div
             class='custom-search-header suggestion-item'
             key='error-header'
             role='heading'>
-            Error loading suggestions. Please try again later.
+            {errorMessage}
           </div>
         );
       // Push no results text
@@ -367,7 +376,8 @@ class CustomSearch extends declared(Widget) {
     if (this.searchResult) {
       if (
         this.searchResult.sourceType === SearchSourceType.Location ||
-        this.searchResult.sourceType === SearchSourceType.Building
+        this.searchResult.sourceType === SearchSourceType.Building ||
+        this.searchResult.sourceType === SearchSourceType.MyLocation
       ) {
         // Open and go to a generic popup for this result
         this.popup.openFromGeneric(
@@ -406,6 +416,7 @@ class CustomSearch extends declared(Widget) {
       return;
     }
     this.error = false;
+    this.errorMessage = '';
     this.loadingSuggestions = true;
     // Safely find new suggestions
     this.suggestionRequestSet.setPromise(this.sources.suggest(searchTerm))
@@ -435,6 +446,7 @@ class CustomSearch extends declared(Widget) {
       console.error(error);
       this._clearSearch();
       this.error = true;
+      this.errorMessage = error;
     });
   }
 

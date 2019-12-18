@@ -7,6 +7,7 @@ enum SearchSourceType {
   Space = 2,
   // Used to supplement Location searches with better results
   Building = 3,
+  MyLocation = 4,
 }
 
 interface SearchFilterClause {

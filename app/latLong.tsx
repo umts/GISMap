@@ -49,8 +49,22 @@ function circleAt(screenPoint: ScreenPoint, view: MapView): Polygon {
   return circle;
 }
 
+// Return a promise to the location of the client using the geolocation api
+function myLocation(): Promise<Point> {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition((location) => {
+      resolve(new Point({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+      }));
+    }, () => {
+      reject('Could not find your location. Try a different query.');
+    });
+  });
+}
+
 /*
   Export helper functions related to positioning so they can be
   imported and used in other files.
 */
-export { umassLongLat, ScreenPoint, homeGoToOverride, circleAt };
+export { umassLongLat, ScreenPoint, homeGoToOverride, circleAt, myLocation };
