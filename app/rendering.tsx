@@ -64,6 +64,12 @@ const spaceRendererInfo = {
     iconUrl: `${iconsPath}/electric-space.png`,
     altText: 'White E V in a light green square'
   },
+  'R-Motorcycle': {
+    label: 'Motorcycle Spaces',
+    description: 'Motorcycle space',
+    iconUrl: `${iconsPath}/motorcycle-space.png`,
+    altText: 'White M in a brown circle'
+  },
   'R-Visitor': {
     label: 'Visitor Spaces',
     description: 'Visitor space',
