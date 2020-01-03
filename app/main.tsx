@@ -211,5 +211,4 @@ view.when(() => {
   canvas.addEventListener('dragover', (event) => {
     event.preventDefault();
   });
-})
-  .otherwise((error) => console.error(error));
+}).catch((error) => console.error(error));
