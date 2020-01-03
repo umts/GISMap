@@ -4,7 +4,6 @@ import WebMap = require('esri/WebMap');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require('esri/views/MapView');
 
-import { toNativePromise } from 'app/promises';
 import MainNavigation = require('app/widgets/MainNavigation');
 
 let hubData: any;
@@ -14,7 +13,7 @@ let hubData: any;
   lot notices window immediately.
 */
 function updateHubData(mainNavigation: MainNavigation): void {
-  toNativePromise(esriRequest('https://hub.parking.umass.edu/gis')
+  esriRequest('https://hub.parking.umass.edu/gis')
     .then((response) => {
       if (response.data.lot_notices.length > 0) {
         mainNavigation.findWindow('lot notices').visible = true;
@@ -23,7 +22,7 @@ function updateHubData(mainNavigation: MainNavigation): void {
       return;
     }).catch((error) => {
       console.error(error);
-    }));
+    });
 }
 
 function getHubData(): any {
