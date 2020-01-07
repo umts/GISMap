@@ -8,7 +8,6 @@ import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require('esri/views/MapView');
 
 import { umassLongLat, myLocation } from 'app/latLong';
-import { toNativePromise } from 'app/promises';
 import { filterInfo, featurePoint } from 'app/rendering';
 import {
   SearchSourceType,
@@ -163,7 +162,7 @@ class CustomSearchSources extends declared(Accessor) {
         Otherwise different locators return coordinates in different spatial
         references depending on the location.
       */
-      return toNativePromise(esriRequest(
+      return esriRequest(
         CustomSearchSources.locationSearchSourceProperties[suggestion.locationSourceIndex].url + '/findAddressCandidates',
         {
           query: {
@@ -189,7 +188,7 @@ class CustomSearchSources extends declared(Accessor) {
         }
       }).catch((error) => {
         throw error;
-      }));
+      });
     // Search for filter or spaces
     } else if (
       suggestion.sourceType === SearchSourceType.Filter ||
@@ -310,7 +309,7 @@ class CustomSearchSources extends declared(Accessor) {
     query.outSpatialReference = new SpatialReference({wkid: 4326});
     query.num = 5;
 
-    return toNativePromise(layer.queryFeatures(query))
+    return layer.queryFeatures(query)
       .then((response: any) => {
         const suggestions: Array<Suggestion> = [];
         response.features.forEach((feature: Graphic) => {
@@ -380,7 +379,7 @@ class CustomSearchSources extends declared(Accessor) {
     const query = layer.createQuery();
     query.where = `ParkingSpaceClientPublic like '%${escapeQueryParam(searchTerm)}%'`;
 
-    return toNativePromise(layer.queryFeatures(query)
+    return layer.queryFeatures(query)
       .then((response: any) => {
         const foundClients: Array<string> = [];
         const maxResults = 5;
@@ -426,7 +425,7 @@ class CustomSearchSources extends declared(Accessor) {
         return suggestions;
       }).catch((error: string) => {
         throw error;
-      }));
+      });
   }
 }
 

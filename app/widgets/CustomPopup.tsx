@@ -15,7 +15,6 @@ import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 import RequestSet = require('app/RequestSet');
 import { circleAt } from 'app/latLong';
 import { getHubData } from 'app/data';
-import { toNativePromise } from 'app/promises';
 import {
   spaceRendererInfo,
   attributeRow,
@@ -335,7 +334,7 @@ class CustomPopup extends declared(Widget) {
           query[key] = queryParams[key];
         });
         // Add query promise array of layer promises
-        layerPromises.push(toNativePromise(layer.queryFeatures(query)));
+        layerPromises.push(layer.queryFeatures(query));
       });
     /*
       Tell the request set to use the wrapper promise (all of the
