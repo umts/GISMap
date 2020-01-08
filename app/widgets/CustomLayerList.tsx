@@ -82,11 +82,10 @@ class CustomLayerList extends declared(Widget) {
   private _renderCustomCheckbox(uniqueId: string, text: string): JSX.Element {
     return (
       <label
-        class='layer-checkbox'
+        class='vertical-input'
         for={`${uniqueId}-checkbox`}>
         <input
           bind={this}
-          class='layer-checkbox-input'
           id={`${uniqueId}-checkbox`}
           name={uniqueId}
           onchange={this._checkboxEvent}
@@ -131,7 +130,9 @@ class CustomLayerList extends declared(Widget) {
       buildingLabelsVisible = buildingLabelsCheckbox.checked;
     }
     this.filter = {
+      name: 'CustomLayerList',
       visible: false,
+      showInFilterList: false,
       clauses: [
         {
           layerName: 'Sections',

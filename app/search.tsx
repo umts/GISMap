@@ -17,12 +17,17 @@ interface SearchFilterClause {
 }
 
 interface SearchFilter {
+  /*
+    The name of the filter to be displayed in the filter window. Also used to
+    identify this filter.
+  */
+  name: string;
   // The clauses to filter by. There should only be one per layer.
   clauses: Array<SearchFilterClause>;
   // Whether or not the filter should be visible in its own window
   visible: boolean;
-  // The name of the filter to be displayed in the filter window
-  name?: string;
+  // Whether or not to show the filter in the filter list
+  showInFilterList: boolean;
   // The description to be displayed in the filter window
   description?: string;
   // Strings to identify this filter in a search

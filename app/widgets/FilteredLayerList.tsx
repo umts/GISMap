@@ -58,12 +58,11 @@ class FilteredLayerList extends declared(Widget) {
       checkboxes.push(
         <label
           aria-label={label}
-          class='layer-checkbox'
+          class='vertical-input'
           for={this._checkboxId(filterOption)}>
           {icon}
           <input
             bind={this}
-            class='layer-checkbox-input'
             id={this._checkboxId(filterOption)}
             name={filterOption}
             onchange={this.setSelectedFilters}

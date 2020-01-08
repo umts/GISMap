@@ -132,7 +132,7 @@ h2 {
 
 .widget-tab-active {
   border: 1px solid #881c1c;
-  border-bottom: 0;
+  border-bottom-color: transparent;
   background-color: white;
 }
 
@@ -319,19 +319,23 @@ input:focus {
   flex-shrink: 0;
 }
 
-.layer-checkbox {
+.vertical-input {
   display: block;
   cursor: pointer;
   padding: 0.3rem;
 }
-.layer-checkbox * {
+.vertical-input.active {
+  background-color: #ccc;
+  border-radius: 0.5rem;
+}
+.vertical-input * {
   cursor: pointer;
 }
 .indent-1 {
   margin-left: 2rem;
 }
 
-.layer-checkbox-input {
+.vertical-input input {
   margin-right: 0.8rem;
 }
 
