@@ -73,6 +73,7 @@ class CustomFilterList extends declared(Widget) {
     return <div>{filterElements}</div>;
   }
 
+  // Called by filter elements to set the custom filter's filter
   private _updateFilter(event: any): void {
     if (event.target.value === 'No Filter') {
       this.customFilter.resetFilter();

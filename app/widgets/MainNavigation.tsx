@@ -82,10 +82,6 @@ class MainNavigation extends declared(Widget) {
       layerList: layerList
     });
 
-    const customFilterList = new CustomFilterList({
-      customFilter: customFilter
-    });
-
     // Create a layer window that will be hidden until opened by a window expand
     const layersWindow = new CustomWindow({
       name: 'layers',
@@ -97,7 +93,7 @@ class MainNavigation extends declared(Widget) {
           widget: layerList,
         }, {
           label: 'Filters',
-          widget: customFilterList,
+          widget: new CustomFilterList({ customFilter: customFilter }),
         }
       ]
     });

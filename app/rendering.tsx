@@ -30,7 +30,6 @@ const spaceRendererInfo = {
   'R-Handicapped': {
     label: 'Handicapped Spaces',
     description: 'Handicapped space',
-    checked: 'checked',
     iconUrl: `${iconsPath}/handicapped-space.png`,
     altText: 'White H in a blue circle'
   },
