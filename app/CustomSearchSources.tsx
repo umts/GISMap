@@ -406,6 +406,7 @@ class CustomSearchSources extends declared(Accessor) {
             name: `${client} Spaces`,
             description: `${target.length} space${target.length === 1 ? '' : 's'} reserved for ${client}.`,
             visible: true,
+            showInFilterList: false,
             clauses: [
               {
                 layerName: 'Spaces',

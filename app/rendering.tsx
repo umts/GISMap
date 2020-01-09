@@ -30,7 +30,6 @@ const spaceRendererInfo = {
   'R-Handicapped': {
     label: 'Handicapped Spaces',
     description: 'Handicapped space',
-    checked: 'checked',
     iconUrl: `${iconsPath}/handicapped-space.png`,
     altText: 'White H in a blue circle'
   },
@@ -155,6 +154,7 @@ const filterInfo: Array<SearchFilter> = [
     description: 'Locations to park without a permit. Pay at a meter or a paystation.',
     tags: ['meter', 'paystation', 'pink', 'visitor'],
     visible: true,
+    showInFilterList: true,
     clauses: [
       {layerName: 'Sections', clause: 'SectionColor = \'Pink\''},
       {layerName: 'Spaces', clause: 'ParkingSpaceSubCategory in (\'Meter-Coin\',\'Meter-Paystation\')'}
@@ -164,12 +164,17 @@ const filterInfo: Array<SearchFilter> = [
     description: 'Payment in these lots available using the ParkMobile app.',
     tags: ['parkmobile'],
     visible: true,
-    clauses: [{layerName: 'Sections', clause: 'ParkmobileZoneID is not null'}]
+    showInFilterList: true,
+    clauses: [
+      {layerName: 'Sections', clause: 'ParkmobileZoneID is not null'},
+      {layerName: 'Spaces', clause: '0 = 1'}
+    ]
   }, {
     name: 'Free Parking (On Weekends)',
     description: 'These lots are only free to park in on the weekend, with the exception of special events.',
     tags: ['free', 'weekend'],
     visible: true,
+    showInFilterList: true,
     clauses: [
       {layerName: 'Sections', clause: 'SectionHours in (\'Weekdays\',\'BusinessHours\')'},
       {layerName: 'Spaces', clause: '0 = 1'}
@@ -179,6 +184,7 @@ const filterInfo: Array<SearchFilter> = [
     description: 'These lots are only free to park in after business hours, with the exception of special events. They are restricted on weekdays from 7:00 AM to 7:00 PM.',
     tags: ['free', 'business'],
     visible: true,
+    showInFilterList: true,
     clauses: [
       {layerName: 'Sections', clause: 'SectionHours in (\'BusinessHours\')'},
       {layerName: 'Spaces', clause: '0 = 1'}
@@ -192,6 +198,7 @@ const filterInfo: Array<SearchFilter> = [
     name: `${color} Lots`,
     tags: [color],
     visible: true,
+    showInFilterList: false,
     clauses: [{layerName: 'Sections', clause: `SectionColor = '${color}'`}]
   });
 });
@@ -202,6 +209,7 @@ Object.keys(spaceRendererInfo).forEach((spaceCategory) => {
     name: spaceRendererInfo[spaceCategory].label,
     tags: spaceRendererInfo[spaceCategory].label.split(' '),
     visible: true,
+    showInFilterList: false,
     clauses: [{layerName: 'Spaces', clause: `ParkingSpaceSubCategory = '${spaceCategory}'`}]
   });
 });

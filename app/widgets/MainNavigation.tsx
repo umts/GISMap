@@ -12,6 +12,7 @@ import { resetUrlTimer } from 'app/url';
 
 import CustomDirections = require('app/widgets/CustomDirections');
 import CustomFilter = require('app/widgets/CustomFilter');
+import CustomFilterList = require('app/widgets/CustomFilterList');
 import CustomLayerList = require('app/widgets/CustomLayerList');
 import CustomLocate = require('app/widgets/CustomLocate');
 import CustomSearch = require('app/widgets/CustomSearch');
@@ -85,11 +86,14 @@ class MainNavigation extends declared(Widget) {
     const layersWindow = new CustomWindow({
       name: 'layers',
       iconName: 'layers',
-      useTabs: false,
+      useTabs: true,
       widgets: [
         {
           label: 'Layers',
           widget: layerList,
+        }, {
+          label: 'Filters',
+          widget: new CustomFilterList({ customFilter: customFilter }),
         }
       ]
     });
