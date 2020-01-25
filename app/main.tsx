@@ -171,7 +171,7 @@ view.when(() => {
   });
 
   // Get and store data from the hub
-  updateHubData(mainNavigation);
+  updateHubData(mainNavigation.windowManager);
 
   // Create the markers widget which manages all the markers on the map
   const markersWidget = new Markers({ view: view, markers: markers });

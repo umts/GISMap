@@ -411,7 +411,8 @@ class CustomPopup extends declared(Widget) {
       longitude: featurePoint(feature).longitude,
     }
     // Set the directions window inputs
-    const directionsWindow = this.mainNavigation.findWindow('directions');
+    const directionsWindow = this.mainNavigation.windowManager
+      .findWindow('directions');
     (directionsWindow.findWidget('Driving directions') as CustomDirections)
       .endSearch.setSearchExplicit(searchResult);
     (directionsWindow.findWidget('Walking directions') as CustomPedestrianDirections)

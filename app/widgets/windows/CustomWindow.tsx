@@ -14,10 +14,6 @@ interface WidgetWithLabel {
 
 @subclass('esri.widgets.CustomWindow')
 class CustomWindow extends declared(Widget) {
-  // The name of the esri icon class to use
-  @property()
-  private readonly iconName: string;
-
   // Whether or not to use tabs to separate the widgets
   @property()
   private readonly useTabs: boolean;
@@ -36,6 +32,10 @@ class CustomWindow extends declared(Widget) {
   */
   @property()
   public readonly name: string;
+
+  // The name of the esri icon class to use
+  @property()
+  public readonly iconName: string;
 
   // Whether or not this window is visible
   @property()
