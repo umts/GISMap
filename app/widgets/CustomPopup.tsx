@@ -14,7 +14,7 @@ import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
 import RequestSet = require('app/RequestSet');
 import { circleAt } from 'app/latLong';
-import { getHubData } from 'app/data';
+import { getHubData, getSectionData } from 'app/data';
 import {
   spaceRendererInfo,
   attributeRow,
@@ -22,7 +22,8 @@ import {
   iconButton,
   featureTitle,
   featurePoint,
-  formatDate
+  formatDate,
+  getGregTable
 } from 'app/rendering';
 import { SearchSourceType } from 'app/search';
 import { FeatureForUrl } from 'app/url';
@@ -126,6 +127,27 @@ class CustomPopup extends declared(Widget) {
     this.watch(['visible', 'page', 'features'], () => {
       this._updateSelectionGraphic();
     });
+
+    setTimeout(() => {
+      const sectionData = getSectionData();
+      sectionData.features.forEach((feature: Graphic) => {
+        this._renderSection(feature);
+      });
+      // CSV
+      const gregTable = getGregTable();
+      console.log(gregTable.map(e => e.join(',')).join('\n'))
+      
+      /*const csvContent = 'data:text/csv;charset=utf-8,' 
+          + gregTable.map(e => '\'' + e.join('\',\'') + '\'').join('\n');
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "my_data.csv");
+      document.body.appendChild(link); // Required for FF
+      */
+
+    }, 10000);
   }
 
   // Render this widget by returning JSX which is converted to HTML
@@ -607,6 +629,7 @@ class CustomPopup extends declared(Widget) {
     let parkmobile;
     if (feature.attributes.ParkmobileZoneID) {
       parkmobile = attributeRow(
+        feature,
         'ParkMobile',
         `Zone #${feature.attributes.ParkmobileZoneID}`,
         'https://www.umass.edu/transportation/pay-cell-parkmobile'
@@ -625,7 +648,7 @@ class CustomPopup extends declared(Widget) {
     if (feature.attributes.SectionColor === 'Pink') {
       parkingType = 'Payment';
       endTime = '7:00 PM';
-      payment = attributeRow('Payment', '$1.50 per hour');
+      payment = attributeRow(feature, 'Payment', '$1.50 per hour');
     }
     if (feature.attributes.SectionHours === 'BusinessHours') {
       sectionHoursDescription = `${parkingType} required 7:00 AM to ${endTime} Monday through Friday`;
@@ -636,7 +659,7 @@ class CustomPopup extends declared(Widget) {
     }
     let sectionHours;
     if (sectionHoursDescription) {
-      sectionHours = attributeRow('Hours', sectionHoursDescription);
+      sectionHours = attributeRow(feature, 'Hours', sectionHoursDescription);
     }
 
     // Who can park here or buy a permit here
@@ -655,6 +678,7 @@ class CustomPopup extends declared(Widget) {
     let permitInfo;
     if (permitInfoDescription) {
       permitInfo = attributeRow(
+        feature,
         'Permit eligibility',
         permitInfoDescription,
         'https://www.umass.edu/transportation/permits'
@@ -678,10 +702,12 @@ class CustomPopup extends declared(Widget) {
     ) {
       const people = waitlistInfo.waitlist_count === 1 ? 'person' : 'people';
       waitlistCount = attributeRow(
+        feature,
         `${this.lot.attributes.ParkingLotName} waitlist`,
         `${waitlistInfo.waitlist_count} ${people}`
       );
       waitlistTime = attributeRow(
+        feature,
         'Approximate waitlist time',
         waitlistInfo.approximate_wait_time
       );
@@ -792,13 +818,13 @@ class CustomPopup extends declared(Widget) {
     let payment;
     let reserved;
     if (feature.attributes.ParkingSpaceSubCategory === 'R-15Min') {
-      duration = attributeRow('Max duration', '15 minutes');
+      duration = attributeRow(feature, 'Max duration', '15 minutes');
     } else if (['Meter-Paystation', 'Meter-Coin'].indexOf(feature.attributes.ParkingSpaceSubCategory) !== -1) {
-      payment = attributeRow('Payment', '$1.50 per hour');
+      payment = attributeRow(feature, 'Payment', '$1.50 per hour');
     }
     if (feature.attributes.ParkingSpaceClientPublic) {
       reserved = attributeRow(
-        'Reserved for', feature.attributes.ParkingSpaceClientPublic
+        feature, 'Reserved for', feature.attributes.ParkingSpaceClientPublic
       );
     }
     return (

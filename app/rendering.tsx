@@ -358,15 +358,36 @@ function imperialDistance(distanceInFeet: number): string {
   return `${distance.toFixed(places)} ${unit}`
 }
 
+const headers = ['SectionName', 'Hours', 'ParkMobile', 'Payment', 'Permit eligibility'];
+const gregTable = [headers];
+
+function getGregTable(): Array<Array<string>> {
+  return gregTable;
+}
+
 let uniqueKey = 0;
 // Return two elements formatted as row with a label and content
-function attributeRow(label: string, content: string, link?: string): JSX.Element {
+function attributeRow(feature: Graphic, label: string, content: string, link?: string): JSX.Element {
   // Label content is either text or a link
   let labelContent: JSX.Element | string = label;
   if (link) {
     labelContent = <a target='_blank' href={link}>{label}</a>;
   }
   uniqueKey += 1;
+
+  // BS starts here
+  const uniqueId = '"' + feature.attributes.SectionName + '"';
+  let row: Array<string> = gregTable.find((r) => {
+    return r[0] === uniqueId;
+  });
+  if (!row) {
+    row = headers.map(() => { return '' });
+    row[0] = uniqueId;
+    gregTable.push(row);
+  }
+  const columnIndex = headers.indexOf(label);
+  row[columnIndex] = '"' + content + '"';
+
   return (
     <div class='space-between attribute-row' key={uniqueKey}>
       <b class='attribute-row-label'>{labelContent}</b>
@@ -524,5 +545,6 @@ export {
   iconButton,
   featureTitle,
   featurePoint,
-  formatDate
+  formatDate,
+  getGregTable
 };

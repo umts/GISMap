@@ -70,7 +70,7 @@ class LotNotices extends declared(Widget) {
             onclick={() => {
               this._openLotNotice(lot.attributes.CitationLocationID)}
             }>
-            {attributeRow(lot.attributes.SectionName, lotNotice.title)}
+            {attributeRow(null, lot.attributes.SectionName, lotNotice.title)}
           </div>
         );
       });
