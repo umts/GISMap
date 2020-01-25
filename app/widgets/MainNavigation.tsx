@@ -18,12 +18,13 @@ import CustomLocate = require('app/widgets/CustomLocate');
 import CustomSearch = require('app/widgets/CustomSearch');
 import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
 import CustomPopup = require('app/widgets/CustomPopup');
-import CustomWindow = require('app/widgets/CustomWindow');
 import { CustomZoom, ZoomDirection } from 'app/widgets/CustomZoom';
 import LotNotices = require('app/widgets/LotNotices');
 import ShareEmail = require('app/widgets/ShareEmail');
 import ShareLink = require('app/widgets/ShareLink');
-import WindowExpand = require('app/widgets/WindowExpand');
+
+import CustomWindow = require('app/widgets/windows/CustomWindow');
+import WindowExpand = require('app/widgets/windows/WindowExpand');
 
 @subclass('esri.widgets.MainNavigation')
 class MainNavigation extends declared(Widget) {

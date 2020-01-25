@@ -3,7 +3,7 @@ import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import Widget = require('esri/widgets/Widget');
 
-import CustomWindow = require('app/widgets/CustomWindow');
+import CustomWindow = require('app/widgets/windows/CustomWindow');
 
 import { iconButton } from 'app/rendering';
 
