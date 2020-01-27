@@ -9,7 +9,7 @@ import WindowManager = require('app/widgets/windows/WindowManager');
 
 @subclass('esri.widgets.WindowExpand')
 class WindowExpand extends declared(Widget) {
-  // The window that this expand will actually open
+  // The window manager we can use to toggle our window
   @property()
   private readonly windowManager: WindowManager;
 

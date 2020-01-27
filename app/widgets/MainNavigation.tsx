@@ -19,6 +19,7 @@ import CustomSearch = require('app/widgets/CustomSearch');
 import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
 import CustomPopup = require('app/widgets/CustomPopup');
 import { CustomZoom, ZoomDirection } from 'app/widgets/CustomZoom';
+import HelpPage = require('app/widgets/HelpPage');
 import LotNotices = require('app/widgets/LotNotices');
 import ShareEmail = require('app/widgets/ShareEmail');
 import ShareLink = require('app/widgets/ShareLink');
@@ -152,8 +153,26 @@ class MainNavigation extends declared(Widget) {
       ]
     });
 
+    const helpWindow = new CustomWindow({
+      name: 'help',
+      iconName: 'question',
+      useTabs: false,
+      widgets: [
+        {
+          label: 'Help',
+          widget: new HelpPage()
+        }
+      ]
+    });
+
     this.windowManager = new WindowManager({
-      windows: [layersWindow, directionsWindow, shareWindow, lotNoticesWindow]
+      windows: [
+        layersWindow,
+        directionsWindow,
+        shareWindow,
+        lotNoticesWindow,
+        helpWindow
+      ]
     });
 
     this.search = new CustomSearch({
