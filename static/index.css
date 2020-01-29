@@ -186,6 +186,16 @@ h2 {
   font-size: 16px;
 }
 
+.static-icon-button {
+  background-color: #881c1c;
+  color: white;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .esri-widget--button,
 .esri-button,
 .umass-theme-button {

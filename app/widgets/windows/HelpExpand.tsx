@@ -19,8 +19,14 @@ class HelpExpand extends declared(Widget) {
 
   // Render this widget by returning JSX which is converted to HTML
   public render(): JSX.Element {
+    const window = this.windowManager.findWindow('help');
     return (
-      <div bind={this} onclick={this._expand} id='help-expand' class='shadow'>
+      <div
+        bind={this}
+        onclick={this._expand}
+        id='help-expand'
+        class='shadow'
+        title={window.visible ? 'Close help window' : 'Open help window'}>
         <span aria-hidden='true' class='esri-icon esri-icon-question'></span>
         <div id='help-expand-text'>Help</div>
       </div>
