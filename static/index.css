@@ -56,11 +56,32 @@ body {
 
 .navigation-window.scrollable {
   display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 .navigation-window-inner.scrollable {
   overflow-y: auto;
   flex-grow: 1;
+}
+
+.window-bar {
+  align-items: center;
+  background-color: #881c1c;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 0.5rem;
+}
+.window-bar-text {
+  flex-shrink: 0;
+  font-size: 16px;
+}
+.window-bar-buttons {
+  display: flex;
+  align-items: center;
+}
+.window-bar-button {
+  width: 48px;
 }
 
 .custom-window {
@@ -177,13 +198,8 @@ h2 {
   margin: 0 0 0.4rem 0;
 }
 
-.horizontal-list-item {
-  display: inline-block;
-}
-
 .page-counter-text {
   margin: 0 1rem 0 1rem;
-  font-size: 16px;
 }
 
 .static-icon-button {

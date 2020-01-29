@@ -466,6 +466,7 @@ function iconButton(properties: {
 // Return the human readable title of a feature
 function featureTitle(feature: Graphic): string {
   let title = 'Unknown feature';
+  if (!feature) return title;
   if (feature.layer.title === 'Sections') {
     if (feature.attributes.SectionColor) {
       title = `${feature.attributes.SectionName} (${feature.attributes.SectionColor})`;
