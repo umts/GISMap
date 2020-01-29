@@ -81,7 +81,7 @@ class CustomWindow extends declared(Widget) {
         );
         tabs.push(tab);
       }
-      renderedElements.push(<div>{tabs}</div>);
+      renderedElements.push(<div class='widget-tab-list'>{tabs}</div>);
     }
     /*
       Render each widget label pair in this window and put the result into
