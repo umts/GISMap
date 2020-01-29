@@ -131,9 +131,10 @@ class CustomPopup extends declared(Widget) {
   // Render this widget by returning JSX which is converted to HTML
   public render(): JSX.Element {
     let featureInfo;
+    let feature;
     // Render the feature information
     if (this.page >= 0 && this.page < this.features.length) {
-      const feature = this.features[this.page];
+      feature = this.features[this.page];
       featureInfo = this._renderFeature(feature);
     }
     // If there is an error override feature information with an error message
@@ -146,20 +147,21 @@ class CustomPopup extends declared(Widget) {
     const pageCounter = (
       <div
         style={`
-          display: ${this.features.length > 1 ? 'inline-block' : 'none'}
-        `}>
+          display: ${this.features.length > 1 ? 'flex' : 'none'}
+        `}
+        class='window-bar-buttons'>
         <button
           bind={this}
-          class='horizontal-list-item umass-theme-button'
+          class='umass-theme-button'
           onclick={this._previousPage}>
           Previous
         </button>
-        <div class='horizontal-list-item page-counter-text'>
+        <div class='page-counter-text window-bar-text'>
           ({this.page + 1}/{this.features.length})
         </div>
         <button
           bind={this}
-          class='horizontal-list-item umass-theme-button'
+          class='umass-theme-button'
           onclick={this._nextPage}>
           Next
         </button>
@@ -170,21 +172,24 @@ class CustomPopup extends declared(Widget) {
       object: this,
       onclick: this._directionsTo,
       name: 'Directions to feature',
-      iconName: 'directions'
+      iconName: 'directions',
+      classes: ['window-bar-button']
     });
 
     const dockButton = iconButton({
       object: this,
       onclick: this._dock,
       name: `${this.docked ? 'Un-dock' : 'Dock'} feature information`,
-      iconName: 'dock-bottom'
+      iconName: 'dock-bottom',
+      classes: ['window-bar-button']
     });
 
     const closeButton = iconButton({
       object: this,
       onclick: this.reset,
       name: 'Close feature information',
-      iconName: 'close'
+      iconName: 'close',
+      classes: ['window-bar-button']
     });
 
     const screenPoint = this.view.toScreen(this.point);
@@ -220,15 +225,15 @@ class CustomPopup extends declared(Widget) {
           aria-label='Feature information'
           class='navigation-window scrollable custom-popup shadow'
           role='dialog'>
-          <div class='navigation-window-inner scrollable'>
-            <div class='widget-list right' role='presentation'>
-              <ul>
-                <li class='widget-list-item'>{directionsToButton}</li>
-                <li class='widget-list-item'>{dockButton}</li>
-                <li class='widget-list-item'>{closeButton}</li>
-              </ul>
+          <div class='window-bar'>
+            <div>{pageCounter}</div>
+            <div class='window-bar-buttons'>
+              {directionsToButton}
+              {dockButton}
+              {closeButton}
             </div>
-            {pageCounter}
+          </div>
+          <div class='navigation-window-inner scrollable'>
             {featureInfo}
           </div>
         </div>

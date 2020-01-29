@@ -61,6 +61,7 @@ class CustomWindow extends declared(Widget) {
     const renderedElements: Array<JSX.Element> = [];
     // Render tabs for each widget if we are using tabs
     if (this.useTabs) {
+      const tabs = [];
       for (let i = 0; i < this.widgets.length; i += 1) {
         let classes = 'widget-tab';
         if (i === this.widgetIndex) {
@@ -78,8 +79,9 @@ class CustomWindow extends declared(Widget) {
             {this.widgets[i].label}
           </div>
         );
-        renderedElements.push(tab);
+        tabs.push(tab);
       }
+      renderedElements.push(<div>{tabs}</div>);
     }
     /*
       Render each widget label pair in this window and put the result into
@@ -120,7 +122,7 @@ class CustomWindow extends declared(Widget) {
       onclick: this._close,
       name: `Close ${this.name} window`,
       iconName: 'close',
-      classes: ['right']
+      classes: ['window-bar-button']
     });
 
     return (
@@ -129,8 +131,15 @@ class CustomWindow extends declared(Widget) {
         class='navigation-window scrollable custom-window shadow'
         key={`${this.name}-window`}
         style={`display: ${this.visible ? 'flex' : 'none'}`}>
+        <div class='window-bar'>
+          <div class='window-bar-text'>
+            {this.name.charAt(0).toUpperCase() + this.name.slice(1)}
+          </div>
+          <div class='window-bar-buttons'>
+            {closeButton}
+          </div>
+        </div>
         <div class='navigation-window-inner scrollable'>
-          {closeButton}
           {renderedElements}
         </div>
       </div>
