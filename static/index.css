@@ -143,17 +143,27 @@ h2 {
   padding: 0.5rem;
 }
 
-.widget-tab {
+.widget-tab-list {
   border-bottom: 1px solid #881c1c;
+  height: 32px;
+  padding-left: 0.5rem;
+}
+
+.widget-tab {
+  border: 1px solid transparent;
+  border-bottom-color: #881c1c;
+  border-radius: 0.5rem 0.5rem 0 0;
   cursor: pointer;
   display: inline-block;
   padding: 0.5rem;
   background-color: #ccc;
+  height: 33px;
+  box-sizing: border-box;
 }
 
 .widget-tab-active {
   border: 1px solid #881c1c;
-  border-bottom-color: transparent;
+  border-bottom-color: white;
   background-color: white;
 }
 
