@@ -210,7 +210,13 @@ Object.keys(spaceRendererInfo).forEach((spaceCategory) => {
     tags: spaceRendererInfo[spaceCategory].label.split(' '),
     visible: true,
     showInFilterList: false,
-    clauses: [{layerName: 'Spaces', clause: `ParkingSpaceSubCategory = '${spaceCategory}'`}]
+    clauses: [
+      {layerName: 'Sections', clause: '0 = 1'},
+      {
+        layerName: 'Spaces',
+        clause: `ParkingSpaceSubCategory = '${spaceCategory}'`
+      }
+    ]
   });
 });
 

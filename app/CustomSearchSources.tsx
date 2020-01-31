@@ -411,7 +411,8 @@ class CustomSearchSources extends declared(Accessor) {
               {
                 layerName: 'Spaces',
                 clause: `ParkingSpaceClientPublic = '${escapeQueryParam(client)}'`
-              }
+              },
+              {layerName: 'Sections', clause: '0 = 1'}
             ],
             target: target
           };
