@@ -18,12 +18,15 @@ import CustomLocate = require('app/widgets/CustomLocate');
 import CustomSearch = require('app/widgets/CustomSearch');
 import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
 import CustomPopup = require('app/widgets/CustomPopup');
-import CustomWindow = require('app/widgets/CustomWindow');
 import { CustomZoom, ZoomDirection } from 'app/widgets/CustomZoom';
+import HelpPage = require('app/widgets/HelpPage');
 import LotNotices = require('app/widgets/LotNotices');
 import ShareEmail = require('app/widgets/ShareEmail');
 import ShareLink = require('app/widgets/ShareLink');
-import WindowExpand = require('app/widgets/WindowExpand');
+
+import CustomWindow = require('app/widgets/windows/CustomWindow');
+import WindowExpand = require('app/widgets/windows/WindowExpand');
+import WindowManager = require('app/widgets/windows/WindowManager');
 
 @subclass('esri.widgets.MainNavigation')
 class MainNavigation extends declared(Widget) {
@@ -43,9 +46,9 @@ class MainNavigation extends declared(Widget) {
   @property()
   private readonly customFilter: CustomFilter;
 
-  // Custom windows that start hidden and can be opened by window expands
+  // Opens, closes and renders custom windows
   @property()
-  private readonly customWindows: Array<CustomWindow>;
+  public readonly windowManager: WindowManager;
 
   // The main map view
   @property()
@@ -150,13 +153,27 @@ class MainNavigation extends declared(Widget) {
       ]
     });
 
-    /*
-      Every window needs to know about the other windows, that way a single
-      window can close the other windows when it needs to open.
-    */
-    const customWindows = [
-      layersWindow, directionsWindow, shareWindow, lotNoticesWindow
-    ];
+    const helpWindow = new CustomWindow({
+      name: 'help',
+      iconName: 'question',
+      useTabs: false,
+      widgets: [
+        {
+          label: 'Help',
+          widget: new HelpPage()
+        }
+      ]
+    });
+
+    this.windowManager = new WindowManager({
+      windows: [
+        layersWindow,
+        directionsWindow,
+        shareWindow,
+        lotNoticesWindow,
+        helpWindow
+      ]
+    });
 
     this.search = new CustomSearch({
       view: properties.view,
@@ -169,9 +186,7 @@ class MainNavigation extends declared(Widget) {
     });
     this.layersExpand = new WindowExpand({
       name: 'layers',
-      iconName: 'layers',
-      window: layersWindow,
-      windows: customWindows
+      windowManager: this.windowManager
     });
     this.buttonWidgets = [
       new CustomZoom({
@@ -190,25 +205,18 @@ class MainNavigation extends declared(Widget) {
       this.layersExpand,
       new WindowExpand({
         name: 'directions',
-        iconName: 'directions',
-        window: directionsWindow,
-        windows: customWindows
+        windowManager: this.windowManager
       }),
       new WindowExpand({
         name: 'share',
-        iconName: 'link',
-        window: shareWindow,
-        windows: customWindows
+        windowManager: this.windowManager
       }),
       new WindowExpand({
         name: 'lot notices',
-        iconName: 'notice-triangle',
-        window: lotNoticesWindow,
-        windows: customWindows
+        windowManager: this.windowManager
       })
     ];
     this.customFilter = customFilter;
-    this.customWindows = customWindows;
   }
 
   // Run after this widget is ready
@@ -235,15 +243,6 @@ class MainNavigation extends declared(Widget) {
       );
     });
 
-    const renderedWindows: Array<JSX.Element> = [];
-    /*
-      Render each custom window into an array.
-      Only one window will be visible at a time.
-    */
-    this.customWindows.forEach((window) => {
-      renderedWindows.push(window.render());
-    });
-
     return (
       <div id='main-navigation' role='presentation'>
         <div class='column-left'>
@@ -262,18 +261,11 @@ class MainNavigation extends declared(Widget) {
             </div>
           </div>
           {this.customFilter.render()}
-          {renderedWindows}
+          {this.windowManager.renderWindows()}
         </div>
         {this.popup.render()}
       </div>
     );
-  }
-
-  // Return a custom window by name
-  public findWindow(windowName: string): CustomWindow {
-    return this.customWindows.filter((window) => {
-      return window.name === windowName;
-    })[0];
   }
 
   // Return a window expand by name

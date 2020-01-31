@@ -3,23 +3,15 @@ import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import Widget = require('esri/widgets/Widget');
 
-import CustomWindow = require('app/widgets/CustomWindow');
-
 import { iconButton } from 'app/rendering';
+
+import WindowManager = require('app/widgets/windows/WindowManager');
 
 @subclass('esri.widgets.WindowExpand')
 class WindowExpand extends declared(Widget) {
-  // The name of the esri icon class to use
+  // The window manager we can use to toggle our window
   @property()
-  private readonly iconName: string;
-
-  // The window that this expand will actually open
-  @property()
-  private readonly window: CustomWindow;
-
-  // Any other windows that need to be closed before this window can be opened
-  @property()
-  private readonly windows: Array<CustomWindow>;
+  private readonly windowManager: WindowManager;
 
   // A descriptive name for the window this expand will open
   @property()
@@ -34,19 +26,18 @@ class WindowExpand extends declared(Widget) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public constructor(properties?: {
     name: string,
-    iconName: string,
-    window: CustomWindow,
-    windows: Array<CustomWindow>
+    windowManager: WindowManager,
   }) {
     super();
   }
 
   // Render this widget by returning JSX which is converted to HTML
   public render(): JSX.Element {
-    const iconName = this.loadingIcon ? 'loading-indicator' : this.iconName;
+    const window = this.windowManager.findWindow(this.name);
+    const iconName = this.loadingIcon ? 'loading-indicator' : window.iconName;
     const name = `Open ${this.name} window`;
     const classes = [];
-    if (this.window.visible) {
+    if (window.visible) {
       classes.push('active');
     }
     return iconButton({
@@ -58,22 +49,9 @@ class WindowExpand extends declared(Widget) {
     });
   }
 
-  /*
-    Referencing the custom window by the same name, open the window if it
-    is closed, and close the window if it is open.
-  */
+  // Toggle the window's visibility
   public expand(): void {
-    if (this.window.visible) {
-      // Close this window
-      this.window.visible = false;
-    } else {
-      // Close any other custom windows before opening this one
-      this.windows.forEach((window) => {
-        window.visible = false;
-      });
-      // Open this window
-      this.window.visible = true;
-    }
+    this.windowManager.toggleWindow(this.name);
   }
 }
 

@@ -4,7 +4,7 @@ import WebMap = require('esri/WebMap');
 import FeatureLayer = require('esri/layers/FeatureLayer');
 import MapView = require('esri/views/MapView');
 
-import MainNavigation = require('app/widgets/MainNavigation');
+import WindowManager = require('app/widgets/windows/WindowManager');
 
 let hubData: any;
 
@@ -12,11 +12,11 @@ let hubData: any;
   Get data from the hub. If the hub data contains lot notices, then open the
   lot notices window immediately.
 */
-function updateHubData(mainNavigation: MainNavigation): void {
+function updateHubData(windowManager: WindowManager): void {
   esriRequest('https://hub.parking.umass.edu/gis')
     .then((response) => {
       if (response.data.lot_notices.length > 0) {
-        mainNavigation.findWindow('lot notices').visible = true;
+        windowManager.findWindow('lot notices').visible = true;
       }
       hubData = response.data;
       return;

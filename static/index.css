@@ -212,6 +212,16 @@ h2 {
   margin: 0 1rem 0 1rem;
 }
 
+.static-icon-button {
+  background-color: #881c1c;
+  color: white;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .esri-widget--button,
 .esri-button,
 .umass-theme-button {
@@ -444,28 +454,6 @@ td.number, th.number {
   padding: 0.5rem;
 }
 
-.feedback {
-  display: flex;
-  align-items: flex-end;
-}
-.feedback-button {
-  background-color: white;
-  border-radius: 50%;
-  color: black;
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-  margin-left: 0.5rem;
-  display: flex;
-  flex-shrink: 0;
-  justify-content: center;
-  align-items: center;
-}
-.feedback-window {
-  margin: 0;
-  max-width: 40vw;
-}
-
 .pointer-cursor {
   cursor: pointer;
 }
@@ -478,6 +466,19 @@ td.number, th.number {
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 }
+
+#help-expand {
+  background-color: white;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 1rem;
+  display: flex;
+}
+
+#help-expand-text {
+  padding-left: 0.2rem;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);

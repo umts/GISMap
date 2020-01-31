@@ -15,7 +15,7 @@ import MainNavigation = require('app/widgets/MainNavigation');
 import { Markers } from 'app/widgets/Markers';
 import CustomPopup = require('app/widgets/CustomPopup');
 import CustomSearch = require('app/widgets/CustomSearch');
-import Feedback = require('app/widgets/Feedback');
+import HelpExpand = require('app/widgets/windows/HelpExpand');
 
 // Set up the UMass link menu
 setupUmassMenu();
@@ -171,17 +171,20 @@ view.when(() => {
   });
 
   // Get and store data from the hub
-  updateHubData(mainNavigation);
+  updateHubData(mainNavigation.windowManager);
 
   // Create the markers widget which manages all the markers on the map
   const markersWidget = new Markers({ view: view, markers: markers });
 
   // Add markers behind everything
   view.ui.add(markersWidget, 'manual');
-  // Add the feedback widget to the bottom right
-  view.ui.add(new Feedback(), 'bottom-right');
-  // Basemap toggle to the bottom left
-  view.ui.add(basemapToggle, 'bottom-left');
+  // Add help expand
+  view.ui.add(
+    new HelpExpand({ windowManager: mainNavigation.windowManager }),
+    'bottom-left'
+  );
+  // Add basemap toggle
+  view.ui.add(basemapToggle, 'bottom-right');
   // Add the main navigation widget to the map
   view.ui.add(mainNavigation, 'manual');
 
