@@ -10,9 +10,9 @@ import { homeGoToOverride } from 'app/latLong';
 import { RenderableWidget } from 'app/rendering';
 import { resetUrlTimer } from 'app/url';
 
+import AttributeFilter = require('app/widgets/AttributeFilter');
 import CustomDirections = require('app/widgets/CustomDirections');
 import CustomFilter = require('app/widgets/CustomFilter');
-import CustomFilterList = require('app/widgets/CustomFilterList');
 import CustomLayerList = require('app/widgets/CustomLayerList');
 import CustomLocate = require('app/widgets/CustomLocate');
 import CustomSearch = require('app/widgets/CustomSearch');
@@ -20,6 +20,7 @@ import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirecti
 import CustomPopup = require('app/widgets/CustomPopup');
 import { CustomZoom, ZoomDirection } from 'app/widgets/CustomZoom';
 import HelpPage = require('app/widgets/HelpPage');
+import LayerFilter = require('app/widgets/LayerFilter');
 import LotNotices = require('app/widgets/LotNotices');
 import ShareEmail = require('app/widgets/ShareEmail');
 import ShareLink = require('app/widgets/ShareLink');
@@ -78,7 +79,27 @@ class MainNavigation extends declared(Widget) {
       We will give this to both the layer window and the custom filter, that
       way the custom filter can filter based on this widget.
     */
-    const layerList = new CustomLayerList({ view: properties.view });
+    const layerList = new CustomLayerList({
+      view: properties.view,
+      layerFilters: [
+        new LayerFilter({
+          layerName: 'Sections',
+          publicName: 'Lots',
+          attributeFilters: [
+            new AttributeFilter({
+              layerName: 'Sections',
+              attributeName: 'SectionColor',
+              valueInfos: [
+                { value: 'Red' },
+                { value: 'Blue' }
+              ]
+            })
+          ]
+        }),
+        new LayerFilter({ layerName: 'Spaces' }),
+        new LayerFilter({ layerName: 'Campus Buildings' })
+      ]
+    });
 
     const customFilter = new CustomFilter({
       view: properties.view,
@@ -89,14 +110,11 @@ class MainNavigation extends declared(Widget) {
     const layersWindow = new CustomWindow({
       name: 'layers',
       iconName: 'layers',
-      useTabs: true,
+      useTabs: false,
       widgets: [
         {
           label: 'Layers',
           widget: layerList,
-        }, {
-          label: 'Filters',
-          widget: new CustomFilterList({ customFilter: customFilter }),
         }
       ]
     });

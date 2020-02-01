@@ -10,10 +10,18 @@ enum SearchSourceType {
   MyLocation = 4,
 }
 
+interface ValueInfo {
+  value: string;
+  label?: string;
+  iconUrl?: string;
+  altText?: string;
+}
+
 interface SearchFilterClause {
   layerName: string;
   clause?: string;
-  labelsVisible?: boolean,
+  visible?: boolean;
+  labelsVisible?: boolean;
 }
 
 interface SearchFilter {
@@ -83,6 +91,7 @@ export {
   SearchSourceType,
   SearchFilter,
   SearchFilterClause,
+  ValueInfo,
   Suggestion,
   SearchResult,
   searchTermMatchesTags,

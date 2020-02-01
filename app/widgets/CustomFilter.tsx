@@ -61,6 +61,10 @@ class CustomFilter extends declared(Widget) {
           layer.definitionExpression = clause.clause;
         }
 
+        // Set the layer visibility
+        if (clause.visible === true || clause.visible === false) {
+          layer.visible = clause.visible;
+        }
         // Set layer label visibility
         if (clause.labelsVisible === true || clause.labelsVisible === false) {
           layer.labelsVisible = clause.labelsVisible;
