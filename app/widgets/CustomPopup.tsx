@@ -478,7 +478,7 @@ class CustomPopup extends declared(Widget) {
 
     const graphic = this.features[this.page].clone();
     graphic.symbol = new SimpleFillSymbol({
-      color: '#e6f2ff',
+      color: [255, 255, 255, 0.8],
       outline: new SimpleLineSymbol({
         color: '#99ccff',
         width: '3px'
