@@ -144,29 +144,30 @@ class CustomPopup extends declared(Widget) {
       </p>;
     }
 
-    const pageCounter = (
-      <div
-        style={`
-          display: ${this.features.length > 1 ? 'flex' : 'none'}
-        `}
-        class='window-bar-buttons'>
-        <button
-          bind={this}
-          class='umass-theme-button'
-          onclick={this._previousPage}>
-          Previous
-        </button>
-        <div class='page-counter-text window-bar-text'>
-          ({this.page + 1}/{this.features.length})
+    let pageCounter;
+    if (this.features.length > 1) {
+      pageCounter = (
+        <div
+          class='window-bar-left'
+          key='page-counter'>
+          <button
+            bind={this}
+            class='umass-theme-button'
+            onclick={this._previousPage}>
+            Previous
+          </button>
+          <div class='page-counter-text window-bar-text'>
+            ({this.page + 1}/{this.features.length})
+          </div>
+          <button
+            bind={this}
+            class='umass-theme-button'
+            onclick={this._nextPage}>
+            Next
+          </button>
         </div>
-        <button
-          bind={this}
-          class='umass-theme-button'
-          onclick={this._nextPage}>
-          Next
-        </button>
-      </div>
-    );
+      );
+    }
 
     const directionsToButton = iconButton({
       object: this,
@@ -226,8 +227,8 @@ class CustomPopup extends declared(Widget) {
           class='navigation-window scrollable custom-popup shadow'
           role='dialog'>
           <div class='window-bar'>
-            <div>{pageCounter}</div>
-            <div class='window-bar-buttons'>
+            {pageCounter}
+            <div class='window-bar-right' key='window-bar-buttons'>
               {directionsToButton}
               {dockButton}
               {closeButton}

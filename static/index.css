@@ -70,18 +70,27 @@ body {
   color: white;
   display: flex;
   justify-content: space-between;
+  flex-shrink: 0;
   padding-left: 0.5rem;
 }
 .window-bar-text {
-  flex-shrink: 0;
   font-size: 16px;
 }
-.window-bar-buttons {
+.window-bar-left {
   display: flex;
+  flex-grow: 1;
+  justify-content: flex-start;
+  align-items: center;
+}
+.window-bar-right {
+  display: flex;
+  flex-grow: 1;
+  justify-content: flex-end;
   align-items: center;
 }
 .window-bar-button {
-  width: 48px;
+  flex-shrink: 1;
+  flex-basis: 48px;
 }
 
 .custom-window {
@@ -209,7 +218,9 @@ h2 {
 }
 
 .page-counter-text {
-  margin: 0 1rem 0 1rem;
+  flex-grow: 1;
+  text-align: center;
+  max-width: 4rem;
 }
 
 .static-icon-button {

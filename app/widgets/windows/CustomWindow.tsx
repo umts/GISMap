@@ -135,7 +135,7 @@ class CustomWindow extends declared(Widget) {
           <div class='window-bar-text'>
             {this.name.charAt(0).toUpperCase() + this.name.slice(1)}
           </div>
-          <div class='window-bar-buttons'>
+          <div class='window-bar-right'>
             {closeButton}
           </div>
         </div>
