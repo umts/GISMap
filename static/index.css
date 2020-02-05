@@ -375,6 +375,11 @@ input:focus {
   margin-right: 0.8rem;
 }
 
+.attribute-filters:nth-child(odd) {
+  background-color: #ddd;
+  border-radius: 0.5rem;
+}
+
 .standalone-text {
   margin: 0;
 }

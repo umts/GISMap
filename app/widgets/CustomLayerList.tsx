@@ -5,7 +5,7 @@ import MapView = require('esri/views/MapView');
 import LayerFilter = require('app/widgets/LayerFilter');
 import Widget = require('esri/widgets/Widget');
 
-import { spaceRendererInfo, sectionRendererInfo } from 'app/rendering';
+import { spaceRendererInfo } from 'app/rendering';
 import { SearchFilter } from 'app/search';
 
 @subclass('esri.widgets.CustomLayerList')

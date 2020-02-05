@@ -4,8 +4,10 @@ import { renderable, tsx } from 'esri/widgets/support/widget';
 import Widget = require('esri/widgets/Widget');
 
 import { SearchFilterClause } from 'app/search';
-
-import AttributeFilter = require('app/widgets/AttributeFilter');
+import {
+  AttributeFilter,
+  AttributeFilterType
+} from 'app/widgets/AttributeFilter';
 
 @subclass('esri.widgets.LayerFilter')
 class LayerFilter extends declared(Widget) {
@@ -37,7 +39,7 @@ class LayerFilter extends declared(Widget) {
   public postInitialize(): void {
     if (this.attributeFilters) {
       this.attributeFilters.forEach((attributeFilter) => {
-        attributeFilter.watch('filteredValues', () => {
+        attributeFilter.watch('filteredValues, filterByPresent', () => {
           this._applyAttributeFilters();
         });
       });
@@ -59,7 +61,7 @@ class LayerFilter extends declared(Widget) {
     }
     let filterContainer;
     if (renderedFilters && renderedFilters.length > 0) {
-      filterContainer = <div class='indent-1'>{renderedFilters}</div>
+      filterContainer = <div class='indent-1'>{renderedFilters}</div>;
     }
 
     return (
@@ -95,18 +97,13 @@ class LayerFilter extends declared(Widget) {
   }
 
   private _applyAttributeFilters(): void {
+    // Go through each attribute filter, if it 
     this.clause = this.attributeFilters.map((attributeFilter) => {
-      const values = attributeFilter.filteredValues.map((value) => {
-        return `'${value}'`
-      }).join(',');
-      if (values.length > 0) {
-        return `${attributeFilter.attributeName} in (${values})`;
-      } else {
-        return null;
-      }
-    }).filter((attributeClause) => {
-      return attributeClause !== null;
+      return attributeFilter.filterClause();
+    }).filter((filterClause) => {
+      return filterClause !== null;
     }).join(' and ');
+    console.log('NEW CLAUSE', this.clause);
   }
 }
 

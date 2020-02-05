@@ -9,8 +9,11 @@ import Widget = require('esri/widgets/Widget');
 import { homeGoToOverride } from 'app/latLong';
 import { RenderableWidget } from 'app/rendering';
 import { resetUrlTimer } from 'app/url';
+import {
+  AttributeFilter,
+  AttributeFilterType
+} from 'app/widgets/AttributeFilter';
 
-import AttributeFilter = require('app/widgets/AttributeFilter');
 import CustomDirections = require('app/widgets/CustomDirections');
 import CustomFilter = require('app/widgets/CustomFilter');
 import CustomLayerList = require('app/widgets/CustomLayerList');
@@ -28,6 +31,43 @@ import ShareLink = require('app/widgets/ShareLink');
 import CustomWindow = require('app/widgets/windows/CustomWindow');
 import WindowExpand = require('app/widgets/windows/WindowExpand');
 import WindowManager = require('app/widgets/windows/WindowManager');
+
+const iconsPath = 'assets/icons';
+
+const sectionValueInfos = [
+  {
+    value: 'Red',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/red-lot.png`,
+    altText: 'Red rectangle'
+  }, {
+    value: 'Blue',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/blue-lot.png`,
+    altText: 'Blue rectangle'
+  }, {
+    value: 'Purple',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/purple-lot.png`,
+    altText: 'Purple rectangle'
+  }, {
+    value: 'Yellow',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/yellow-lot.png`,
+    altText: 'Yellow rectangle'
+  }, {
+    value: 'Green',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/green-lot.png`,
+    altText: 'Green rectangle'
+  }, {
+    value: 'Pink',
+    label: 'Pink (Meter Lots)',
+    checked: 'checked',
+    iconUrl: `${iconsPath}/meter-lot.png`,
+    altText: 'Pink rectangle'
+  }
+];
 
 @subclass('esri.widgets.MainNavigation')
 class MainNavigation extends declared(Widget) {
@@ -89,10 +129,14 @@ class MainNavigation extends declared(Widget) {
             new AttributeFilter({
               layerName: 'Sections',
               attributeName: 'SectionColor',
-              valueInfos: [
-                { value: 'Red' },
-                { value: 'Blue' }
-              ]
+              attributeFilterType: AttributeFilterType.AnyValue,
+              valueInfos: sectionValueInfos
+            }),
+            new AttributeFilter({
+              layerName: 'Sections',
+              attributeName: 'ParkmobileZoneID',
+              attributeFilterType: AttributeFilterType.Present,
+              valueInfos: [{ value: 'ParkMobile Available' }]
             })
           ]
         }),

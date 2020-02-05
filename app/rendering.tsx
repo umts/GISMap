@@ -95,59 +95,6 @@ const spaceRendererInfo = {
   }
 };
 
-// Info that should be used to render different section colors
-const sectionRendererInfo = {
-  'Red': {
-    label: 'Red Lots',
-    color: [255, 0, 0],
-    checked: 'checked',
-    iconUrl: `${iconsPath}/red-lot.png`,
-    altText: 'Red rectangle'
-  },
-  'Blue': {
-    label: 'Blue Lots',
-    color: [0, 112, 255],
-    checked: 'checked',
-    iconUrl: `${iconsPath}/blue-lot.png`,
-    altText: 'Blue rectangle'
-  },
-  'Purple': {
-    label: 'Purple Lots',
-    color: [132, 0, 168],
-    checked: 'checked',
-    iconUrl: `${iconsPath}/purple-lot.png`,
-    altText: 'Purple rectangle'
-  },
-  'Yellow': {
-    label: 'Yellow Lots',
-    color: [255, 255, 0],
-    checked: 'checked',
-    iconUrl: `${iconsPath}/yellow-lot.png`,
-    altText: 'Yellow rectangle'
-  },
-  'Green': {
-    label: 'Green Lots',
-    color: [56, 168, 0],
-    checked: 'checked',
-    iconUrl: `${iconsPath}/green-lot.png`,
-    altText: 'Green rectangle'
-  },
-  'Pink': {
-    label: 'Meter Lots',
-    color: [255, 0, 197],
-    checked: 'checked',
-    iconUrl: `${iconsPath}/meter-lot.png`,
-    altText: 'Pink rectangle'
-  },
-  'Null': {
-    label: 'Other Lots',
-    color: [153, 153, 153],
-    checked: 'checked',
-    iconUrl: `${iconsPath}/other-lot.png`,
-    altText: 'Gray rectangle'
-  }
-}
-
 const filterInfo: Array<SearchFilter> = [
   {
     name: 'Metered/Visitor Parking',
@@ -243,6 +190,17 @@ function updateRenderers(map: WebMap): void {
       return null;
     }).filter((info) => { return info !== null })
   });
+
+  const sectionInfos = [
+    { value: 'Red', label: 'Red', color: [255, 0, 0] },
+    { value: 'Blue', label: 'Blue', color: [0, 112, 255] },
+    { value: 'Purple', label: 'Purple', color: [132, 0, 168] },
+    { value: 'Yellow', label: 'Yellow', color: [255, 255, 0] },
+    { value: 'Green', label: 'Green', color: [56, 168, 0] },
+    { value: 'Pink', label: 'Pink', color: [255, 0, 197] },
+    { value: 'Null', label: 'Other Lots', color: [153, 153, 153] }
+  ];
+
   const sectionRenderer = new UniqueValueRenderer({
     field: 'SectionColor',
     defaultSymbol: new SimpleFillSymbol({
@@ -253,15 +211,14 @@ function updateRenderers(map: WebMap): void {
       })
     }),
     defaultLabel: 'Other Lots',
-    uniqueValueInfos: Object.keys(sectionRendererInfo).map((sectionColor) => {
-      const rendererInfo = sectionRendererInfo[sectionColor];
+    uniqueValueInfos: sectionInfos.map((sectionInfo) => {
       return {
-        value: sectionColor,
-        label: rendererInfo.label,
+        value: sectionInfo.value,
+        label: sectionInfo.label,
         symbol: new SimpleFillSymbol({
-          color: rendererInfo.color,
+          color: sectionInfo.color,
           outline: new SimpleLineSymbol({
-            color: rendererInfo.color,
+            color: sectionInfo.color,
             width: '1px'
           })
         })
@@ -516,7 +473,6 @@ export {
   updateRenderers,
   updateLabeling,
   spaceRendererInfo,
-  sectionRendererInfo,
   filterInfo,
   goToSmart,
   imperialDistance,
