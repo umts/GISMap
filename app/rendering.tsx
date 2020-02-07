@@ -409,7 +409,7 @@ function expandable(
   mainElement: JSX.Element
 ): JSX.Element {
   return (
-    <div>
+    <div class='expandable-container'>
       <div
         aria-expanded={startExpanded ? 'true' : 'false'}
         aria-label={startExpanded ? `Collapse ${title}` : `Expand ${title}`}

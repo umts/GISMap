@@ -110,6 +110,10 @@ body {
   color: white;
 }
 
+.expandable-container {
+  flex-basis: 100%;
+}
+
 .expandable {
   cursor: pointer;
   display: flex;
