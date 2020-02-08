@@ -17,8 +17,8 @@ interface ValueInfo {
     used instead.
   */
   label?: string;
-  // The text 'checked' if this value should be checked by default
-  checked?: string;
+  // If this value should be checked by default
+  checked?: boolean;
   // The icon to display for this value
   iconUrl?: string;
   // The alt text for the icon
@@ -27,21 +27,27 @@ interface ValueInfo {
 
 @subclass('esri.widgets.AttributeFilter')
 class AttributeFilter extends declared(Widget) {
+  // Name of the layer this attribute belongs to
   @property()
   private readonly layerName: string;
 
+  // Info on possible values for this attribute
   @property()
   private readonly valueInfos: Array<ValueInfo>;
 
+  // The user facing label to use for this attribute
   @property()
-  private readonly presenceOnly: boolean;
+  private readonly attributeLabel: string;
 
+  // The name of the attribute to filter on
   @property()
   public readonly attributeName: string;
 
+  // What type of filtering should be done
   @property()
   public readonly attributeFilterType: AttributeFilterType;
 
+  // The specific values currently being filtered
   @property()
   public filteredValues: Array<string>;
 
@@ -49,17 +55,78 @@ class AttributeFilter extends declared(Widget) {
   @property()
   public filterByPresent: boolean;
 
+  // Whether or not to currently ignore this attribute filter
+  @property()
+  @renderable()
+  public dontCare: boolean;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public constructor(properties: {
     layerName: string,
     attributeName: string,
+    attributeLabel?: string,
     attributeFilterType: AttributeFilterType,
     valueInfos: Array<ValueInfo>
   }) {
     super();
   }
 
+  // Run after this widget is ready
+  public postInitialize(): void {
+    // Ensure filtered values are initialized
+    if (this.attributeFilterType === AttributeFilterType.AnyValue) {
+      this.filteredValues = this.valueInfos.filter((valueInfo) => {
+        return valueInfo.checked;
+      }).map((valueInfo) => {
+        return valueInfo.value;
+      })
+    }
+
+    /*
+      Uncheck the dont care radio button if dontCare is now false. Uncheck
+      the value checkboxes if dontCare is now true.
+    */
+    this.watch('dontCare', (dontCare) => {
+      const dontCareCheckbox = this._dontCareCheckbox();
+      if (dontCareCheckbox) {
+        if (dontCare) {
+          dontCareCheckbox.checked = true;
+          this.valueInfos.forEach((valueInfo) => {
+            this._valueCheckbox(valueInfo).checked = false;
+          });
+        } else {
+          dontCareCheckbox.checked = false;
+        }
+      }
+    });
+
+    // Set dont care if none of our values are checked to start
+    const numCheckedValues = this.valueInfos.filter((valueInfo) => {
+      return valueInfo.checked;
+    }).length;
+    if (numCheckedValues === 0) {
+      this.dontCare = true;
+    }
+  }
+
   // Render this widget by returning JSX which is converted to HTML
   public render(): JSX.Element {
+    const dontCareId = this._dontCareId();
+    const dontCareButton = (
+      <label
+        class='vertical-input'
+        for={dontCareId}>
+        <input
+          bind={this}
+          id={dontCareId}
+          name={dontCareId}
+          onchange={this._setDontCare}
+          type='radio' 
+          checked={this.dontCare} />
+        Don't care
+      </label>
+    );
+
     const renderedCheckboxes = this.valueInfos.map((valueInfo) => {
       const valueId = this._valueId(valueInfo);
 
@@ -87,7 +154,7 @@ class AttributeFilter extends declared(Widget) {
             bind={this}
             id={valueId}
             name={valueInfo.label}
-            onchange={this._updateFilteredValues}
+            onchange={this._updateFilter}
             type='checkbox' 
             checked={valueInfo.checked} />
           {valueLabel}
@@ -95,9 +162,18 @@ class AttributeFilter extends declared(Widget) {
       );
     });
 
+    const checkboxContainerClasses = [];
+    if (this.dontCare) {
+      checkboxContainerClasses.push('grayed-out');
+    }
+
     return (
-      <div class='attribute-filters'>
-        {renderedCheckboxes}
+      <div>
+        <div class='attribute-filter-separator'>{this.attributeLabel}</div>
+        {dontCareButton}
+        <div class={checkboxContainerClasses.join(' ')}>
+          {renderedCheckboxes}
+        </div>
       </div>
     );
   }
@@ -107,6 +183,10 @@ class AttributeFilter extends declared(Widget) {
     if there is nothing to filter by.
   */
   public filterClause(): string {
+    // Return if the user has selected dont care for this attribute
+    if (this.dontCare) {
+      return null;
+    }
     // Filter features where attribute is present
     if (this.attributeFilterType === AttributeFilterType.Present) {
       if (this.filterByPresent) {
@@ -131,7 +211,19 @@ class AttributeFilter extends declared(Widget) {
     return `${this.layerName}-${this.attributeName}-${valueInfo.value}-checkbox`;
   }
 
-  private _updateFilteredValues(): void {
+  private _valueCheckbox(valueInfo: ValueInfo): HTMLInputElement {
+    return document.getElementById(this._valueId(valueInfo)) as HTMLInputElement;
+  }
+
+  private _dontCareId(): string {
+    return `${this.layerName}-${this.attributeName}-dont-care`;
+  }
+
+  private _dontCareCheckbox(): HTMLInputElement {
+    return document.getElementById(this._dontCareId()) as HTMLInputElement;
+  }
+
+  private _updateFilter(): void {
     this.filteredValues = [];
     this.filterByPresent = false;
     /*
@@ -139,9 +231,10 @@ class AttributeFilter extends declared(Widget) {
       what was checked.
     */
     this.valueInfos.forEach((valueInfo) => {
-      const checkbox = document.getElementById(this._valueId(valueInfo)) as HTMLInputElement;
+      const checkbox = this._valueCheckbox(valueInfo);
       
-      if (checkbox.checked) {
+      if (checkbox && checkbox.checked) {
+        this.dontCare = false;
         if (this.attributeFilterType === AttributeFilterType.Present) {
           this.filterByPresent = true;
         } else {
@@ -149,6 +242,10 @@ class AttributeFilter extends declared(Widget) {
         }
       }
     });
+  }
+
+  private _setDontCare(event: any): void {
+    this.dontCare = event.target.checked;
   }
 }
 

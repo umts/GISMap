@@ -37,33 +37,33 @@ const iconsPath = 'assets/icons';
 const sectionValueInfos = [
   {
     value: 'Red',
-    checked: 'checked',
+    checked: true,
     iconUrl: `${iconsPath}/red-lot.png`,
     altText: 'Red rectangle'
   }, {
     value: 'Blue',
-    checked: 'checked',
+    checked: true,
     iconUrl: `${iconsPath}/blue-lot.png`,
     altText: 'Blue rectangle'
   }, {
     value: 'Purple',
-    checked: 'checked',
+    checked: true,
     iconUrl: `${iconsPath}/purple-lot.png`,
     altText: 'Purple rectangle'
   }, {
     value: 'Yellow',
-    checked: 'checked',
+    checked: true,
     iconUrl: `${iconsPath}/yellow-lot.png`,
     altText: 'Yellow rectangle'
   }, {
     value: 'Green',
-    checked: 'checked',
+    checked: true,
     iconUrl: `${iconsPath}/green-lot.png`,
     altText: 'Green rectangle'
   }, {
     value: 'Pink',
-    label: 'Pink (Meter Lots)',
-    checked: 'checked',
+    label: 'Pink (Meter lots)',
+    checked: true,
     iconUrl: `${iconsPath}/meter-lot.png`,
     altText: 'Pink rectangle'
   }
@@ -125,23 +125,31 @@ class MainNavigation extends declared(Widget) {
         new LayerFilter({
           layerName: 'Sections',
           publicName: 'Lots',
+          allowLabelToggle: true,
+          labelToggleLabel: 'Show lot numbers',
           attributeFilters: [
             new AttributeFilter({
               layerName: 'Sections',
               attributeName: 'SectionColor',
+              attributeLabel: 'Color',
               attributeFilterType: AttributeFilterType.AnyValue,
               valueInfos: sectionValueInfos
             }),
             new AttributeFilter({
               layerName: 'Sections',
               attributeName: 'ParkmobileZoneID',
+              attributeLabel: 'ParkMobile',
               attributeFilterType: AttributeFilterType.Present,
-              valueInfos: [{ value: 'ParkMobile Available' }]
+              valueInfos: [{ value: 'ParkMobile available' }]
             })
           ]
         }),
-        new LayerFilter({ layerName: 'Spaces' }),
-        new LayerFilter({ layerName: 'Campus Buildings' })
+        new LayerFilter({ layerName: 'Spaces', visible: false }),
+        new LayerFilter({
+          layerName: 'Campus Buildings',
+          allowLabelToggle: true,
+          labelToggleLabel: 'Show building names'
+        })
       ]
     });
 

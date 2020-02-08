@@ -5,7 +5,6 @@ import MapView = require('esri/views/MapView');
 import LayerFilter = require('app/widgets/LayerFilter');
 import Widget = require('esri/widgets/Widget');
 
-import { spaceRendererInfo } from 'app/rendering';
 import { SearchFilter } from 'app/search';
 
 @subclass('esri.widgets.CustomLayerList')
@@ -38,10 +37,12 @@ class CustomLayerList extends declared(Widget) {
   // Run after this widget is ready
   public postInitialize(): void {
     this.layerFilters.forEach((layerFilter) => {
-      layerFilter.watch('clause, visible', () => {
+      layerFilter.watch('clause, visible, labelsVisible', () => {
         this._applyLayerFilters();
       });
     });
+    // Apply layer filters first time
+    this._applyLayerFilters();
   }
 
   // Render this widget by returning JSX which is converted to HTML

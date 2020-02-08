@@ -375,9 +375,14 @@ input:focus {
   margin-right: 0.8rem;
 }
 
-.attribute-filters:nth-child(odd) {
-  background-color: #ddd;
-  border-radius: 0.5rem;
+.layer-checkbox {
+  font-weight: bold;
+}
+
+.attribute-filter-separator {
+  border-bottom: 1px solid black;
+  margin-top: 0.2rem;
+  font-style: italic;
 }
 
 .standalone-text {
@@ -417,6 +422,10 @@ input:focus {
 }
 .shelf > * + * {
   margin-left: 0.5rem;
+}
+
+.grayed-out {
+  color: #aaa;
 }
 
 table {
