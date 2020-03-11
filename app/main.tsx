@@ -96,24 +96,12 @@ view.when(() => {
       view: view,
       name: 'directions-origin',
       placeholder: 'Origin',
-      required: true
-    }),
-    new CustomSearch({
-      view: view,
-      name: 'directions-destination',
-      placeholder: 'Destination',
-      required: true
-    }),
-    new CustomSearch({
-      view: view,
-      name: 'pedestrian-directions-origin',
-      placeholder: 'Origin',
       required: true,
       onCampusLocationsOnly: true
     }),
     new CustomSearch({
       view: view,
-      name: 'pedestrian-directions-destination',
+      name: 'directions-destination',
       placeholder: 'Destination',
       required: true,
       onCampusLocationsOnly: true
@@ -123,27 +111,15 @@ view.when(() => {
   const markers = [
     {
       color: '#63ef4a',
-      annotation: 'Driving Origin',
+      annotation: 'Origin',
       search: searches.filter((search) => {
         return search.name === 'directions-origin';
       })[0]
     }, {
       color: '#ef4a63',
-      annotation: 'Driving Destination',
+      annotation: 'Destination',
       search: searches.filter((search) => {
         return search.name === 'directions-destination';
-      })[0]
-    }, {
-      color: '#63ef4a',
-      annotation: 'Walking Origin',
-      search: searches.filter((search) => {
-        return search.name === 'pedestrian-directions-origin';
-      })[0]
-    }, {
-      color: '#ef4a63',
-      annotation: 'Walking Destination',
-      search: searches.filter((search) => {
-        return search.name === 'pedestrian-directions-destination';
       })[0]
     }, {
       color: '#881c1c',

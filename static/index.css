@@ -196,6 +196,14 @@ h2 {
   justify-content: space-around;
 }
 
+.form-column {
+  display: flex;
+  flex-direction: column;
+}
+.form-column * + * {
+  margin-top: 0.6rem;
+}
+
 .button-input {
   flex-shrink: 0;
 }

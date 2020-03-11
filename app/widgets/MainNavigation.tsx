@@ -16,7 +16,6 @@ import CustomFilterList = require('app/widgets/CustomFilterList');
 import CustomLayerList = require('app/widgets/CustomLayerList');
 import CustomLocate = require('app/widgets/CustomLocate');
 import CustomSearch = require('app/widgets/CustomSearch');
-import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
 import CustomPopup = require('app/widgets/CustomPopup');
 import { CustomZoom, ZoomDirection } from 'app/widgets/CustomZoom';
 import HelpPage = require('app/widgets/HelpPage');
@@ -108,17 +107,11 @@ class MainNavigation extends declared(Widget) {
     const directionsWindow = new CustomWindow({
       name: 'directions',
       iconName: 'directions',
-      useTabs: true,
+      useTabs: false,
       widgets: [
         {
-          label: 'Driving directions',
+          label: 'Directions',
           widget: new CustomDirections({
-            view: properties.view, searches: properties.searches
-          })
-        },
-        {
-          label: 'Walking directions',
-          widget: new CustomPedestrianDirections({
             view: properties.view, searches: properties.searches
           })
         }

@@ -28,7 +28,6 @@ import { SearchSourceType } from 'app/search';
 import { FeatureForUrl } from 'app/url';
 
 import CustomDirections = require('app/widgets/CustomDirections');
-import CustomPedestrianDirections = require('app/widgets/CustomPedestrianDirections');
 import MainNavigation = require('app/widgets/MainNavigation');
 
 // Direction the popup window should open towards
@@ -419,9 +418,7 @@ class CustomPopup extends declared(Widget) {
     // Set the directions window inputs
     const directionsWindow = this.mainNavigation.windowManager
       .findWindow('directions');
-    (directionsWindow.findWidget('Driving directions') as CustomDirections)
-      .endSearch.setSearchExplicit(searchResult);
-    (directionsWindow.findWidget('Walking directions') as CustomPedestrianDirections)
+    (directionsWindow.findWidget('Directions') as CustomDirections)
       .endSearch.setSearchExplicit(searchResult);
     // Open the directions window if needed
     if (!directionsWindow.visible) {
