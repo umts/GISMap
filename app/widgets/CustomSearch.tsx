@@ -86,6 +86,11 @@ class CustomSearch extends declared(Widget) {
   @property()
   public marker: Marker;
 
+  // True if this search should return on campus locations only
+  @property()
+  @renderable()
+  public onCampusLocationsOnly: boolean;
+
   // Pass in any properties
   public constructor(properties?: {
     view: MapView,
@@ -120,6 +125,14 @@ class CustomSearch extends declared(Widget) {
       if (event.key === 'Escape' || event.keyCode === 27) {
         this._hideSuggestions();
       }
+    });
+  }
+
+  // Run after this widget is ready
+  public postInitialize(): void {
+    // Need to update on campus locations for the sources
+    this.watch('onCampusLocationsOnly', (onCampusLocationsOnly) => {
+      this.sources.onCampusLocationsOnly = onCampusLocationsOnly;
     });
   }
 

@@ -122,7 +122,8 @@ class CustomDirections extends declared(Widget) {
     return (
       <div class='esri-widget'>
         {error}
-        <p>Drag and drop the green and red markers, or start typing a location</p>
+        <p>Drag and drop the green and red markers, or start typing a location.</p>
+        <p>Walking directions only work on-campus.</p>
         <form>
           {this.startSearch.render()}
           {this.endSearch.render()}
@@ -206,8 +207,16 @@ class CustomDirections extends declared(Widget) {
     }
   }
 
+  // Called when the tranport method dropdown is changed
   private _changeTransportMethod(event: any): void {
     this.transportMethod = Number(event.target.value);
+    // Update search to use or not use off campus locations
+    let onCampusLocationsOnly = true;
+    if (this.transportMethod === TransportMethod.Driving) {
+      onCampusLocationsOnly = false;
+    }
+    this.startSearch.onCampusLocationsOnly = onCampusLocationsOnly;
+    this.endSearch.onCampusLocationsOnly = onCampusLocationsOnly;
   }
 
   /*
