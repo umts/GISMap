@@ -199,6 +199,7 @@ h2 {
 .form-column {
   display: flex;
   flex-direction: column;
+  margin-bottom: 0.6rem;
 }
 .form-column * + * {
   margin-top: 0.6rem;

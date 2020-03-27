@@ -23,8 +23,8 @@ enum TransportMethod {
   Walking = 1,
 }
 
-@subclass('esri.widgets.CustomPedestrianDirections')
-class CustomPedestrianDirections extends declared(Widget) {
+@subclass('esri.widgets.CustomDirections')
+class CustomDirections extends declared(Widget) {
   // The route task to use to query for routes
   private static routeTask = new RouteTask({
     url: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route'
@@ -84,6 +84,7 @@ class CustomPedestrianDirections extends declared(Widget) {
       })
       directionsElement = (
         <div class='directions-list'>
+          <hr />
           <h2 bind={this} class='directions-header' onclick={this._clickHeader}>
             {this.routeResult.directions.routeName}
           </h2>
@@ -255,7 +256,7 @@ class CustomPedestrianDirections extends declared(Widget) {
   }
 
   private _openWalkingDirections(origin: string, destination: string): void {
-    CustomPedestrianDirections.routeTask.solve(new RouteParameters({
+    CustomDirections.routeTask.solve(new RouteParameters({
       stops: new FeatureSet({
         features: [
           new Graphic({
@@ -321,7 +322,7 @@ class CustomPedestrianDirections extends declared(Widget) {
 }
 
 /*
-  Set the custom pedestrian directions widget as the export for this
-  file so it can be imported and used in other files.
+  Set the custom directions widget as the export for this file so it can be
+  imported and used in other files.
 */
-export = CustomPedestrianDirections;
+export = CustomDirections;
