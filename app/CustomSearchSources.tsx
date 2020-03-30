@@ -43,7 +43,7 @@ class CustomSearchSources extends declared(Accessor) {
 
   // Only use on campus locations for searching
   @property()
-  private readonly onCampusLocationsOnly: boolean;
+  public onCampusLocationsOnly: boolean;
 
   // Pass in any properties
   public constructor(properties?: {
