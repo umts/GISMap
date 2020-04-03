@@ -54,14 +54,6 @@ function getSectionData(): any {
   return sectionData;
 }
 
-// Return a hardcoded object id based on layer name
-function objectIdColumn(layerName: string): string {
-  if (layerName === 'Campus Buildings') {
-    return 'OBJECTID';
-  }
-  return 'OBJECTID_1';
-}
-
 /*
   Export helper functions related to raw data so they can be
   imported and used in other files.
@@ -70,6 +62,5 @@ export {
   updateHubData,
   getHubData,
   updateSectionData,
-  getSectionData,
-  objectIdColumn
+  getSectionData
 };

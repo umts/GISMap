@@ -14,7 +14,7 @@ import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
 import RequestSet = require('app/RequestSet');
 import { circleAt } from 'app/latLong';
-import { getHubData, objectIdColumn } from 'app/data';
+import { getHubData } from 'app/data';
 import {
   spaceRendererInfo,
   attributeRow,
@@ -294,10 +294,14 @@ class CustomPopup extends declared(Widget) {
     */
     this.featureForUrl = featureForUrl;
 
+    /*
+      Use hardcoded OBJECTID_1 since layers may not be loaded yet so we cant
+      use objectIdField.
+    */
     this._queryAndUseFeatures(
       [featureForUrl.layer],
       {
-        where: `${objectIdColumn(featureForUrl.layer)} = '${featureForUrl.id}'`,
+        where: `OBJECTID_1 = '${featureForUrl.id}'`,
         outSpatialReference: new SpatialReference({'wkid': 4326}),
         // Ensure the query returns all fields, in particular the OBJECTID field
         outFields: ['*']
