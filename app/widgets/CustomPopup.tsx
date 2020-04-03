@@ -14,7 +14,7 @@ import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
 import RequestSet = require('app/RequestSet');
 import { circleAt } from 'app/latLong';
-import { getHubData } from 'app/data';
+import { getHubData, objectIdColumn } from 'app/data';
 import {
   spaceRendererInfo,
   attributeRow,
@@ -294,15 +294,10 @@ class CustomPopup extends declared(Widget) {
     */
     this.featureForUrl = featureForUrl;
 
-    let idColumn = 'OBJECTID_1';
-    if (featureForUrl.layer === 'Campus Buildings') {
-      idColumn = 'OBJECTID';
-    }
-
     this._queryAndUseFeatures(
       [featureForUrl.layer],
       {
-        where: `${idColumn} = '${featureForUrl.id}'`,
+        where: `${objectIdColumn(featureForUrl.layer)} = '${featureForUrl.id}'`,
         outSpatialReference: new SpatialReference({'wkid': 4326}),
         // Ensure the query returns all fields, in particular the OBJECTID field
         outFields: ['*']
@@ -489,14 +484,9 @@ class CustomPopup extends declared(Widget) {
   private _updateFeatureForUrl(): void {
     if (this.page >= 0 && this.page < this.features.length) {
       const feature = this.features[this.page];
-      let id;
-      if (feature.layer.title === 'Campus Buildings') {
-        id = feature.attributes.OBJECTID;
-      } else {
-        id = feature.attributes.OBJECTID_1;
-      }
+
       this.featureForUrl = {
-        id: id,
+        id: Number(feature.getObjectId()),
         layer: feature.layer.title
       };
     /*
@@ -734,7 +724,8 @@ class CustomPopup extends declared(Widget) {
     }
 
     return (
-      <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
+      <div
+        key={feature.layer.title + feature.getObjectId()}>
         {title}
         {noticeElements}
         <p><b>{feature.attributes.SectionAddress}</b></p>
@@ -759,7 +750,7 @@ class CustomPopup extends declared(Widget) {
   // Return a JSX element describing a building
   private _renderBuilding(feature: Graphic): JSX.Element {
     return (
-      <div key={feature.layer.title + feature.attributes.OBJECTID}>
+      <div key={feature.layer.title + feature.getObjectId()}>
         <h1>{featureTitle(feature)}</h1>
         <p><b>{feature.attributes.Address}</b></p>
         {
@@ -806,7 +797,7 @@ class CustomPopup extends declared(Widget) {
       );
     }
     return (
-      <div key={feature.layer.title + feature.attributes.OBJECTID_1}>
+      <div key={feature.layer.title + feature.getObjectId()}>
         <h1>{featureTitle(feature)}{icon}</h1>
         {reserved}{payment}{duration}
       </div>

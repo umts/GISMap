@@ -419,7 +419,7 @@ class CustomSearchSources extends declared(Accessor) {
           // Add the suggestion
           suggestions.push({
             text: `${client} Spaces`,
-            key: feature.attributes.OBJECTID_1,
+            key: String(feature.getObjectId()),
             sourceType: SearchSourceType.Space,
             filter: filter
           });
