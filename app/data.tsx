@@ -58,9 +58,4 @@ function getSectionData(): any {
   Export helper functions related to raw data so they can be
   imported and used in other files.
 */
-export {
-  updateHubData,
-  getHubData,
-  updateSectionData,
-  getSectionData
-};
+export { updateHubData, getHubData, updateSectionData, getSectionData };
