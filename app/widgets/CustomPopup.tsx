@@ -13,7 +13,7 @@ import SimpleLineSymbol = require('esri/symbols/SimpleLineSymbol');
 import SimpleFillSymbol = require('esri/symbols/SimpleFillSymbol');
 
 import RequestSet = require('app/RequestSet');
-import { circleAt } from 'app/latLong';
+import { circleAt, myLocation } from 'app/latLong';
 import { getHubData } from 'app/data';
 import {
   spaceRendererInfo,
@@ -417,6 +417,19 @@ class CustomPopup extends declared(Widget) {
     // Set the directions window inputs
     const directionsWindow = this.mainNavigation.windowManager
       .findWindow('directions');
+    // Set start search to my location if it is empty
+    myLocation().then((location) => {
+      const myLocationResult = {
+        name: 'My location',
+        sourceType: SearchSourceType.MyLocation,
+        latitude: location.latitude,
+        longitude: location.longitude
+      };
+      (directionsWindow.findWidget('Directions') as CustomDirections)
+        .startSearch.setSearchExplicit(myLocationResult);
+      return;
+    }).catch((error) => console.error(error));
+    // Set end search to result
     (directionsWindow.findWidget('Directions') as CustomDirections)
       .endSearch.setSearchExplicit(searchResult);
     // Open the directions window if needed

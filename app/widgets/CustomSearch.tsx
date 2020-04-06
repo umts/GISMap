@@ -80,6 +80,7 @@ class CustomSearch extends declared(Widget) {
 
   // The single search result returned from the geolocator services
   @property()
+  @renderable()
   public searchResult: SearchResult;
 
   // Markers sets the marker for each search

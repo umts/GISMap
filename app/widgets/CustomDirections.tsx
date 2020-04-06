@@ -33,14 +33,6 @@ class CustomDirections extends declared(Widget) {
   @property()
   private readonly view: MapView;
 
-  // Custom search widget for the starting location
-  @property()
-  private readonly startSearch: CustomSearch;
-
-  // Custom search widget for the ending location
-  @property()
-  public endSearch: CustomSearch;
-
   // The result of querying using a route task. Contains directions.
   @property()
   @renderable()
@@ -58,6 +50,14 @@ class CustomDirections extends declared(Widget) {
   @property()
   @renderable()
   private transportMethod: TransportMethod;
+
+  // Custom search widget for the starting location
+  @property()
+  public startSearch: CustomSearch;
+
+  // Custom search widget for the ending location
+  @property()
+  public endSearch: CustomSearch;
 
   // Pass in any properties
   public constructor(properties?: {
