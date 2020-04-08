@@ -6,6 +6,7 @@ import MapView = require('esri/views/MapView');
 import Widget = require('esri/widgets/Widget');
 
 import { clickOnSpaceOrEnter } from 'app/events';
+import { myLocation } from 'app/latLong';
 import { iconButton } from 'app/rendering';
 import { SearchSourceType, SearchResult, Suggestion } from 'app/search';
 import CustomSearchSources = require('app/CustomSearchSources');
@@ -247,6 +248,17 @@ class CustomSearch extends declared(Widget) {
       });
     }
 
+    let locateButton;
+    if (!this.mainSearch) {
+      locateButton = iconButton({
+        object: this,
+        onclick: this.setMyLocation,
+        name: 'Use my location',
+        iconName: 'locate',
+        classes: ['button-input']
+      })
+    }
+
     let submitButton;
     if (this.mainSearch) {
       submitButton = iconButton({
@@ -269,6 +281,7 @@ class CustomSearch extends declared(Widget) {
           type='text'
           required={this.required} />
         {clearButton}
+        {locateButton}
         {submitButton}
       </div>
     );
@@ -373,6 +386,20 @@ class CustomSearch extends declared(Widget) {
   // Show the validation warning with the given message
   public showWarning(message: string): void {
     this.warning = message;
+  }
+
+  // Set the search result to my location
+  public setMyLocation(): void {
+    myLocation().then((location) => {
+      const myLocationResult = {
+        name: 'My location',
+        sourceType: SearchSourceType.MyLocation,
+        latitude: location.latitude,
+        longitude: location.longitude
+      };
+      this.setSearchExplicit(myLocationResult);
+      return;
+    }).catch((error) => console.error(error));
   }
 
   // Store the id of this search in the drag event
