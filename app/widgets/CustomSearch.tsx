@@ -391,15 +391,17 @@ class CustomSearch extends declared(Widget) {
   // Set the search result to my location
   public setMyLocation(): void {
     myLocation().then((location) => {
-      const myLocationResult = {
+      this.setSearchExplicit({
         name: 'My location',
         sourceType: SearchSourceType.MyLocation,
         latitude: location.latitude,
         longitude: location.longitude
-      };
-      this.setSearchExplicit(myLocationResult);
+      });
       return;
-    }).catch((error) => console.error(error));
+    }).catch((error) => {
+      console.error(error);
+      this.showWarning(error);
+    });
   }
 
   // Store the id of this search in the drag event
