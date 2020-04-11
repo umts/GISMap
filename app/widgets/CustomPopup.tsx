@@ -417,6 +417,10 @@ class CustomPopup extends declared(Widget) {
     // Set the directions window inputs
     const directionsWindow = this.mainNavigation.windowManager
       .findWindow('directions');
+    // Set start search to my location if it is empty
+    (directionsWindow.findWidget('Directions') as CustomDirections)
+      .startSearch.setMyLocation();
+    // Set end search to result
     (directionsWindow.findWidget('Directions') as CustomDirections)
       .endSearch.setSearchExplicit(searchResult);
     // Open the directions window if needed
