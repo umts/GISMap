@@ -134,8 +134,9 @@ view.when(() => {
   // Set up basemap toggle
   map.basemap = topoBasemap;
   const basemapToggle = new BasemapToggle({
-    view: view, nextBasemap: satelliteBasemap, titleVisible: true
+    view: view, nextBasemap: satelliteBasemap
   });
+  basemapToggle.visibleElements = { title: true };
 
   /*
     Create the main navigation widget.

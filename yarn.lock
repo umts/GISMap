@@ -16,10 +16,10 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@types/arcgis-js-api@4.14.0":
-  version "4.14.0"
-  resolved "https://registry.yarnpkg.com/@types/arcgis-js-api/-/arcgis-js-api-4.14.0.tgz#9e647e91fc0c6a3d9644d3cbfaa6dad46ab3f838"
-  integrity sha512-TGOfVtEpC5mIVqHwZRGS2OLx8D47AsPfUgDw/Z4IdTOOjMY+7/Hd25mu8xPkoEYNKy88jFYD/7eUIZWDBPUvKQ==
+"@types/arcgis-js-api@4.16.0":
+  version "4.16.0"
+  resolved "https://registry.yarnpkg.com/@types/arcgis-js-api/-/arcgis-js-api-4.16.0.tgz#a562e788aaef492ce72de0a98328bb28f6a9a77a"
+  integrity sha512-AAXUeyzF2PxtjKOO/Zqffq/mLpNp/uVaKwqq/n8ayqsqOGtffNDBTrfeUDvaFnrox8oTVFhDIAEObZHJNxwFgA==
 
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
@@ -1511,6 +1511,11 @@ to-arraybuffer@^1.0.0:
 tslib@^1.8.1, tslib@^1.9.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.10.0.tgz#c3c19f95973fb0a62973fb09d90d961ee43e5c8a"
+
+tslib@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.0.tgz#18d13fc2dce04051e20f074cc8387fd8089ce4f3"
+  integrity sha512-lTqkx847PI7xEDYJntxZH89L2/aXInsyF2luSafe/+0fHOMjlBNXdH6th7f70qxLDhul7KZK0zC8V5ZIyHl0/g==
 
 tsutils@^3.7.0:
   version "3.14.0"

@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import Extent = require('esri/geometry/Extent');
@@ -11,7 +11,7 @@ import { goToSmart, expandable, iconButton } from 'app/rendering';
 import CustomLayerList = require('app/widgets/CustomLayerList');
 
 @subclass('esri.widgets.CustomFilter')
-class CustomFilter extends declared(Widget) {
+class CustomFilter extends Widget {
   // Clauses that should always be applied to specific layers
   private static defaultClauses = {
     'Sections': 'SectionPublicVisible = \'Yes\''
@@ -30,13 +30,14 @@ class CustomFilter extends declared(Widget) {
   @renderable()
   public filter: SearchFilter;
 
-  // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: {
+  public constructor(params?: {
     view: MapView,
     layerList: CustomLayerList
   }) {
     super();
+    // Assign constructor params
+    this.set(params);
   }
 
   // Run after this widget is ready
@@ -113,8 +114,8 @@ class CustomFilter extends declared(Widget) {
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
-    let filterWindow;
+  public render(): tsx.JSX.Element {
+    let filterWindow = <div></div>;
     if (this.filter && this.filter.visible) {
       const title = `Filtering by: ${this.filter.name}`;
       let windowContent;

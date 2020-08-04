@@ -366,9 +366,9 @@ function imperialDistance(distanceInFeet: number): string {
 
 let uniqueKey = 0;
 // Return two elements formatted as row with a label and content
-function attributeRow(label: string, content: string, link?: string): JSX.Element {
+function attributeRow(label: string, content: string, link?: string): tsx.JSX.Element {
   // Label content is either text or a link
-  let labelContent: JSX.Element | string = label;
+  let labelContent: tsx.JSX.Element | string = label;
   if (link) {
     labelContent = <a target='_blank' href={link}>{label}</a>;
   }
@@ -406,8 +406,8 @@ function expandable(
   title: string,
   startExpanded: boolean,
   className: string,
-  mainElement: JSX.Element
-): JSX.Element {
+  mainElement: tsx.JSX.Element
+): tsx.JSX.Element {
   return (
     <div class='expandable-container'>
       <div
@@ -447,7 +447,7 @@ function iconButton(properties: {
   name: string,
   iconName: string,
   classes?: Array<string>
-}): JSX.Element {
+}): tsx.JSX.Element {
   const allClasses = ['esri-widget', 'esri-widget--button'];
   if (properties.classes) {
     properties.classes.forEach((someClass) => { allClasses.push(someClass) });

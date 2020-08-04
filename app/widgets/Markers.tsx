@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { tsx } from 'esri/widgets/support/widget';
 
 import Point = require('esri/geometry/Point');
@@ -26,7 +26,7 @@ interface Marker {
 }
 
 @subclass('esri.widgets.Markers')
-class Markers extends declared(Widget) {
+class Markers extends Widget {
   // The map view
   @property()
   private readonly view: MapView;
@@ -35,10 +35,12 @@ class Markers extends declared(Widget) {
   @property()
   private readonly markers: Array<Marker>;
 
-  public constructor(properties?: { view: MapView, markers: Array<Marker> }) {
+  public constructor(params?: { view: MapView, markers: Array<Marker> }) {
     super();
+    // Assign constructor params
+    this.set(params);
     // Set the marker of each custom search
-    properties.markers.forEach((marker) => {
+    params.markers.forEach((marker) => {
       if (marker.search) {
         marker.search.marker = marker;
       }
@@ -46,8 +48,8 @@ class Markers extends declared(Widget) {
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
-    const renderedMarkers: Array<JSX.Element> = [];
+  public render(): tsx.JSX.Element {
+    const renderedMarkers: Array<tsx.JSX.Element> = [];
     this.markers.forEach((marker) => {
       // Set point to new point if undefined
       if (!marker.point) {

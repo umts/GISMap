@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@types/arcgis-js-api": "4.14.0",
+    "@types/arcgis-js-api": "4.16.0",
     "es6-promise": "^4.2.6"
   },
   "devDependencies": {
@@ -13,7 +13,8 @@
     "eslint": "^6.0.1",
     "eslint-plugin-promise": "^4.2.1",
     "node-static": "^0.7.11",
-    "typescript": "^3.5.2"
+    "typescript": "^3.5.2",
+    "tslib": "^2.0.0"
   },
   "scripts": {
     "build": "script/build",

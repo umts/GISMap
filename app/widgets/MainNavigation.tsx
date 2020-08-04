@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { tsx } from 'esri/widgets/support/widget';
 
 import MapView = require('esri/views/MapView');
@@ -28,7 +28,7 @@ import WindowExpand = require('app/widgets/windows/WindowExpand');
 import WindowManager = require('app/widgets/windows/WindowManager');
 
 @subclass('esri.widgets.MainNavigation')
-class MainNavigation extends declared(Widget) {
+class MainNavigation extends Widget {
   // Search widget
   @property()
   private readonly search: CustomSearch;
@@ -62,25 +62,27 @@ class MainNavigation extends declared(Widget) {
   public basemapToggle: BasemapToggle
 
   /*
-    Pass in properties like widgets as `any` type which will then be cast to
+    Pass in params like widgets as `any` type which will then be cast to
     their correct types.
   */
-  public constructor(properties?: {
+  public constructor(params?: {
     view: MapView,
     popup: CustomPopup,
     searches: Array<CustomSearch>,
     basemapToggle: BasemapToggle,
   }) {
     super();
+    // Assign constructor params
+    this.set(params);
 
     /*
       We will give this to both the layer window and the custom filter, that
       way the custom filter can filter based on this widget.
     */
-    const layerList = new CustomLayerList({ view: properties.view });
+    const layerList = new CustomLayerList({ view: params.view });
 
     const customFilter = new CustomFilter({
-      view: properties.view,
+      view: params.view,
       layerList: layerList
     });
 
@@ -112,7 +114,7 @@ class MainNavigation extends declared(Widget) {
         {
           label: 'Directions',
           widget: new CustomDirections({
-            view: properties.view, searches: properties.searches
+            view: params.view, searches: params.searches
           })
         }
       ]
@@ -141,7 +143,7 @@ class MainNavigation extends declared(Widget) {
       widgets: [
         {
           label: 'Lot notices/events',
-          widget: new LotNotices({ popup: properties.popup })
+          widget: new LotNotices({ popup: params.popup })
         }
       ]
     });
@@ -169,13 +171,13 @@ class MainNavigation extends declared(Widget) {
     });
 
     this.search = new CustomSearch({
-      view: properties.view,
+      view: params.view,
       name: 'main',
       placeholder: 'Search the map',
       customFilter: customFilter,
       mainSearch: true,
       onCampusLocationsOnly: true,
-      popup: properties.popup
+      popup: params.popup
     });
     this.layersExpand = new WindowExpand({
       name: 'layers',
@@ -183,18 +185,18 @@ class MainNavigation extends declared(Widget) {
     });
     this.buttonWidgets = [
       new CustomZoom({
-        view: properties.view,
+        view: params.view,
         direction: ZoomDirection.In
       }),
       new CustomZoom({
-        view: properties.view,
+        view: params.view,
         direction: ZoomDirection.Out
       }),
       new Home({
-        view: properties.view,
+        view: params.view,
         goToOverride: homeGoToOverride
       }),
-      new CustomLocate({ view: properties.view, popup: properties.popup }),
+      new CustomLocate({ view: params.view, popup: params.popup }),
       this.layersExpand,
       new WindowExpand({
         name: 'directions',
@@ -225,8 +227,8 @@ class MainNavigation extends declared(Widget) {
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
-    const renderedButtons: Array<JSX.Element> = [];
+  public render(): tsx.JSX.Element {
+    const renderedButtons: Array<tsx.JSX.Element> = [];
     // Render each navigation button into an array
     this.buttonWidgets.forEach((buttonWidget) => {
       renderedButtons.push(

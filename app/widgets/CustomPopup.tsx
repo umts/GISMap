@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import Graphic = require('esri/Graphic');
@@ -37,7 +37,7 @@ enum Direction {
 }
 
 @subclass('esri.widgets.CustomPopup')
-class CustomPopup extends declared(Widget) {
+class CustomPopup extends Widget {
   // The main map view
   @property()
   // Re-render any time the view changes so we can re-render our popup
@@ -100,10 +100,12 @@ class CustomPopup extends declared(Widget) {
   @renderable()
   public docked: boolean;
 
-  // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: { view: MapView }) {
+  public constructor(params?: { view: MapView }) {
     super();
+    // Assign constructor params
+    this.set(params);
+
     this.visible = false;
     this.docked = true;
     this.point = new Point();
@@ -128,7 +130,7 @@ class CustomPopup extends declared(Widget) {
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
+  public render(): tsx.JSX.Element {
     let featureInfo;
     let feature;
     // Render the feature information
@@ -551,7 +553,7 @@ class CustomPopup extends declared(Widget) {
     Return a JSX element describing the feature. Note that each div has to
     have its own unique key attribute for rendering, otherwise it errors.
   */
-  private _renderFeature(feature: Graphic): JSX.Element {
+  private _renderFeature(feature: Graphic): tsx.JSX.Element {
     if (feature.layer.title === 'Sections') {
       return this._renderSection(feature);
     } else if (feature.layer.title === 'Campus Buildings') {
@@ -565,10 +567,10 @@ class CustomPopup extends declared(Widget) {
   }
 
   // Return a JSX element describing a section
-  private _renderSection(feature: Graphic): JSX.Element {
+  private _renderSection(feature: Graphic): tsx.JSX.Element {
     const title = <h1>{featureTitle(feature)}</h1>;
 
-    const noticeElements: Array<JSX.Element> = [];
+    const noticeElements: Array<tsx.JSX.Element> = [];
     const hubData = getHubData();
     // If the hub data has been loaded yet
     if (hubData) {
@@ -690,7 +692,7 @@ class CustomPopup extends declared(Widget) {
     }
 
     // Render space counts
-    const spaceCountElements: Array<JSX.Element> = [];
+    const spaceCountElements: Array<tsx.JSX.Element> = [];
     if (feature.attributes.SpaceCounts) {
       const spaceCounts = JSON.parse(feature.attributes.SpaceCounts);
       // Add special space counts
@@ -756,7 +758,7 @@ class CustomPopup extends declared(Widget) {
   }
 
   // Return a JSX element describing a building
-  private _renderBuilding(feature: Graphic): JSX.Element {
+  private _renderBuilding(feature: Graphic): tsx.JSX.Element {
     return (
       <div key={feature.layer.title + feature.getObjectId()}>
         <h1>{featureTitle(feature)}</h1>
@@ -777,7 +779,7 @@ class CustomPopup extends declared(Widget) {
   }
 
   // Return a JSX element describing a space
-  private _renderSpace(feature: Graphic): JSX.Element {
+  private _renderSpace(feature: Graphic): tsx.JSX.Element {
     const categoryInfo = spaceRendererInfo[feature.attributes.ParkingSpaceSubCategory];
     let icon;
     const iconUrl = categoryInfo.iconUrl;
@@ -812,7 +814,7 @@ class CustomPopup extends declared(Widget) {
     );
   }
 
-  private _renderGeneric(feature: Graphic): JSX.Element {
+  private _renderGeneric(feature: Graphic): tsx.JSX.Element {
     return (
       <div key={feature.layer.title + feature.attributes.name}>
         <h1>{featureTitle(feature)}</h1>

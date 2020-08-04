@@ -1,16 +1,16 @@
-import { subclass, declared } from 'esri/core/accessorSupport/decorators';
+import { subclass } from 'esri/core/accessorSupport/decorators';
 import { tsx } from 'esri/widgets/support/widget';
 
 import Widget = require('esri/widgets/Widget');
 
 @subclass('esri.widgets.HelpPage')
-class HelpPage extends declared(Widget) {
+class HelpPage extends Widget {
   public constructor() {
     super();
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
+  public render(): tsx.JSX.Element {
     const emailLink = (
       <a href='mailto:parking@umass.edu?subject=UMass Parking Map Feedback'>
         email
@@ -122,7 +122,7 @@ class HelpPage extends declared(Widget) {
   }
 
   // Return a static icon button
-  private _staticIconButton(iconName: string): JSX.Element {
+  private _staticIconButton(iconName: string): tsx.JSX.Element {
     return (
       <div class='static-icon-button'>
         <span aria-hidden='true' class={`esri-icon esri-icon-${iconName}`}>

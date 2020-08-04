@@ -1,10 +1,10 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { tsx } from 'esri/widgets/support/widget';
 
 import Widget = require('esri/widgets/Widget');
 
 @subclass('esri.widgets.FilteredLayerList')
-class FilteredLayerList extends declared(Widget) {
+class FilteredLayerList extends Widget {
   // The column name to filter by
   @property()
   private readonly filterColumnName: string;
@@ -21,26 +21,27 @@ class FilteredLayerList extends declared(Widget) {
   @property()
   public clause: string;
 
-  // Pass in any properties
-  public constructor(properties?: {
+  public constructor(params?: {
     filterColumnName: string,
     filterOptionInfos: any
   }) {
     super();
+    // Assign constructor params
+    this.set(params);
     // Set filter options based on the keys to the more detailed info
-    this.filterOptions = Object.keys(properties.filterOptionInfos);
+    this.filterOptions = Object.keys(params.filterOptionInfos);
     // Set the starting clause based on the checkboxes that start checked
     this.clause = this._clause(
-      properties.filterColumnName,
+      params.filterColumnName,
       this.filterOptions.filter((option) => {
-        return properties.filterOptionInfos[option].checked === 'checked';
+        return params.filterOptionInfos[option].checked === 'checked';
       })
     );
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
-    const checkboxes: Array<JSX.Element> = [];
+  public render(): tsx.JSX.Element {
+    const checkboxes: Array<tsx.JSX.Element> = [];
     this.filterOptions.forEach((filterOption) => {
       let icon;
       const iconUrl = this.filterOptionInfos[filterOption].iconUrl;

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "module": "amd",
     "noImplicitAny": true,
     "sourceMap": true,
@@ -14,8 +15,13 @@
     "experimentalDecorators": true,
     "preserveConstEnums": true,
     "suppressImplicitAnyIndexErrors": true,
+    "importHelpers": true,
     "removeComments": true,
-    "outDir": "./out/app"
+    "outDir": "./out/app",
+    "baseUrl": "./",
+    "paths": {
+      "tslib" : ["node_modules/tslib/tslib.d.ts"]
+    }
   },
   "include": [
     "./app/*"
