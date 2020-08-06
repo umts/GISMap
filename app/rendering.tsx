@@ -340,7 +340,7 @@ function updateFeatureReduction(view: MapView): void {
     labelingInfo: [new LabelClass({
       deconflictionStrategy: 'none',
       labelExpressionInfo: {
-        expression: 'Text(`(${$feature.cluster_count})`, \'#,###\')'
+        expression: 'Text(`(${$feature.cluster_count})`)'
       },
       symbol: new TextSymbol({
         color: 'white',
@@ -360,13 +360,16 @@ function updateFeatureReduction(view: MapView): void {
     return layer.title === 'Spaces';
   }) as FeatureLayer;
   // Use feature reduction when zoomed out beyond 18
-  view.watch('zoom', (zoom) => {
+  function zoomUpdateReduction(zoom: number): void {
     if (zoom > 18) {
       spacesLayer.featureReduction = null;
     } else if (spacesLayer.featureReduction === null) {
       spacesLayer.featureReduction = featureReduction;
     }
-  });
+  }
+  // Call once then watch for changes
+  zoomUpdateReduction(view.zoom);
+  view.watch('zoom', zoomUpdateReduction);
 }
 
 /*
