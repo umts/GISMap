@@ -5,6 +5,7 @@ import WebMap = require('esri/WebMap');
 import Point = require('esri/geometry/Point');
 import Polygon = require('esri/geometry/Polygon');
 import FeatureLayer = require('esri/layers/FeatureLayer');
+import FeatureReductionCluster = require('esri/layers/support/FeatureReductionCluster');
 import LabelClass = require('esri/layers/support/LabelClass');
 import UniqueValueRenderer = require('esri/renderers/UniqueValueRenderer');
 import PictureMarkerSymbol = require('esri/symbols/PictureMarkerSymbol');
@@ -331,6 +332,43 @@ function updateLabeling(map: WebMap): void {
   buildingsLayer.labelingInfo = [buildingLabel];
 }
 
+function updateFeatureReduction(view: MapView): void {
+  const featureReduction = new FeatureReductionCluster({
+    clusterRadius: '50px',
+    clusterMinSize: '22px',
+    clusterMaxSize: '32px',
+    labelingInfo: [new LabelClass({
+      deconflictionStrategy: 'none',
+      labelExpressionInfo: {
+        expression: 'Text(`(${$feature.cluster_count})`, \'#,###\')'
+      },
+      symbol: new TextSymbol({
+        color: 'white',
+        haloColor: 'black',
+        haloSize: '1px',
+        yoffset: -11,
+        font: new Font({
+          size: 8,
+          family: 'sans-serif',
+          weight: 'bold'
+        })
+      }),
+      labelPlacement: 'center-center'
+    })]
+  });
+  const spacesLayer = view.map.layers.find((layer) => {
+    return layer.title === 'Spaces';
+  }) as FeatureLayer;
+  // Use feature reduction when zoomed out beyond 18
+  view.watch('zoom', (zoom) => {
+    if (zoom > 18) {
+      spacesLayer.featureReduction = null;
+    } else if (spacesLayer.featureReduction === null) {
+      spacesLayer.featureReduction = featureReduction;
+    }
+  });
+}
+
 /*
   Make the view go to target normally, but use max zoom when the
   target is just a point.
@@ -521,6 +559,7 @@ export {
   RenderableWidget,
   updateRenderers,
   updateLabeling,
+  updateFeatureReduction,
   spaceRendererInfo,
   sectionRendererInfo,
   filterInfo,

@@ -8,7 +8,11 @@ import BasemapToggle = require('esri/widgets/BasemapToggle');
 import { setupUmassMenu } from 'app/events';
 import { umassLongLat } from 'app/latLong';
 import { updateHubData, updateSectionData } from 'app/data';
-import { updateRenderers, updateLabeling } from 'app/rendering';
+import {
+  updateRenderers,
+  updateLabeling,
+  updateFeatureReduction
+} from 'app/rendering';
 import { resetUrlTimer, updateAppFromUrl } from 'app/url';
 
 import MainNavigation = require('app/widgets/MainNavigation');
@@ -80,6 +84,8 @@ view.when(() => {
   updateRenderers(map);
   // Set labels on layers
   updateLabeling(map);
+  // Set feature reduction on spaces layer
+  updateFeatureReduction(view);
 
   /*
     Create the popup for the main navigation, which the popup pointer
