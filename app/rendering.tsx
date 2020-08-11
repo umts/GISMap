@@ -5,6 +5,7 @@ import WebMap = require('esri/WebMap');
 import Point = require('esri/geometry/Point');
 import Polygon = require('esri/geometry/Polygon');
 import FeatureLayer = require('esri/layers/FeatureLayer');
+import FeatureReductionCluster = require('esri/layers/support/FeatureReductionCluster');
 import LabelClass = require('esri/layers/support/LabelClass');
 import UniqueValueRenderer = require('esri/renderers/UniqueValueRenderer');
 import PictureMarkerSymbol = require('esri/symbols/PictureMarkerSymbol');
@@ -331,6 +332,46 @@ function updateLabeling(map: WebMap): void {
   buildingsLayer.labelingInfo = [buildingLabel];
 }
 
+function updateFeatureReduction(view: MapView): void {
+  const featureReduction = new FeatureReductionCluster({
+    clusterRadius: '50px',
+    clusterMinSize: '22px',
+    clusterMaxSize: '32px',
+    labelingInfo: [new LabelClass({
+      deconflictionStrategy: 'none',
+      labelExpressionInfo: {
+        expression: 'Text(`(${$feature.cluster_count})`)'
+      },
+      symbol: new TextSymbol({
+        color: 'white',
+        haloColor: 'black',
+        haloSize: '1px',
+        yoffset: -11,
+        font: new Font({
+          size: 8,
+          family: 'sans-serif',
+          weight: 'bold'
+        })
+      }),
+      labelPlacement: 'center-center'
+    })]
+  });
+  const spacesLayer = view.map.layers.find((layer) => {
+    return layer.title === 'Spaces';
+  }) as FeatureLayer;
+  // Use feature reduction when zoomed out beyond 18
+  function zoomUpdateReduction(zoom: number): void {
+    if (zoom > 18) {
+      spacesLayer.featureReduction = null;
+    } else if (spacesLayer.featureReduction === null) {
+      spacesLayer.featureReduction = featureReduction;
+    }
+  }
+  // Call once then watch for changes
+  zoomUpdateReduction(view.zoom);
+  view.watch('zoom', zoomUpdateReduction);
+}
+
 /*
   Make the view go to target normally, but use max zoom when the
   target is just a point.
@@ -366,9 +407,9 @@ function imperialDistance(distanceInFeet: number): string {
 
 let uniqueKey = 0;
 // Return two elements formatted as row with a label and content
-function attributeRow(label: string, content: string, link?: string): JSX.Element {
+function attributeRow(label: string, content: string, link?: string): tsx.JSX.Element {
   // Label content is either text or a link
-  let labelContent: JSX.Element | string = label;
+  let labelContent: tsx.JSX.Element | string = label;
   if (link) {
     labelContent = <a target='_blank' href={link}>{label}</a>;
   }
@@ -406,8 +447,8 @@ function expandable(
   title: string,
   startExpanded: boolean,
   className: string,
-  mainElement: JSX.Element
-): JSX.Element {
+  mainElement: tsx.JSX.Element
+): tsx.JSX.Element {
   return (
     <div class='expandable-container'>
       <div
@@ -447,7 +488,7 @@ function iconButton(properties: {
   name: string,
   iconName: string,
   classes?: Array<string>
-}): JSX.Element {
+}): tsx.JSX.Element {
   const allClasses = ['esri-widget', 'esri-widget--button'];
   if (properties.classes) {
     properties.classes.forEach((someClass) => { allClasses.push(someClass) });
@@ -521,6 +562,7 @@ export {
   RenderableWidget,
   updateRenderers,
   updateLabeling,
+  updateFeatureReduction,
   spaceRendererInfo,
   sectionRendererInfo,
   filterInfo,

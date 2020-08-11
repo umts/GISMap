@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 
 import esriRequest = require('esri/request');
 import Graphic = require('esri/Graphic');
@@ -24,7 +24,7 @@ interface LocationSearchSourceProperties {
 }
 
 @subclass('esri.CustomSearchSources')
-class CustomSearchSources extends declared(Accessor) {
+class CustomSearchSources extends Accessor {
   @property()
   private view: MapView;
 
@@ -45,15 +45,17 @@ class CustomSearchSources extends declared(Accessor) {
   @property()
   public onCampusLocationsOnly: boolean;
 
-  // Pass in any properties
-  public constructor(properties?: {
+  public constructor(params?: {
     view: MapView,
     locationsOnly: boolean,
     onCampusLocationsOnly: boolean,
   }) {
     super();
-    this.locationsOnly = properties.locationsOnly || false;
-    this.onCampusLocationsOnly = properties.onCampusLocationsOnly || false;
+    // Assign constructor params
+    this.set(params);
+
+    this.locationsOnly = params.locationsOnly || false;
+    this.onCampusLocationsOnly = params.onCampusLocationsOnly || false;
   }
 
   // Return header text to describe a list of suggestions of the same type

@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import Point = require('esri/geometry/Point');
@@ -16,7 +16,7 @@ import CustomPopup = require('app/widgets/CustomPopup');
 import { Marker } from 'app/widgets/Markers'
 
 @subclass('esri.widgets.CustomSearch')
-class CustomSearch extends declared(Widget) {
+class CustomSearch extends Widget {
   // Placeholder text for the input
   @property()
   private readonly placeholder: string;
@@ -93,8 +93,7 @@ class CustomSearch extends declared(Widget) {
   @renderable()
   public onCampusLocationsOnly: boolean;
 
-  // Pass in any properties
-  public constructor(properties?: {
+  public constructor(params?: {
     view: MapView,
     name: string,
     placeholder: string,
@@ -105,16 +104,19 @@ class CustomSearch extends declared(Widget) {
     onCampusLocationsOnly?: boolean,
   }) {
     super();
+    // Assign constructor params
+    this.set(params);
+
     this.suggestions = [];
     this.suggestionRequestSet = new RequestSet();
     this.showSuggestions = false;
-    this.required = properties.required || false;
-    this.mainSearch = properties.mainSearch || false;
+    this.required = params.required || false;
+    this.mainSearch = params.mainSearch || false;
     this.warning = '';
     this.sources = new CustomSearchSources({
-      view: properties.view,
-      locationsOnly: !properties.mainSearch,
-      onCampusLocationsOnly: properties.onCampusLocationsOnly,
+      view: params.view,
+      locationsOnly: !params.mainSearch,
+      onCampusLocationsOnly: params.onCampusLocationsOnly,
     });
 
     // Hide suggestions when the escape key is pressed
@@ -139,12 +141,12 @@ class CustomSearch extends declared(Widget) {
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
+  public render(): tsx.JSX.Element {
     /*
       Render suggestions assuming suggestions from the same source are
       consecutive.
     */
-    const suggestionElements: Array<JSX.Element> = [];
+    const suggestionElements: Array<tsx.JSX.Element> = [];
     const visitedSources: Array<string> = [];
     if (this.showSuggestions) {
       this.suggestions.forEach((suggestion, i) => {

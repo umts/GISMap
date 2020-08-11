@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { tsx } from 'esri/widgets/support/widget';
 
 import MapView = require('esri/views/MapView');
@@ -11,7 +11,7 @@ import { isUrlInsecure } from 'app/url';
 import CustomPopup = require('app/widgets/CustomPopup');
 
 @subclass('esri.widgets.CustomLocate')
-class CustomLocate extends declared(Widget) {
+class CustomLocate extends Widget {
   // The map view
   @property()
   private readonly view: MapView;
@@ -24,17 +24,18 @@ class CustomLocate extends declared(Widget) {
   @property()
   private readonly disabled: boolean;
 
-  // Pass in properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: { view: MapView, popup: CustomPopup }) {
+  public constructor(params?: { view: MapView, popup: CustomPopup }) {
     super();
+    // Assign constructor params
+    this.set(params);
 
     // The geolocation api only works on secure connections
     this.disabled = isUrlInsecure();
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
+  public render(): tsx.JSX.Element {
     const classes = [];
     let name = 'Find my location';
     if (this.disabled) {

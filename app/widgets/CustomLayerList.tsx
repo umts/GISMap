@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import MapView = require('esri/views/MapView');
@@ -9,7 +9,7 @@ import { spaceRendererInfo, sectionRendererInfo } from 'app/rendering';
 import { SearchFilter } from 'app/search';
 
 @subclass('esri.widgets.CustomLayerList')
-class CustomLayerList extends declared(Widget) {
+class CustomLayerList extends Widget {
   // The map view
   @property()
   private readonly view: MapView
@@ -30,10 +30,12 @@ class CustomLayerList extends declared(Widget) {
   @renderable()
   public filter: SearchFilter
 
-  // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: { view: MapView }) {
+  public constructor(params?: { view: MapView }) {
     super();
+    // Assign constructor params
+    this.set(params);
+
     this.sectionLayers = new FilteredLayerList({
       filterColumnName: 'SectionColor',
       filterOptionInfos: sectionRendererInfo
@@ -61,7 +63,7 @@ class CustomLayerList extends declared(Widget) {
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
+  public render(): tsx.JSX.Element {
     return (
       <div>
         {this._renderCustomCheckbox('lots', 'Lots')}
@@ -79,7 +81,7 @@ class CustomLayerList extends declared(Widget) {
     Render a generic checkbox that will trigger generic checkbox events in
     this widget.
   */
-  private _renderCustomCheckbox(uniqueId: string, text: string): JSX.Element {
+  private _renderCustomCheckbox(uniqueId: string, text: string): tsx.JSX.Element {
     return (
       <label
         class='vertical-input'

@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { tsx } from 'esri/widgets/support/widget';
 
 import MapView = require('esri/views/MapView');
@@ -16,7 +16,7 @@ enum ZoomDirection {
 }
 
 @subclass('esri.widgets.CustomZoom')
-class CustomZoom extends declared(Widget) {
+class CustomZoom extends Widget {
   /*
     The map view.
     We need this in order to manipulate properties of the view like `zoom`.
@@ -28,17 +28,15 @@ class CustomZoom extends declared(Widget) {
   @property()
   private readonly direction: ZoomDirection;
 
-  /*
-    Pass in properties like widgets as `any` type which will then be cast to
-    their correct types.
-  */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: { view: MapView, direction: ZoomDirection }) {
+  public constructor(params?: { view: MapView, direction: ZoomDirection }) {
     super();
+    // Assign constructor params
+    this.set(params);
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
+  public render(): tsx.JSX.Element {
     /*
       Set which icon we should use depending on if this widget zooms in or out.
       Use a plus sign for zooming in and a minus sign for zooming out.

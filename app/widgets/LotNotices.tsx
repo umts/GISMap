@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { tsx } from 'esri/widgets/support/widget';
 
 import Graphic = require('esri/Graphic');
@@ -9,19 +9,20 @@ import { attributeRow } from 'app/rendering';
 import CustomPopup = require('app/widgets/CustomPopup');
 
 @subclass('esri.widgets.LotNotices')
-class LotNotices extends declared(Widget) {
+class LotNotices extends Widget {
   @property()
   private readonly popup: CustomPopup;
 
-  // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: { popup: CustomPopup }) {
+  public constructor(params?: { popup: CustomPopup }) {
     super();
+    // Assign constructor params
+    this.set(params);
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
-    const noticeElements: Array<JSX.Element> = [];
+  public render(): tsx.JSX.Element {
+    const noticeElements: Array<tsx.JSX.Element> = [];
     const hubData = getHubData();
     const sectionData = getSectionData();
     // If the hub data has been loaded yet

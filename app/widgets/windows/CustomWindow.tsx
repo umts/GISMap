@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import Widget = require('esri/widgets/Widget');
@@ -13,7 +13,7 @@ interface WidgetWithLabel {
 }
 
 @subclass('esri.widgets.CustomWindow')
-class CustomWindow extends declared(Widget) {
+class CustomWindow extends Widget {
   // Whether or not to use tabs to separate the widgets
   @property()
   private readonly useTabs: boolean;
@@ -42,9 +42,8 @@ class CustomWindow extends declared(Widget) {
   @renderable()
   public visible: boolean;
 
-  // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: {
+  public constructor(params?: {
     name: string,
     iconName: string,
     useTabs: boolean,
@@ -52,13 +51,17 @@ class CustomWindow extends declared(Widget) {
     visible?: boolean
   }) {
     super();
-    this.widgetIndex = 0;
-    this.visible = properties.visible || false;
+    // Assign constructor params
+    this.set(params);
+    this.set({
+      widgetIndex: 0,
+      visible: params.visible || false
+    });
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
-    const renderedElements: Array<JSX.Element> = [];
+  public render(): tsx.JSX.Element {
+    const renderedElements: Array<tsx.JSX.Element> = [];
     // Render tabs for each widget if we are using tabs
     if (this.useTabs) {
       const tabs = [];

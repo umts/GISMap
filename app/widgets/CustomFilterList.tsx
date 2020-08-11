@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import Widget = require('esri/widgets/Widget');
@@ -8,26 +8,28 @@ import { filterInfo } from 'app/rendering';
 import CustomFilter = require('app/widgets/CustomFilter');
 
 @subclass('esri.widgets.CustomFilterList')
-class CustomFilterList extends declared(Widget) {
+class CustomFilterList extends Widget {
   // The custom filter to update
   @property()
   @renderable()
   public customFilter: CustomFilter;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: { customFilter: CustomFilter }) {
+  public constructor(params?: { customFilter: CustomFilter }) {
     super();
+    // Assign constructor params
+    this.set(params);
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
+  public render(): tsx.JSX.Element {
     // Insert the no filter element
     const noFilter = this.customFilter.filter.name === 'CustomLayerList';
     const labelClasses = ['vertical-input'];
     if (noFilter) {
       labelClasses.push('active');
     }
-    const filterElements: Array<JSX.Element> = [
+    const filterElements: Array<tsx.JSX.Element> = [
       <label for='CustomLayerList' class={labelClasses.join(' ')}>
         <input
           bind={this}

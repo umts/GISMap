@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { tsx } from 'esri/widgets/support/widget';
 
 import Widget = require('esri/widgets/Widget');
@@ -6,25 +6,27 @@ import Widget = require('esri/widgets/Widget');
 import CustomWindow = require('app/widgets/windows/CustomWindow');
 
 @subclass('esri.widgets.WindowManager')
-class WindowManager extends declared(Widget) {
+class WindowManager extends Widget {
   // The windows that this widget can open, close and render
   @property()
   private readonly windows: Array<CustomWindow>
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties?: { windows: Array<CustomWindow> }) {
+  public constructor(params?: { windows: Array<CustomWindow> }) {
     super();
+    // Assign constructor params
+    this.set(params);
   }
 
   // Return an array of rendered windows
-  public renderWindows(): Array<JSX.Element> {
+  public renderWindows(): Array<tsx.JSX.Element> {
     /*
       Render each custom window into an array.
       Only one window will be visible at a time. They all need to be rendered,
       even if they are not visible, otherwise inputs and buttons in the windows
       will reset.
     */
-    const renderedWindows: Array<JSX.Element> = [];
+    const renderedWindows: Array<tsx.JSX.Element> = [];
     this.windows.forEach((window) => {
       renderedWindows.push(window.render());
     });

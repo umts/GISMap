@@ -1,17 +1,17 @@
-import { subclass, declared } from 'esri/core/accessorSupport/decorators';
+import { subclass } from 'esri/core/accessorSupport/decorators';
 import { tsx } from 'esri/widgets/support/widget';
 
 import Widget = require('esri/widgets/Widget');
 import { safeUrl } from 'app/url';
 
 @subclass('esri.widgets.ShareEmail')
-class ShareEmail extends declared(Widget) {
+class ShareEmail extends Widget {
   public constructor() {
     super();
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
+  public render(): tsx.JSX.Element {
     return (
       <div class="esri-widget">
         <form>

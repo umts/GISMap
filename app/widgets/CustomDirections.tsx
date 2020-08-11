@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { renderable, tsx } from 'esri/widgets/support/widget';
 
 import Graphic = require('esri/Graphic');
@@ -24,7 +24,7 @@ enum TransportMethod {
 }
 
 @subclass('esri.widgets.CustomDirections')
-class CustomDirections extends declared(Widget) {
+class CustomDirections extends Widget {
   // The route task to use to query for routes
   private static routeTask = new RouteTask({
     url: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route'
@@ -59,26 +59,29 @@ class CustomDirections extends declared(Widget) {
   @property()
   public endSearch: CustomSearch;
 
-  // Pass in any properties
-  public constructor(properties?: {
+  public constructor(params?: {
     view: MapView,
     searches: Array<CustomSearch>
   }) {
     super();
-    this.startSearch = properties.searches.filter((search) => {
-      return search.name === 'directions-origin';
-    })[0];
-    this.endSearch = properties.searches.filter((search) => {
-      return search.name === 'directions-destination';
-    })[0];
-    this.transportMethod = TransportMethod.Driving;
+    // Assign constructor params
+    this.set({
+      view: params.view,
+      startSearch: params.searches.filter((search) => {
+        return search.name === 'directions-origin';
+      })[0],
+      endSearch: params.searches.filter((search) => {
+        return search.name === 'directions-destination';
+      })[0],
+      transportMethod: TransportMethod.Driving
+    });
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
+  public render(): tsx.JSX.Element {
     let directionsElement;
     if (this.routeResult && this.routeResult.directions) {
-      const directions: Array<JSX.Element> = [];
+      const directions: Array<tsx.JSX.Element> = [];
       this.routeResult.directions.features.forEach((graphic, i) => {
         directions.push(this._renderDirection(graphic, i));
       })
@@ -151,7 +154,7 @@ class CustomDirections extends declared(Widget) {
   }
 
   // Render a direction which is given to us as a graphic by the api
-  private _renderDirection(graphic: Graphic, index: number): JSX.Element {
+  private _renderDirection(graphic: Graphic, index: number): tsx.JSX.Element {
     const classes = ['direction'];
     if (index === this.directionIndex) {
       classes.push('active');

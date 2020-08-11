@@ -1,4 +1,4 @@
-import { subclass, declared, property } from 'esri/core/accessorSupport/decorators';
+import { subclass, property } from 'esri/core/accessorSupport/decorators';
 import { tsx } from 'esri/widgets/support/widget';
 
 import Widget = require('esri/widgets/Widget');
@@ -6,19 +6,21 @@ import Widget = require('esri/widgets/Widget');
 import WindowManager = require('app/widgets/windows/WindowManager');
 
 @subclass('esri.widgets.HelpExpand')
-class HelpExpand extends declared(Widget) {
+class HelpExpand extends Widget {
   // The window that this expand will actually open
   @property()
   private readonly windowManager: WindowManager;
 
   // Pass in any properties
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public constructor(properties: { windowManager: WindowManager }) {
+  public constructor(params?: { windowManager: WindowManager }) {
     super();
+    // Assign constructor params
+    this.set(params);
   }
 
   // Render this widget by returning JSX which is converted to HTML
-  public render(): JSX.Element {
+  public render(): tsx.JSX.Element {
     const window = this.windowManager.findWindow('help');
     return (
       <div
