@@ -9,7 +9,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "@typescript-eslint/parser": "^1.11.0",
-    "browserify": "^16.2.3",
+    "browserify": "^16.5.2",
     "eslint": "^7.18.0",
     "eslint-plugin-promise": "^4.2.1",
     "finalhandler": "^1.1.2",
