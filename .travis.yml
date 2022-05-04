@@ -1,12 +1,14 @@
+os: linux
+dist: focal
 language: node_js
 node_js: node
 script: yarn run compress
 deploy:
+  edge: true
   provider: releases
-  api_key:
+  token:
     secure: TQuDynLxEXAfBJeC/dXpXhFzRt8a0DiYFQlfRoKnrAF5P7ZZg0MikEuvjXbwrKA2ArzXVBiFGYEnficjH9zv60ZDHddjDguB4wl72uHqR1lXhgMRzU3s4FTFdFv4g5H7iOOhrqYRh9Sxvgdvf260YxWAMKi8ip6QS1StTi0AEI1d56J+/95aDZZW8aWK9NFuQgZvcm1kBggIvewFKPrDIBEQEWSLeYGu2oT+hmv61s+t+RgUNXhjQ00VuWeHkGHMDzl4ljlJVlC1ZtrnqW9fiYs5VUeJZTX3Ob4e+7rd0noQTyGjaOReLrzuUWLr8MF2fZln9yuiZlhgkvLTmiEdCUgn3BcCFVfri3MgN9bBfuhNclSxVK6qluTPk4eHvPALZSZMjW+1tpPb1TIHa9ibYOfBX70mxSqlBCMjmTd2BGfkDVYFK6FdBLE1Ikc5Z7VQmYPFx8MBPdZBs95eJN6p8CqMhbM+bYHXFIqagXzWCxdps7in0xMUYuWkGjTc2QOA8KAjhorgyNomPY9cvdzDeZhKwFhSvJZQnPxQ3m4x2KMRGskJphTBA6VNwS9GktBq8F5KEQa59gewOcklRhf8kUzNy1QawU8YNrU28wUp8U9hb87NxQzJCJwQZBgMebg+j9EVoRh54jAZ4qNy6fHfBCm8w1XQQbLRLJBP+qZeQRY=
   file: site.zip
-  skip_cleanup: true
 notifications:
   email:
     on_success: never
