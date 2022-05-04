@@ -3,6 +3,9 @@ dist: focal
 language: node_js
 node_js: node
 script: yarn run compress
+branches:
+  only:
+    - master
 before_deploy:
   - git config --local user.name "UMass Transportation"
   - git config --local user.email "transportation-it@groups.umass.edu"
