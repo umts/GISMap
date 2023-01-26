@@ -12,11 +12,13 @@ before_deploy:
   - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
   - git tag $TRAVIS_TAG
 deploy:
-  edge: true
   provider: releases
   token:
     secure: "e7+JeeUwZowEAwvpdDidxcnSC+dw6Z8rjFdtDyVdPO7Qf36YxwJpjjgl9Rb1dA4TFZRIXymmGvG5+xtQJBNn3fXI19ipWb4jwGLevBKHu1/zJ7eLEtsMDqlBsYKEQ2kzCETUyDL8V2NCHam8ETn1rmCDjkzcYJv8uvpNDUTZSVOUl4LrylTartceVybLc4URgWeSht+DiryXY5hbFcpA3/IZGHK02ofNt1BGXHS0f6y4dtbqaS5K8XyDso66XYzgrQDxZm/f1IWwpNKSDkud4qiEFaMHYahnb0w8buHUtpgsPaqb5u8Qj6LyUsLBhNQ+4JFMigUD5ueuWJx4yDCDom0IHGXrnnljkdB3bEGKIkT0kz1S1FIDzpSMdObfaZj33q4o2hdEt1nzFgNoKMShEcPkvz0y+RADfP9WzmmEM26ctW1dplLg5Kna8y4Ji9dOGlwY875VKh7ENdeU57EHvIYvP+z8HopHi2435u+ob+26g/YbfMR8uQ2MecgyLFDYMzJUCNbGWpbiTOoVhZiCBa1+CLY/j1L+AGZUY0kHKAyMs7GrWBNwZ0xBq9B3TpTp8J1OuhIEEtxzpf0fXZyapKouqAvmsotSBtXlY3LvqVRw2E8rGk94Pqr3r7j5+igW/H7Mosvb73WlBVI0C87gQvaPMt2ouGj4iFUILRfBAr8="
   file: site.zip
+  edge: true
+  on:
+    branch: main
 notifications:
   email:
     on_success: never
