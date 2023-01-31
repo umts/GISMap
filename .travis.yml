@@ -12,11 +12,13 @@ before_deploy:
   - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
   - git tag $TRAVIS_TAG
 deploy:
-  edge: true
   provider: releases
   token:
-    secure: TQuDynLxEXAfBJeC/dXpXhFzRt8a0DiYFQlfRoKnrAF5P7ZZg0MikEuvjXbwrKA2ArzXVBiFGYEnficjH9zv60ZDHddjDguB4wl72uHqR1lXhgMRzU3s4FTFdFv4g5H7iOOhrqYRh9Sxvgdvf260YxWAMKi8ip6QS1StTi0AEI1d56J+/95aDZZW8aWK9NFuQgZvcm1kBggIvewFKPrDIBEQEWSLeYGu2oT+hmv61s+t+RgUNXhjQ00VuWeHkGHMDzl4ljlJVlC1ZtrnqW9fiYs5VUeJZTX3Ob4e+7rd0noQTyGjaOReLrzuUWLr8MF2fZln9yuiZlhgkvLTmiEdCUgn3BcCFVfri3MgN9bBfuhNclSxVK6qluTPk4eHvPALZSZMjW+1tpPb1TIHa9ibYOfBX70mxSqlBCMjmTd2BGfkDVYFK6FdBLE1Ikc5Z7VQmYPFx8MBPdZBs95eJN6p8CqMhbM+bYHXFIqagXzWCxdps7in0xMUYuWkGjTc2QOA8KAjhorgyNomPY9cvdzDeZhKwFhSvJZQnPxQ3m4x2KMRGskJphTBA6VNwS9GktBq8F5KEQa59gewOcklRhf8kUzNy1QawU8YNrU28wUp8U9hb87NxQzJCJwQZBgMebg+j9EVoRh54jAZ4qNy6fHfBCm8w1XQQbLRLJBP+qZeQRY=
+    secure: "XENpGcc6MiV5rrxyd0PS1XbvoFT2VQFTfU3bkEGVoVeM0sxQIsNDCWiuAG4Nm1kQi/Yru1K8GtsoYpUiVfzIifQU4GDLjmIhTDp1119EMqAyDRrDL924n0Jr02H5pshompP4vhXhHp0xFOopACiszJPKHKPcmgTZJVD2PZlJSZ/SxzSWiqjBF/HsnOHEu+Rz0pPNqepaHt/ViAamgLWvTzkwWXFivwPENKYZ9JFGtds1F/PdJW3vWv02+Px6fu5Jdr50DxgcFjFQa0/sQOa8UCLZ2L+R8MPwZr1IbvVkWziZeR3bgIKhZi9oz0ClBm2kw8uFbWlShlJ3MjvRnkr9VgpBpYkaYhFxq1/LgkWHVg92LlBSxRKl+aoGdCNgSHdQ0L1ZKsW2h9uwcuAgfi2tgDtkDB7Maz1buclYHdNzII1TlQFKK+NRxznJfjZ5dK5FmvbXhXyzNsARSa063bexNGw6Y0Oc1m0t5uTsNya1krGFIMZoZ41PXL2aUZbpNIESix/Cq/BTUPrgXKHsPAa59Ji9yrFET8hLBCKx8RO3qAv6cC6/h4YyvbVN1b8d7aJWiB0wH423tdEJOfKI86d37xACtbH6KfFMoGnVqDMBWTCgdtRDHbM2gmR4dlQAYfWoyZ89Wb7VO88lVG2++G9xf8O6294ju0ZctT5DGq6ipJk="
   file: site.zip
+  edge: true
+  on:
+    branch: main
 notifications:
   email:
     on_success: never
