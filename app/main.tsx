@@ -133,7 +133,7 @@ view.when(() => {
     }
   ];
 
-  const topoBasemap = Basemap.fromId('topo');
+  const topoBasemap = Basemap.fromId('topo-vector');
   topoBasemap.title = 'Map';
   const satelliteBasemap = Basemap.fromId('satellite');
   satelliteBasemap.title = 'Satellite';
