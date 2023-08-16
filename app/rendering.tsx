@@ -29,10 +29,10 @@ const iconsPath = 'assets/icons';
 // Info that should be used to render different types of spaces
 const spaceRendererInfo = {
   'R-Handicapped': {
-    label: 'Handicapped Spaces',
-    description: 'Handicapped space',
-    iconUrl: `${iconsPath}/handicapped-space.png`,
-    altText: 'White H in a blue circle'
+    label: 'Accessible Spaces',
+    description: 'Accessible space',
+    iconUrl: `${iconsPath}/accessible-space.png`,
+    altText: 'Accessible space'
   },
   'R-Carpool': {
     label: 'Carpool Spaces',
