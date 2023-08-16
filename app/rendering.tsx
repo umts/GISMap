@@ -31,8 +31,8 @@ const spaceRendererInfo = {
   'R-Handicapped': {
     label: 'Accessible Spaces',
     description: 'Accessible space',
-    iconUrl: `${iconsPath}/handicapped-space.png`,
-    altText: 'White H in a blue circle'
+    iconUrl: `${iconsPath}/accessible-space.png`,
+    altText: 'Accessible space'
   },
   'R-Carpool': {
     label: 'Carpool Spaces',
