@@ -13,8 +13,7 @@ before_deploy:
   - git tag $TRAVIS_TAG
 deploy:
   provider: releases
-  token:
-    secure: "XENpGcc6MiV5rrxyd0PS1XbvoFT2VQFTfU3bkEGVoVeM0sxQIsNDCWiuAG4Nm1kQi/Yru1K8GtsoYpUiVfzIifQU4GDLjmIhTDp1119EMqAyDRrDL924n0Jr02H5pshompP4vhXhHp0xFOopACiszJPKHKPcmgTZJVD2PZlJSZ/SxzSWiqjBF/HsnOHEu+Rz0pPNqepaHt/ViAamgLWvTzkwWXFivwPENKYZ9JFGtds1F/PdJW3vWv02+Px6fu5Jdr50DxgcFjFQa0/sQOa8UCLZ2L+R8MPwZr1IbvVkWziZeR3bgIKhZi9oz0ClBm2kw8uFbWlShlJ3MjvRnkr9VgpBpYkaYhFxq1/LgkWHVg92LlBSxRKl+aoGdCNgSHdQ0L1ZKsW2h9uwcuAgfi2tgDtkDB7Maz1buclYHdNzII1TlQFKK+NRxznJfjZ5dK5FmvbXhXyzNsARSa063bexNGw6Y0Oc1m0t5uTsNya1krGFIMZoZ41PXL2aUZbpNIESix/Cq/BTUPrgXKHsPAa59Ji9yrFET8hLBCKx8RO3qAv6cC6/h4YyvbVN1b8d7aJWiB0wH423tdEJOfKI86d37xACtbH6KfFMoGnVqDMBWTCgdtRDHbM2gmR4dlQAYfWoyZ89Wb7VO88lVG2++G9xf8O6294ju0ZctT5DGq6ipJk="
+  api_key: $GITHUB_TOKEN
   file: site.zip
   edge: true
   on:
