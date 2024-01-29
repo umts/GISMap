@@ -27,7 +27,7 @@ enum TransportMethod {
 class CustomDirections extends Widget {
   // The route task to use to query for routes
   private static routeTask = new RouteTask({
-    url: 'https://maps.umass.edu/arcgis/rest/services/Research/CampusPedestrianNetwork/NAServer/Route'
+    url: 'https://maps.umass.edu/server/rest/services/Community-Routing/Community_PedestrianRouting/NAServer/Route'
   });
 
   @property()
