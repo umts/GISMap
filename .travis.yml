@@ -6,7 +6,7 @@ script: yarn run compress
 branches:
   only:
     - main
-    - fix-deploy
+    - fix-travis
 before_deploy:
   - git config --local user.name "UMass Transportation"
   - git config --local user.email "transportation-it@groups.umass.edu"
