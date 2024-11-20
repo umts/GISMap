@@ -12,6 +12,7 @@ before_deploy:
   - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
   - git tag $TRAVIS_TAG
   - gem update --system
+  - gem install faraday-net_http -v '3.3.0'
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
