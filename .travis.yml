@@ -11,6 +11,7 @@ before_deploy:
   - git config --local user.email "transportation-it@groups.umass.edu"
   - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
   - git tag $TRAVIS_TAG
+  - gem update --system
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
