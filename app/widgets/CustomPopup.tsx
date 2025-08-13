@@ -668,6 +668,7 @@ class CustomPopup extends Widget {
     // Waitlist info for entire lot
     const waitlistInfo = this._waitlistInfo();
     let waitlistCount;
+    let waitlistTime;
     // If there is no hub data display an error
     if (!hubData) {
       waitlistCount = <div class='error'>
@@ -683,6 +684,10 @@ class CustomPopup extends Widget {
       waitlistCount = attributeRow(
         `${this.lot.attributes.ParkingLotName} waitlist`,
         `${waitlistInfo.waitlist_count} ${people}`
+      );
+      waitlistTime = attributeRow(
+        'Approximate waitlist time',
+        waitlistInfo.approximate_wait_time
       );
     }
 
@@ -744,6 +749,7 @@ class CustomPopup extends Widget {
             {permitInfo}
             {parkmobile}
             {waitlistCount}
+            {waitlistTime}
           </div>
         )}
         {spaceCountExpand}
