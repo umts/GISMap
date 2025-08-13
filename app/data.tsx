@@ -13,7 +13,7 @@ let hubData: any;
   lot notices window immediately.
 */
 function updateHubData(windowManager: WindowManager): void {
-  hubData = {}
+  hubData = { facilities: {}, lot_notices: [] }
 }
 
 function getHubData(): any {
