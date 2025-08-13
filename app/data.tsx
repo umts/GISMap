@@ -13,16 +13,7 @@ let hubData: any;
   lot notices window immediately.
 */
 function updateHubData(windowManager: WindowManager): void {
-  esriRequest('https://hub.parking.umass.edu/gis')
-    .then((response) => {
-      if (response.data.lot_notices.length > 0) {
-        windowManager.findWindow('lot notices').visible = true;
-      }
-      hubData = response.data;
-      return;
-    }).catch((error) => {
-      console.error(error);
-    });
+  hubData = { facilities: {}, lot_notices: [] }
 }
 
 function getHubData(): any {

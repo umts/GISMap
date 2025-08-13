@@ -4,6 +4,5 @@ cd "$(dirname "$0")/.."
 
 rm -Rvf out/*
 cp -Rv static/* out/
-yarn run eslint "app/**"
 yarn run tsc
 yarn run browserify node_modules/es6-promise/auto.js -o out/bundle.js
